@@ -1,7 +1,9 @@
 name: grabber_sheet
 description: "A reusable and customizable draggable bottom sheet with a grabber handle, inspired by the modal sheets in popular apps."
 version: 0.0.1
-homepage: https://github.com/example/grabber_sheet
+homepage: https://github.com/SangWook16074/grabber_sheet
+repository: https://github.com/SangWook16074/grabber_sheet.git
+issue_tracker: https://github.com/SangWook16074/grabber_sheet/issues
 
 environment:
   sdk: ^3.10.0

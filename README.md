@@ -1,5 +1,8 @@
 # grabber_sheet
 
+[![pub.dev](https://img.shields.io/pub/v/grabber_sheet.svg)](https://pub.dev/packages/grabber_sheet)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/SangWook16074/grabber_sheet/blob/main/LICENSE)
+
 A reusable and customizable draggable bottom sheet with a grabber handle, inspired by the modal sheets in popular apps like Google Maps.
 
 This package provides a `GrabberSheet` widget that is easy to use and customize.
@@ -10,22 +13,23 @@ This package provides a `GrabberSheet` widget that is easy to use and customize.
 * Stable and predictable behavior, fixing common scroll controller conflicts.
 * Use any widget as the content of the sheet via a builder.
 * Customize sheet sizes (initial, min, max).
+* Optional snapping behavior with custom snap points via `snap` and `snapSizes`.
 * Customize grabber style (color, size, shape).
 
 ## Getting started
 
-Add this to your package's `pubspec.yaml` file:
+Add this to your package's `pubspec.yaml` file. Check the latest version on [pub.dev](https://pub.dev/packages/grabber_sheet).
 
 ```yaml
 dependencies:
-  grabber_sheet: ^0.0.1 # TODO: Replace with the latest version from pub.dev
+  grabber_sheet: ^1.0.0 # Replace with the latest version from pub.dev
 ```
 
 Then, install it by running `flutter pub get` in your terminal.
 
 ## Usage
 
-Here's a simple example of how to use `GrabberSheet`:
+Here's a simple example of how to use `GrabberSheet` with snapping enabled:
 
 ```dart
 import 'package:flutter/material.dart';
@@ -46,7 +50,8 @@ class ExampleHomePage extends StatelessWidget {
             child: Text('Background Content'),
           ),
           GrabberSheet(
-            // The builder provides a scroll controller to be used by your scrollable content.
+            snap: true,
+            snapSizes: const [0.5], // Add an intermediate snap point
             builder: (context, scrollController) {
               return ListView.builder(
                 controller: scrollController,
@@ -70,4 +75,4 @@ For a more detailed example, see the `/example` folder included in the package.
 
 ## Additional information
 
-This package is currently under development. To file issues, request features, or contribute, please visit the [GitHub repository](https://github.com/example/grabber_sheet).
+To file issues, request features, or contribute, please visit the [GitHub repository](https://github.com/SangWook16074/grabber_sheet).
