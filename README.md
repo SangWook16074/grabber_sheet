@@ -1,3 +1,5 @@
+[한국어 문서 보기 (View in Korean)](README.ko.md)
+
 # grabber_sheet
 
 [![pub.dev](https://img.shields.io/pub/v/grabber_sheet.svg)](https://pub.dev/packages/grabber_sheet)
@@ -5,7 +7,8 @@
 
 A reusable and customizable draggable bottom sheet with a grabber handle, inspired by the modal sheets in popular apps like Google Maps.
 
-This package provides a `GrabberSheet` widget that is easy to use and customize.
+![GrabberSheet Demo](https://raw.githubusercontent.com/SangWook16074/grabber_sheet/main/art/demo.gif)
+*(It's highly recommended to add a demo GIF at this path.)*
 
 ## Features
 
@@ -27,9 +30,9 @@ dependencies:
 
 Then, install it by running `flutter pub get` in your terminal.
 
-## Usage
+## Basic Usage
 
-Here's a simple example of how to use `GrabberSheet` with snapping enabled:
+Here's a simple example of how to use `GrabberSheet`:
 
 ```dart
 import 'package:flutter/material.dart';
@@ -50,8 +53,6 @@ class ExampleHomePage extends StatelessWidget {
             child: Text('Background Content'),
           ),
           GrabberSheet(
-            snap: true,
-            snapSizes: const [0.5], // Add an intermediate snap point
             builder: (context, scrollController) {
               return ListView.builder(
                 controller: scrollController,
@@ -71,7 +72,62 @@ class ExampleHomePage extends StatelessWidget {
 }
 ```
 
-For a more detailed example, see the `/example` folder included in the package.
+## Advanced Customization
+
+### Controlling Snap Behavior
+
+By setting `snap` to `true`, the sheet will automatically animate to the nearest defined snap point when a drag gesture ends. This creates a clean, "snapping" motion.
+
+You can define these points using `minChildSize`, `maxChildSize`, `initialChildSize`, and the optional `snapSizes` for intermediate points.
+
+```dart
+GrabberSheet(
+  snap: true, // Enable snapping
+  // Define snap points: 0.2 (min), 0.6 (intermediate), and 0.9 (max)
+  minChildSize: 0.2,
+  maxChildSize: 0.9,
+  snapSizes: const [0.6],
+  builder: (context, scrollController) {
+    // ... your content
+  },
+),
+```
+
+### Customizing the Grabber
+
+The appearance of the grabber handle can be fully customized using the `grabberStyle` property.
+
+```dart
+GrabberSheet(
+  grabberStyle: GrabberStyle(
+    width: 60,
+    height: 6,
+    margin: const EdgeInsets.symmetric(vertical: 10),
+    color: Colors.grey.shade300,
+    radius: const Radius.circular(12),
+  ),
+  builder: (context, scrollController) {
+    // ... your content
+  },
+),
+```
+
+You can also hide the grabber completely by setting `showGrabber: false`.
+
+## Properties
+
+| Property         | Type                  | Description                                                                                                 |
+|------------------|-----------------------|-------------------------------------------------------------------------------------------------------------|
+| `builder`        | `Widget Function(...)`| **Required.** Builds the scrollable content of the sheet.                                                     |
+| `initialChildSize`| `double`              | The initial fractional size of the sheet. Defaults to `0.5`.                                                |
+| `minChildSize`   | `double`              | The minimum fractional size of the sheet. Defaults to `0.25`.                                               |
+| `maxChildSize`   | `double`              | The maximum fractional size of the sheet. Defaults to `1.0`.                                                |
+| `snap`           | `bool`                | If true, the sheet will snap to the nearest snap point after dragging. Defaults to `false`.                 |
+| `snapSizes`      | `List<double>?`       | A list of intermediate fractional sizes to snap to.                                                         |
+| `showGrabber`    | `bool`                | Whether to show the grabber handle. Defaults to `true`.                                                     |
+| `grabberStyle`   | `GrabberStyle`        | The visual style of the grabber handle.                                                                     |
+| `backgroundColor`| `Color?`              | The background color of the sheet container.                                                                |
+
 
 ## Additional information
 

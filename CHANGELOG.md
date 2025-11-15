@@ -1,3 +1,8 @@
+## 0.0.2
+
+* Improved `README.md` with detailed customization instructions and examples.
+* Added a Korean version of the README (`README.ko.md`).
+
 ## 0.0.1
 
 * Initial release of the `grabber_sheet` package.
