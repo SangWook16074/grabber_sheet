@@ -1,27 +1,37 @@
 import 'package:flutter/material.dart';
 
-/// A class to define the styling of the grabber handle.
+/// Defines the visual appearance of the grabber handle.
+///
+/// An object of this class can be passed to `GrabberSheet.grabberStyle`
+/// to customize the look and feel of the draggable handle.
 class GrabberStyle {
-  /// The color of the grabber.
+  /// The background color of the grabber handle.
   final Color color;
 
-  /// The width of the grabber.
+  /// The width of the grabber handle.
+  ///
   /// Defaults to 48.0.
   final double width;
 
-  /// The height of the grabber.
-  /// Defaults to 4.0.
+  /// The height of the grabber handle.
+  ///
+  /// Defaults to 5.0.
   final double height;
 
-  /// The border radius of the grabber.
-  /// Defaults to `Radius.circular(8.0)`.
+  /// The border radius of the grabber handle's corners.
+  ///
+  /// Defaults to `const Radius.circular(8.0)`.
   final Radius radius;
 
-  /// The vertical margin around the grabber.
-  /// Defaults to `EdgeInsets.symmetric(vertical: 8.0)`.
+  /// The margin surrounding the grabber handle.
+  ///
+  /// This is useful for creating vertical space between the handle
+  /// and the content of the sheet.
+  ///
+  /// Defaults to `const EdgeInsets.symmetric(vertical: 10.0)`.
   final EdgeInsetsGeometry margin;
 
-  /// Creates a style object for the grabber.
+  /// Creates a style object that defines the grabber's appearance.
   const GrabberStyle({
     this.color = Colors.grey,
     this.width = 48.0,

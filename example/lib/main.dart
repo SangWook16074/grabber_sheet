@@ -47,7 +47,7 @@ class ExampleHomePage extends StatelessWidget {
             minChildSize: 0.1,
             maxChildSize: 0.9,
             snap: true,
-            snapSizes: const [.2, .4, .8],
+            snapSizes: const [.5],
             backgroundColor: Theme.of(context).colorScheme.surface,
             grabberStyle: GrabberStyle(color: Colors.grey.shade400),
             builder: (BuildContext context, ScrollController scrollController) {

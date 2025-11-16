@@ -7,17 +7,21 @@
 
 A reusable and customizable draggable bottom sheet with a grabber handle, inspired by the modal sheets in popular apps like Google Maps.
 
+It enhances Flutter's built-in `DraggableScrollableSheet` by providing a visible grabber, simplifying scroll controller management, and ensuring predictable behavior.
+
 ![GrabberSheet Demo](https://raw.githubusercontent.com/SangWook16074/grabber_sheet/main/art/demo.gif)
 *(It's highly recommended to add a demo GIF at this path.)*
 
 ## Features
 
-* Draggable bottom sheet with a customizable grabber handle.
-* Stable and predictable behavior, fixing common scroll controller conflicts.
-* Use any widget as the content of the sheet via a builder.
-* Customize sheet sizes (initial, min, max).
-* Optional snapping behavior with custom snap points via `snap` and `snapSizes`.
-* Customize grabber style (color, size, shape).
+*   Draggable bottom sheet with a customizable grabber handle.
+*   Stable and predictable behavior, fixing common scroll controller conflicts.
+*   Use any widget as the content of the sheet via a `builder`.
+*   Customize sheet sizes (initial, min, max).
+*   Optional snapping behavior with custom snap points via `snap` and `snapSizes`.
+*   Customize grabber style (color, size, shape).
+*   Grabber is automatically hidden on desktop and web platforms for a native feel.
+*   Sheet has rounded top corners by default.
 
 ## Getting started
 
@@ -116,17 +120,29 @@ You can also hide the grabber completely by setting `showGrabber: false`.
 
 ## Properties
 
-| Property         | Type                  | Description                                                                                                 |
-|------------------|-----------------------|-------------------------------------------------------------------------------------------------------------|
-| `builder`        | `Widget Function(...)`| **Required.** Builds the scrollable content of the sheet.                                                     |
-| `initialChildSize`| `double`              | The initial fractional size of the sheet. Defaults to `0.5`.                                                |
-| `minChildSize`   | `double`              | The minimum fractional size of the sheet. Defaults to `0.25`.                                               |
-| `maxChildSize`   | `double`              | The maximum fractional size of the sheet. Defaults to `1.0`.                                                |
-| `snap`           | `bool`                | If true, the sheet will snap to the nearest snap point after dragging. Defaults to `false`.                 |
-| `snapSizes`      | `List<double>?`       | A list of intermediate fractional sizes to snap to.                                                         |
-| `showGrabber`    | `bool`                | Whether to show the grabber handle. Defaults to `true`.                                                     |
-| `grabberStyle`   | `GrabberStyle`        | The visual style of the grabber handle.                                                                     |
-| `backgroundColor`| `Color?`              | The background color of the sheet container.                                                                |
+### GrabberSheet
+
+| Property           | Type                                     | Description                                                                                                                                 | Default Value                                |
+| ------------------ | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| `builder`          | `Widget Function(BuildContext, ScrollController)` | **Required.** Builds the scrollable content of the sheet. Provides a `ScrollController` to be used by the content.                      | -                                            |
+| `initialChildSize` | `double`                                 | The initial fractional size of the sheet.                                                                                                   | `0.5`                                        |
+| `minChildSize`     | `double`                                 | The minimum fractional size of the sheet.                                                                                                   | `0.25`                                       |
+| `maxChildSize`     | `double`                                 | The maximum fractional size of the sheet.                                                                                                   | `1.0`                                        |
+| `snap`             | `bool`                                   | If true, the sheet will snap to the nearest snap point after dragging.                                                                      | `false`                                      |
+| `snapSizes`        | `List<double>?`                          | A list of intermediate fractional sizes to snap to.                                                                                         | `null`                                       |
+| `showGrabber`      | `bool`                                   | Whether to show the grabber handle. It is automatically hidden on desktop and web platforms regardless of this value.                       | `true`                                       |
+| `grabberStyle`     | `GrabberStyle`                           | The visual style of the grabber handle.                                                                                                     | `const GrabberStyle()`                       |
+| `backgroundColor`  | `Color?`                                 | The background color of the sheet container. If null, it uses the theme's `colorScheme.surface`. The sheet has a default top border radius of 16.0. | `Theme.of(context).colorScheme.surface`      |
+
+### GrabberStyle
+
+| Property | Type                 | Description                                       | Default Value                                  |
+| -------- | -------------------- | ------------------------------------------------- | ---------------------------------------------- |
+| `color`    | `Color`              | The background color of the grabber handle.       | `Colors.grey`                                  |
+| `width`    | `double`             | The width of the grabber handle.                  | `48.0`                                         |
+| `height`   | `double`             | The height of the grabber handle.                 | `5.0`                                          |
+| `radius`   | `Radius`             | The border radius of the grabber handle's corners. | `const Radius.circular(8.0)`                   |
+| `margin`   | `EdgeInsetsGeometry` | The margin surrounding the grabber handle.        | `const EdgeInsets.symmetric(vertical: 10.0)` |
 
 
 ## Additional information

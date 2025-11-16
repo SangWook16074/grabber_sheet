@@ -5,17 +5,21 @@
 
 구글 지도(Google Maps)와 같은 인기 앱의 모달 시트에서 영감을 받은, 커스터마이징 가능한 드래그형 하단 시트(bottom sheet)입니다.
 
+Flutter에 내장된 `DraggableScrollableSheet`를 기반으로, 눈에 띄는 그래버를 추가하고 스크롤 컨트롤러 관리를 단순화하여 예측 가능한 동작을 보장합니다.
+
 ![GrabberSheet Demo](https://raw.githubusercontent.com/SangWook16074/grabber_sheet/main/art/demo.gif)
 *(이 경로에 데모 GIF 파일을 추가하는 것을 강력히 추천합니다.)*
 
 ## 주요 특징
 
-* 커스터마이징 가능한 그래버(grabber) 핸들이 있는 드래그형 하단 시트
-* 스크롤 컨트롤러 충돌 문제를 해결한 안정적이고 예측 가능한 동작
-* 빌더(builder)를 통해 어떤 위젯이든 시트의 콘텐츠로 사용 가능
-* 시트 크기(초기, 최소, 최대) 조절 가능
-* `snap` 및 `snapSizes`를 통한 스냅 동작 및 사용자 정의 스냅 지점 설정 가능
-* 그래버 스타일(색상, 크기, 모양) 커스터마이징 가능
+*   커스터마이징 가능한 그래버(grabber) 핸들이 있는 드래그형 하단 시트
+*   스크롤 컨트롤러 충돌 문제를 해결한 안정적이고 예측 가능한 동작
+*   빌더(`builder`)를 통해 어떤 위젯이든 시트의 콘텐츠로 사용 가능
+*   시트 크기(초기, 최소, 최대) 조절 가능
+*   `snap` 및 `snapSizes`를 통한 스냅 동작 및 사용자 정의 스냅 지점 설정 가능
+*   그래버 스타일(색상, 크기, 모양) 커스터마이징 가능
+*   네이티브한 느낌을 위해 데스크톱 및 웹 플랫폼에서는 그래버가 자동으로 숨겨집니다.
+*   시트는 기본적으로 상단에 둥근 모서리를 가집니다.
 
 ## 시작하기
 
@@ -114,17 +118,29 @@ GrabberSheet(
 
 ## 속성 (Properties)
 
-| 프로퍼티         | 타입                  | 설명                                                                                                 |
-|------------------|-----------------------|-------------------------------------------------------------------------------------------------------------|
-| `builder`        | `Widget Function(...)`| **(필수)** 시트의 스크롤 가능한 콘텐츠를 빌드합니다.                                                     |
-| `initialChildSize`| `double`              | 시트의 초기 크기 (비율). 기본값: `0.5`.                                                |
-| `minChildSize`   | `double`              | 시트의 최소 크기 (비율). 기본값: `0.25`.                                               |
-| `maxChildSize`   | `double`              | 시트의 최대 크기 (비율). 기본값: `1.0`.                                                |
-| `snap`           | `bool`                | `true`이면 드래그 후 가장 가까운 스냅 지점으로 이동합니다. 기본값: `false`.                 |
-| `snapSizes`      | `List<double>?`       | 중간 스냅 지점 목록 (비율).                                                         |
-| `showGrabber`    | `bool`                | 그래버 핸들을 표시할지 여부. 기본값: `true`.                                                     |
-| `grabberStyle`   | `GrabberStyle`        | 그래버 핸들의 시각적 스타일.                                                                     |
-| `backgroundColor`| `Color?`              | 시트 컨테이너의 배경색.                                                                |
+### GrabberSheet
+
+| 프로퍼티         | 타입                                     | 설명                                                                                                                                            | 기본값                                       |
+| ------------------ | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| `builder`          | `Widget Function(BuildContext, ScrollController)` | **(필수)** 시트의 스크롤 가능한 콘텐츠를 빌드합니다. 콘텐츠에서 사용할 `ScrollController`를 제공합니다.                                     | -                                            |
+| `initialChildSize` | `double`                                 | 시트의 초기 크기 (비율).                                                                                                                        | `0.5`                                        |
+| `minChildSize`     | `double`                                 | 시트의 최소 크기 (비율).                                                                                                                        | `0.25`                                       |
+| `maxChildSize`     | `double`                                 | 시트의 최대 크기 (비율).                                                                                                                        | `1.0`                                        |
+| `snap`             | `bool`                                   | `true`이면 드래그 후 가장 가까운 스냅 지점으로 이동합니다.                                                                                      | `false`                                      |
+| `snapSizes`        | `List<double>?`                          | 중간 스냅 지점 목록 (비율).                                                                                                                     | `null`                                       |
+| `showGrabber`      | `bool`                                   | 그래버 핸들을 표시할지 여부. 이 값과 관계없이 데스크톱 및 웹에서는 자동으로 숨겨집니다.                                                          | `true`                                       |
+| `grabberStyle`     | `GrabberStyle`                           | 그래버 핸들의 시각적 스타일.                                                                                                                    | `const GrabberStyle()`                       |
+| `backgroundColor`  | `Color?`                                 | 시트 컨테이너의 배경색. `null`이면 테마의 `colorScheme.surface`를 사용합니다. 시트는 기본적으로 16.0의 상단 모서리 반경을 가집니다. | `Theme.of(context).colorScheme.surface`      |
+
+### GrabberStyle
+
+| 프로퍼티 | 타입                 | 설명                               | 기본값                                         |
+| -------- | -------------------- | ---------------------------------- | ---------------------------------------------- |
+| `color`    | `Color`              | 그래버 핸들의 배경색.              | `Colors.grey`                                  |
+| `width`    | `double`             | 그래버 핸들의 너비.                | `48.0`                                         |
+| `height`   | `double`             | 그래버 핸들의 높이.                | `5.0`                                          |
+| `radius`   | `Radius`             | 그래버 핸들 모서리의 둥글기.       | `const Radius.circular(8.0)`                   |
+| `margin`   | `EdgeInsetsGeometry` | 그래버 핸들 주변의 여백.           | `const EdgeInsets.symmetric(vertical: 10.0)` |
 
 
 ## 추가 정보
