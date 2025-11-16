@@ -9,8 +9,7 @@ A reusable and customizable draggable bottom sheet with a grabber handle, inspir
 
 It enhances Flutter's built-in `DraggableScrollableSheet` by providing a visible grabber, simplifying scroll controller management, and ensuring predictable behavior.
 
-![GrabberSheet Demo](https://raw.githubusercontent.com/SangWook16074/grabber_sheet/main/art/demo.gif)
-*(It's highly recommended to add a demo GIF at this path.)*
+![GrabberSheet Demo](https://github.com/user-attachments/assets/dcf2b6bf-1d5f-4826-9c8c-0fe3ca13e472)
 
 ## Features
 
@@ -29,7 +28,7 @@ Add this to your package's `pubspec.yaml` file. Check the latest version on [pub
 
 ```yaml
 dependencies:
-  grabber_sheet: ^1.0.0 # Replace with the latest version from pub.dev
+  grabber_sheet: ^latest # Replace with the latest version from pub.dev
 ```
 
 Then, install it by running `flutter pub get` in your terminal.
@@ -97,6 +96,8 @@ GrabberSheet(
 ),
 ```
 
+![Controlling Snap Behavior](https://github.com/user-attachments/assets/fade4285-24e1-4d76-8fce-db80a32ffbe3)
+
 ### Customizing the Grabber
 
 The appearance of the grabber handle can be fully customized using the `grabberStyle` property.
@@ -116,7 +117,11 @@ GrabberSheet(
 ),
 ```
 
+<img width="250" alt="Simulator Screenshot - iPhone 16 Pro - 2025-11-16 at 22 10 52" src="https://github.com/user-attachments/assets/a0d21d18-f7e8-47b6-b30e-8f36a067de7f" />
+
 You can also hide the grabber completely by setting `showGrabber: false`.
+
+<img width="250" alt="Simulator Screenshot - iPhone 16 Pro - 2025-11-16 at 22 11 57" src="https://github.com/user-attachments/assets/2b9a299b-81e5-4170-91c1-3b3308d5fe9d" />
 
 ## Properties
 
