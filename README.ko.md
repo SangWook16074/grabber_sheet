@@ -7,8 +7,7 @@
 
 Flutter에 내장된 `DraggableScrollableSheet`를 기반으로, 눈에 띄는 그래버를 추가하고 스크롤 컨트롤러 관리를 단순화하여 예측 가능한 동작을 보장합니다.
 
-![GrabberSheet Demo](https://raw.githubusercontent.com/SangWook16074/grabber_sheet/main/art/demo.gif)
-*(이 경로에 데모 GIF 파일을 추가하는 것을 강력히 추천합니다.)*
+![GrabberSheet Demo](https://github.com/user-attachments/assets/dcf2b6bf-1d5f-4826-9c8c-0fe3ca13e472)
 
 ## 주요 특징
 
@@ -27,7 +26,7 @@ Flutter에 내장된 `DraggableScrollableSheet`를 기반으로, 눈에 띄는 �
 
 ```yaml
 dependencies:
-  grabber_sheet: ^1.0.0 # pub.dev의 최신 버전으로 교체하세요
+  grabber_sheet: ^latest # pub.dev의 최신 버전으로 교체하세요
 ```
 
 그 다음, 터미널에서 `flutter pub get`을 실행하여 패키지를 설치합니다.
@@ -95,6 +94,9 @@ GrabberSheet(
 ),
 ```
 
+![Controlling Snap Behavior](https://github.com/user-attachments/assets/fade4285-24e1-4d76-8fce-db80a32ffbe3)
+
+
 ### 그래버 핸들 꾸미기
 
 그래버 핸들의 모양은 `grabberStyle` 프로퍼티를 통해 자유롭게 변경할 수 있습니다.
@@ -114,7 +116,12 @@ GrabberSheet(
 ),
 ```
 
+<img width="250" alt="Simulator Screenshot - iPhone 16 Pro - 2025-11-16 at 22 10 52" src="https://github.com/user-attachments/assets/a0d21d18-f7e8-47b6-b30e-8f36a067de7f" />
+
+
 `showGrabber: false`로 설정하여 그래버를 완전히 숨길 수도 있습니다.
+
+<img width="250" alt="Simulator Screenshot - iPhone 16 Pro - 2025-11-16 at 22 11 57" src="https://github.com/user-attachments/assets/2b9a299b-81e5-4170-91c1-3b3308d5fe9d" />
 
 ## 속성 (Properties)
 
