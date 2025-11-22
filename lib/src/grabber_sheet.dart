@@ -45,6 +45,12 @@ class GrabberSheet extends StatefulWidget {
   /// The visual style of the grabber handle, defined by a [GrabberStyle] object.
   final GrabberStyle grabberStyle;
 
+  /// A custom widget to be displayed below the grabber.
+  final Widget? bottom;
+
+  /// The padding for the bottom widget.
+  final EdgeInsetsGeometry? bottomAreaPadding;
+
   /// The background color of the sheet.
   ///
   /// If null, it defaults to the theme's `colorScheme.surface`.
@@ -72,6 +78,8 @@ class GrabberSheet extends StatefulWidget {
     this.maxChildSize = 1.0,
     this.showGrabber = true,
     this.grabberStyle = const GrabberStyle(),
+    this.bottom,
+    this.bottomAreaPadding,
     this.snap = false,
     this.snapSizes,
     this.backgroundColor,
@@ -130,63 +138,76 @@ class _GrabberSheetState extends State<GrabberSheet> {
               ),
               child: Column(
                 children: <Widget>[
-                  if (widget.showGrabber)
-                    // The draggable handle area.
-                    _Grabber(
-                      onVerticalDragUpdate: (details) {
-                        final newPixel = _controller.pixels - details.delta.dy;
-                        // Convert pixel value to fractional size and clamp it.
-                        _newSize = _controller
-                            .pixelsToSize(newPixel)
-                            .clamp(0.0, 1.0);
+                  GestureDetector(
+                    onVerticalDragUpdate: (details) {
+                      final newPixel = _controller.pixels - details.delta.dy;
+                      // Convert pixel value to fractional size and clamp it.
+                      _newSize = _controller
+                          .pixelsToSize(newPixel)
+                          .clamp(0.0, 1.0);
 
-                        _controller.jumpTo(_newSize);
-                      },
-                      onVerticalDragEnd: (details) {
-                        // If snapping is disabled, do nothing.
-                        if (!widget.snap) return;
+                      _controller.jumpTo(_newSize);
+                    },
+                    onVerticalDragEnd: (details) {
+                      // If snapping is disabled, do nothing.
+                      if (!widget.snap) return;
 
-                        final double velocity = details.primaryVelocity ?? 0.0;
-                        // A velocity threshold to determine if it's a fling.
-                        const double flingVelocity = 300.0;
+                      final double velocity = details.primaryVelocity ?? 0.0;
+                      // A velocity threshold to determine if it's a fling.
+                      const double flingVelocity = 300.0;
 
-                        // Combine min/max with custom snapSizes, remove duplicates, and sort.
-                        final Set<double> allSnapPoints = {
-                          widget.minChildSize,
-                          widget.maxChildSize,
-                        };
-                        if (widget.snapSizes != null) {
-                          allSnapPoints.addAll(widget.snapSizes!);
-                        }
-                        final List<double> sortedSnapPoints =
-                            allSnapPoints.toList()..sort();
+                      // Combine min/max with custom snapSizes, remove duplicates, and sort.
+                      final Set<double> allSnapPoints = {
+                        widget.minChildSize,
+                        widget.maxChildSize,
+                        ...?widget.snapSizes,
+                      };
+                      final List<double> sortedSnapPoints =
+                          allSnapPoints.toList()..sort();
 
-                        double targetSize;
+                      double targetSize;
 
-                        if (velocity.abs() > flingVelocity) {
-                          // On a fling, animate to the min or max extent.
-                          targetSize = velocity < 0
-                              ? sortedSnapPoints.last
-                              : sortedSnapPoints.first;
-                        } else {
-                          // On a slow drag, find the closest snap point.
-                          targetSize = sortedSnapPoints.reduce(
-                            (a, b) =>
-                                (_newSize - a).abs() < (_newSize - b).abs()
-                                ? a
-                                : b,
-                          );
-                        }
-
-                        // Animate the sheet to the determined target size.
-                        _controller.animateTo(
-                          targetSize,
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeOut,
+                      if (velocity.abs() > flingVelocity) {
+                        // On a fling, animate to the min or max extent.
+                        targetSize = velocity < 0
+                            ? sortedSnapPoints.last
+                            : sortedSnapPoints.first;
+                      } else {
+                        // On a slow drag, find the closest snap point.
+                        targetSize = sortedSnapPoints.reduce(
+                          (a, b) =>
+                              (_newSize - a).abs() < (_newSize - b).abs()
+                                  ? a
+                                  : b,
                         );
-                      },
-                      style: widget.grabberStyle,
+                      }
+
+                      // Animate the sheet to the determined target size.
+                      _controller.animateTo(
+                        targetSize,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeOut,
+                      );
+                    },
+                    child: Container(
+                      color: Colors.transparent,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (widget.showGrabber)
+                            _Grabber(
+                              style: widget.grabberStyle,
+                            ),
+                          if (widget.bottom != null)
+                            Padding(
+                              padding:
+                                  widget.bottomAreaPadding ?? EdgeInsets.zero,
+                              child: widget.bottom,
+                            ),
+                        ],
+                      ),
                     ),
+                  ),
                   // The main content of the sheet.
                   Expanded(child: widget.builder(context, scrollController)),
                 ],
@@ -203,15 +224,7 @@ class _GrabberSheetState extends State<GrabberSheet> {
 class _Grabber extends StatelessWidget {
   const _Grabber({
     required this.style,
-    required this.onVerticalDragUpdate,
-    required this.onVerticalDragEnd,
   });
-
-  /// Callback for when the user drags the handle vertically.
-  final ValueChanged<DragUpdateDetails> onVerticalDragUpdate;
-
-  /// Callback for when the user ends a vertical drag on the handle.
-  final ValueChanged<DragEndDetails> onVerticalDragEnd;
 
   /// The visual style of the grabber handle.
   final GrabberStyle style;
@@ -223,24 +236,19 @@ class _Grabber extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return GestureDetector(
-      onVerticalDragUpdate: onVerticalDragUpdate,
-      onVerticalDragEnd: onVerticalDragEnd,
-      // Use a larger, transparent container to increase the touch target area.
-      child: Container(
-        width: double.infinity,
-        color: Colors.transparent,
-        child: Align(
-          alignment: Alignment.topCenter,
-          // This is the visible part of the grabber.
-          child: Container(
-            margin: style.margin,
-            width: style.width,
-            height: style.height,
-            decoration: BoxDecoration(
-              color: style.color,
-              borderRadius: BorderRadius.all(style.radius),
-            ),
+    return Container(
+      width: double.infinity,
+      color: Colors.transparent,
+      child: Align(
+        alignment: Alignment.topCenter,
+        // This is the visible part of the grabber.
+        child: Container(
+          margin: style.margin,
+          width: style.width,
+          height: style.height,
+          decoration: BoxDecoration(
+            color: style.color,
+            borderRadius: BorderRadius.all(style.radius),
           ),
         ),
       ),
