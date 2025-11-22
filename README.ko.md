@@ -77,19 +77,30 @@ class ExampleHomePage extends StatelessWidget {
 
 ### 스냅 동작 제어하기
 
-`snap` 프로퍼티를 `true`로 설정하면, 사용자가 드래그를 놓았을 때 시트가 가장 가까운 스냅 지점으로 자동으로 부드럽게 이동합니다. 이 "스냅 애니메이션"은 깔끔한 사용자 경험을 제공합니다.
+`snap` 프로퍼티를 `true`로 설정하면, 사용자가 드래그를 놓았을 때 시트가 가장 가까운 스냅 지점으로 자동으로 부드럽게 이동합니다. 이는 사용자에게 깔끔하고 예측 가능한 움직임을 제공합니다.
 
-스냅 지점은 `minChildSize`, `maxChildSize`, `initialChildSize`와, 중간 지점을 위한 `snapSizes` 프로퍼티로 정의할 수 있습니다.
+스냅 로직은 드래그 제스처에 따라 다르게 동작합니다:
+
+*   **느린 드래그 (Slow Drag):** 사용자가 시트를 천천히 드래그하다 놓으면, 가장 *가까운* 스냅 지점으로 이동합니다.
+*   **플링 (Fling):** 사용자가 빠른 제스처로 시트를 "던지면", 던진 방향으로 가장 가까운 경계(`minChildSize` 또는 `maxChildSize`)까지 애니메이션으로 이동합니다.
+
+스냅 지점은 `minChildSize`, `maxChildSize`, 그리고 중간 지점들을 위한 `snapSizes` 프로퍼티로 정의할 수 있습니다.
+
+다음은 여러 개의 중간 스냅 지점을 포함한 예제입니다:
 
 ```dart
 GrabberSheet(
-  snap: true, // 스냅 기능 활성화
-  // 스냅 지점 정의: 0.2 (최소), 0.6 (중간), 0.9 (최대)
+  // 스냅 기능 활성화
+  snap: true, 
+  
+  // 스냅 지점 정의: 0.2 (최소), 0.5, 0.8 (중간), 1.0 (최대)
   minChildSize: 0.2,
-  maxChildSize: 0.9,
-  snapSizes: const [0.6],
+  maxChildSize: 1.0,
+  initialChildSize: 0.5,
+  snapSizes: const [0.5, 0.8],
+  
   builder: (context, scrollController) {
-    // ... Your content
+    // ... your content
   },
 ),
 ```

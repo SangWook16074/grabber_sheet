@@ -79,17 +79,28 @@ class ExampleHomePage extends StatelessWidget {
 
 ### Controlling Snap Behavior
 
-By setting `snap` to `true`, the sheet will automatically animate to the nearest defined snap point when a drag gesture ends. This creates a clean, "snapping" motion.
+By setting `snap` to `true`, the sheet will automatically animate to the nearest defined snap point when a drag gesture ends. This creates a clean, predictable motion for the user.
 
-You can define these points using `minChildSize`, `maxChildSize`, `initialChildSize`, and the optional `snapSizes` for intermediate points.
+The snapping logic behaves differently based on the drag gesture:
+
+*   **Slow Drag:** If the user slowly drags the sheet and releases, it will snap to the *closest* snap point.
+*   **Fling:** If the user "flings" the sheet with a quick gesture, it will animate to the nearest boundary (either `minChildSize` or `maxChildSize`) in the direction of the fling.
+
+You can define the snap points using `minChildSize`, `maxChildSize`, and the optional `snapSizes` for any intermediate points.
+
+Here is an example with multiple intermediate snap points:
 
 ```dart
 GrabberSheet(
-  snap: true, // Enable snapping
-  // Define snap points: 0.2 (min), 0.6 (intermediate), and 0.9 (max)
+  // Enable snapping
+  snap: true, 
+  
+  // Define snap points: 0.2 (min), 0.5, 0.8 (intermediate), and 1.0 (max)
   minChildSize: 0.2,
-  maxChildSize: 0.9,
-  snapSizes: const [0.6],
+  maxChildSize: 1.0,
+  initialChildSize: 0.5,
+  snapSizes: const [0.5, 0.8],
+  
   builder: (context, scrollController) {
     // ... your content
   },
