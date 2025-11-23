@@ -174,17 +174,9 @@ The `bottomAreaPadding` property can be used to add padding around this custom w
 GrabberSheet(
   bottom: Row(
     children: [
-      const Text(
-        'Locations',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-      ),
+      const Text('sheet title'),
       const Spacer(),
-      IconButton(
-        onPressed: () {
-          // Handle close action
-        },
-        icon: const Icon(Icons.close),
-      ),
+      IconButton(onPressed: () {}, icon: const Icon(Icons.close)),
     ],
   ),
   bottomAreaPadding: const EdgeInsets.symmetric(horizontal: 16),
