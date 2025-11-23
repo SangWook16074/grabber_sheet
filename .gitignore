@@ -31,4 +31,10 @@ migrate_working_dir/
 /coverage/
 
 # GEMINI CLI
+
+
+.gemini/
 PRD.md
+PLAN.md
+GEMINI.md
+TASK.md
