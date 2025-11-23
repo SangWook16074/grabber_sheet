@@ -175,10 +175,9 @@ class _GrabberSheetState extends State<GrabberSheet> {
                       } else {
                         // On a slow drag, find the closest snap point.
                         targetSize = sortedSnapPoints.reduce(
-                          (a, b) =>
-                              (_newSize - a).abs() < (_newSize - b).abs()
-                                  ? a
-                                  : b,
+                          (a, b) => (_newSize - a).abs() < (_newSize - b).abs()
+                              ? a
+                              : b,
                         );
                       }
 
@@ -195,9 +194,7 @@ class _GrabberSheetState extends State<GrabberSheet> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           if (widget.showGrabber)
-                            _Grabber(
-                              style: widget.grabberStyle,
-                            ),
+                            _Grabber(style: widget.grabberStyle),
                           if (widget.bottom != null)
                             Padding(
                               padding:
@@ -222,9 +219,7 @@ class _GrabberSheetState extends State<GrabberSheet> {
 
 /// A private widget representing the draggable handle area.
 class _Grabber extends StatelessWidget {
-  const _Grabber({
-    required this.style,
-  });
+  const _Grabber({required this.style});
 
   /// The visual style of the grabber handle.
   final GrabberStyle style;
