@@ -1,3 +1,9 @@
+## 1.0.0
+
+* **New Feature**: Added a `bottom` property to allow adding widgets to the bottom area of the sheet.
+* **Docs**: Improved descriptions in `README.md` and `README.ko.md`, and updated example images and sample code.
+* **Build**: Added ignored paths to `.gitignore`.
+
 ## 0.0.2
 
 * Improved `README.md` with detailed customization instructions and examples.

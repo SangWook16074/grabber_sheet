@@ -3,7 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:grabber_sheet/grabber_sheet.dart';
 
 void main() {
-  testWidgets('renders bottom widget when provided', (WidgetTester tester) async {
+  testWidgets('renders bottom widget when provided', (
+    WidgetTester tester,
+  ) async {
     // Given
     const bottomWidget = Text('Bottom Widget');
     await tester.pumpWidget(

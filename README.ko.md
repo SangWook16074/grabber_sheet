@@ -7,7 +7,7 @@
 
 Flutter에 내장된 `DraggableScrollableSheet`를 기반으로, 눈에 띄는 그래버를 추가하고 스크롤 컨트롤러 관리를 단순화하여 예측 가능한 동작을 보장합니다.
 
-![GrabberSheet Demo](https://github.com/user-attachments/assets/dcf2b6bf-1d5f-4826-9c8c-0fe3ca13e472)
+<img width="250" src="https://github.com/user-attachments/assets/cc2a3eaf-c872-46f1-8b45-bbf83b781104" />
 
 ## 주요 특징
 
@@ -134,7 +134,7 @@ GrabberSheet(
 ),
 ```
 
-![Controlling Snap Behavior](https://github.com/user-attachments/assets/fade4285-24e1-4d76-8fce-db80a32ffbe3)
+![snap gif](https://github.com/user-attachments/assets/3727d83a-456b-4fd9-a721-8ad3e2116005)
 
 
 ### 그래버 핸들 꾸미기
@@ -156,12 +156,12 @@ GrabberSheet(
 ),
 ```
 
-<img width="250" alt="Simulator Screenshot - iPhone 16 Pro - 2025-11-16 at 22 10 52" src="https://github.com/user-attachments/assets/a0d21d18-f7e8-47b6-b30e-8f36a067de7f" />
+<img width="250" src="https://github.com/user-attachments/assets/8d062fa4-cdda-4445-9d90-b34aa3fce1c5" />
 
 
 `showGrabber: false`로 설정하여 그래버를 완전히 숨길 수도 있습니다.
 
-<img width="250" alt="Simulator Screenshot - iPhone 16 Pro - 2025-11-16 at 22 11 57" src="https://github.com/user-attachments/assets/2b9a299b-81e5-4170-91c1-3b3308d5fe9d" />
+<img width="250" src="https://github.com/user-attachments/assets/20d589b5-54c3-4da3-b420-0c1b10f3e9ef" />
 
 ### 그래버 영역에 커스텀 위젯 추가하기
 
@@ -173,25 +173,19 @@ GrabberSheet(
 GrabberSheet(
   bottom: Row(
     children: [
-      const Text(
-        '장소',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-      ),
+      const Text('sheet title'),
       const Spacer(),
-      IconButton(
-        onPressed: () {
-          // 닫기 동작 처리
-        },
-        icon: const Icon(Icons.close),
-      ),
+      IconButton(onPressed: () {}, icon: const Icon(Icons.close)),
     ],
   ),
   bottomAreaPadding: const EdgeInsets.symmetric(horizontal: 16),
   builder: (context, scrollController) {
-    // ... 장소 목록
+    // ... your list of locations
   },
 ),
 ```
+
+<img width="250" src="https://github.com/user-attachments/assets/669f7506-2b92-408f-a239-240ac68ca621" />
 
 ## 속성 (Properties)
 
@@ -225,3 +219,4 @@ GrabberSheet(
 ## 추가 정보
 
 이슈 제기, 기능 요청, 또는 기여를 원하시면 [GitHub repository](https://github.com/SangWook16074/grabber_sheet)를 방문해주세요.
+�� 원하시면 [GitHub repository](https://github.com/SangWook16074/grabber_sheet)를 방문해주세요.
