@@ -47,8 +47,8 @@ class ExampleHomePage extends StatelessWidget {
           ),
           GrabberSheet(
             initialChildSize: 0.5,
-            minChildSize: 0.1,
-            maxChildSize: 0.9,
+            minChildSize: 0.2,
+            maxChildSize: 0.8,
             snap: true,
             snapSizes: const [.5],
             backgroundColor: sheetColor,
@@ -69,9 +69,7 @@ class ExampleHomePage extends StatelessWidget {
                   return ListTile(
                     title: Text(
                       'Item $index',
-                      style: TextStyle(
-                        color: theme.colorScheme.onSurface,
-                      ),
+                      style: TextStyle(color: theme.colorScheme.onSurface),
                     ),
                   );
                 },

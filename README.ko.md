@@ -45,23 +45,51 @@ class ExampleHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final sheetColor = Colors.blue.shade100;
+
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('GrabberSheet Example'),
+        backgroundColor: sheetColor,
       ),
       body: Stack(
         children: [
-          const Center(
-            child: Text('Background Content'),
+          Center(
+            child: Text(
+              'Background Content',
+              style: theme.textTheme.headlineMedium,
+            ),
           ),
           GrabberSheet(
-            builder: (context, scrollController) {
+            initialChildSize: 0.5,
+            minChildSize: 0.2,
+            maxChildSize: 0.8,
+            snap: true,
+            snapSizes: const [.5],
+            backgroundColor: sheetColor,
+            grabberStyle: GrabberStyle(color: Colors.grey.shade400),
+            bottom: Row(
+              children: [
+                const Text('sheet title'),
+                const Spacer(),
+                IconButton(onPressed: () {}, icon: const Icon(Icons.close)),
+              ],
+            ),
+            bottomAreaPadding: const EdgeInsets.symmetric(horizontal: 16),
+            builder: (BuildContext context, ScrollController scrollController) {
               return ListView.builder(
                 controller: scrollController,
                 itemCount: 30,
-                itemBuilder: (context, index) {
+                itemBuilder: (BuildContext context, int index) {
                   return ListTile(
-                    title: Text('Item $index'),
+                    title: Text(
+                      'Item $index',
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurface,
+                      ),
+                    ),
                   );
                 },
               );
