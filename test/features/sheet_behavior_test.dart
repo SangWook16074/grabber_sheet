@@ -62,7 +62,8 @@ void main() {
       );
 
       // When
-      await tester.drag(find.byKey(const Key('grabber')), const Offset(0, -200));
+      await tester.drag(
+          find.byKey(const Key('grabber')), const Offset(0, -200));
       await tester.pumpAndSettle(); // Wait for snap animation to finish
 
       // Then
