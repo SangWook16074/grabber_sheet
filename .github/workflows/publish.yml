@@ -1,0 +1,44 @@
+# This workflow is triggered when a new tag starting with 'v' is pushed.
+name: Publish to pub.dev
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+*' # Match tags like v1.0.0, v2.3.4, v3.0.0-alpha
+  workflow_dispatch: # Allows manual triggering of the workflow
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Set up Flutter environment
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.x' # Use the latest stable version of Flutter 3
+          channel: 'stable'
+          cache: true
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 4. Run static analysis
+      - name: Analyze project source
+        run: flutter analyze
+
+      # 5. Run tests
+      - name: Run tests
+        run: flutter test
+
+      # 6. Publish to pub.dev
+      #    The secret `PUB_DEV_CREDENTIALS` needs to be configured in GitHub repository settings.
+      #    It contains the JSON content from the pub.dev credentials file.
+      - name: Publish to pub.dev
+        run: flutter pub publish --force
+        env:
+          PUB_DEV_CREDENTIALS: ${{ secrets.PUB_DEV_CREDENTIALS }}
