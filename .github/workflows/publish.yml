@@ -38,10 +38,13 @@ jobs:
       # 6. Publish to pub.dev
       #    The secret `PUB_DEV_CREDENTIALS` needs to be configured in GitHub repository settings.
       #    It contains the JSON content from the pub.dev credentials file.
-      - name: Run Dry run
-        run: flutter pub publish --dry-run
+      - name: Configure pub.dev credentials
+        run: |
+          mkdir -p ~/.config/dart
+          echo "$PUB_DEV_CREDENTIALS" > ~/.config/dart/pub-credentials.json
+        env:
+          PUB_DEV_CREDENTIALS: ${{ secrets.PUB_DEV_CREDENTIALS }}
+
 
       - name: Publish to pub.dev
         run: flutter pub publish --force
-        env:
-          PUB_DEV_CREDENTIALS: ${{ secrets.PUB_DEV_CREDENTIALS }}
