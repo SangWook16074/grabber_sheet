@@ -3,6 +3,8 @@
 # grabber_sheet
 
 [![pub.dev](https://img.shields.io/pub/v/grabber_sheet.svg)](https://pub.dev/packages/grabber_sheet)
+[![Test](https://github.com/SangWook16074/grabber_sheet/actions/workflows/test.yml/badge.svg)](https://github.com/SangWook16074/grabber_sheet/actions/workflows/test.yml)
+[![codecov](https://codecov.io/gh/SangWook16074/grabber_sheet/branch/main/graph/badge.svg)](https://codecov.io/gh/SangWook16074/grabber_sheet)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/SangWook16074/grabber_sheet/blob/main/LICENSE)
 
 A reusable and customizable draggable bottom sheet with a grabber handle, inspired by the modal sheets in popular apps like Google Maps.
@@ -29,10 +31,16 @@ Add this to your package's `pubspec.yaml` file. Check the latest version on [pub
 
 ```yaml
 dependencies:
-  grabber_sheet: ^latest # Replace with the latest version from pub.dev
+  grabber_sheet: ^1.0.1
 ```
 
 Then, install it by running `flutter pub get` in your terminal.
+
+## Compatibility
+
+This package is compatible with the following SDK versions:
+*   **Flutter**: `>=3.0.0`
+*   **Dart**: `>=3.0.0 <4.0.0`
 
 ## Basic Usage
 

@@ -83,10 +83,10 @@ class GrabberSheet extends StatefulWidget {
     this.snap = false,
     this.snapSizes,
     this.backgroundColor,
-  }) : assert(minChildSize >= 0.0),
-       assert(maxChildSize <= 1.0),
-       assert(minChildSize <= initialChildSize),
-       assert(initialChildSize <= maxChildSize);
+  })  : assert(minChildSize >= 0.0),
+        assert(maxChildSize <= 1.0),
+        assert(minChildSize <= initialChildSize),
+        assert(initialChildSize <= maxChildSize);
 
   @override
   State<GrabberSheet> createState() => _GrabberSheetState();
@@ -142,9 +142,8 @@ class _GrabberSheetState extends State<GrabberSheet> {
                     onVerticalDragUpdate: (details) {
                       final newPixel = _controller.pixels - details.delta.dy;
                       // Convert pixel value to fractional size and clamp it.
-                      _newSize = _controller
-                          .pixelsToSize(newPixel)
-                          .clamp(0.0, 1.0);
+                      _newSize =
+                          _controller.pixelsToSize(newPixel).clamp(0.0, 1.0);
 
                       _controller.jumpTo(_newSize);
                     },
@@ -219,7 +218,9 @@ class _GrabberSheetState extends State<GrabberSheet> {
 
 /// A private widget representing the draggable handle area.
 class _Grabber extends StatelessWidget {
-  const _Grabber({required this.style});
+  const _Grabber({
+    required this.style,
+  });
 
   /// The visual style of the grabber handle.
   final GrabberStyle style;
@@ -238,6 +239,7 @@ class _Grabber extends StatelessWidget {
         alignment: Alignment.topCenter,
         // This is the visible part of the grabber.
         child: Container(
+          key: const Key('grabber'),
           margin: style.margin,
           width: style.width,
           height: style.height,
@@ -256,10 +258,12 @@ class _Grabber extends StatelessWidget {
         switch (defaultTargetPlatform) {
           TargetPlatform.macOS ||
           TargetPlatform.linux ||
-          TargetPlatform.windows => true,
+          TargetPlatform.windows =>
+            true,
           TargetPlatform.android ||
           TargetPlatform.iOS ||
-          TargetPlatform.fuchsia => false,
+          TargetPlatform.fuchsia =>
+            false,
         };
   }
 }

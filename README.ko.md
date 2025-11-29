@@ -1,6 +1,8 @@
 # grabber_sheet (한국어)
 
 [![pub.dev](https://img.shields.io/pub/v/grabber_sheet.svg)](https://pub.dev/packages/grabber_sheet)
+[![Test](https://github.com/SangWook16074/grabber_sheet/actions/workflows/test.yml/badge.svg)](https://github.com/SangWook16074/grabber_sheet/actions/workflows/test.yml)
+[![codecov](https://codecov.io/gh/SangWook16074/grabber_sheet/branch/main/graph/badge.svg)](https://codecov.io/gh/SangWook16074/grabber_sheet)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/SangWook16074/grabber_sheet/blob/main/LICENSE)
 
 구글 지도(Google Maps)와 같은 인기 앱의 모달 시트에서 영감을 받은, 커스터마이징 가능한 드래그형 하단 시트(bottom sheet)입니다.
@@ -27,10 +29,16 @@ Flutter에 내장된 `DraggableScrollableSheet`를 기반으로, 눈에 띄는 �
 
 ```yaml
 dependencies:
-  grabber_sheet: ^latest # pub.dev의 최신 버전으로 교체하세요
+  grabber_sheet: ^1.0.1
 ```
 
 그 다음, 터미널에서 `flutter pub get`을 실행하여 패키지를 설치합니다.
+
+## 호환성
+
+이 패키지는 다음 SDK 버전과 호환됩니다:
+*   **Flutter**: `>=3.0.0`
+*   **Dart**: `>=3.0.0 <4.0.0`
 
 ## 기본 사용법
 
