@@ -43,5 +43,4 @@ jobs:
           PUB_DEV_CREDENTIALS: ${{ secrets.PUB_DEV_CREDENTIALS }}
 
       - name: Publish to pub.dev
-        if: startsWith(github.ref, 'refs/tags/v')
         run: flutter pub publish --force

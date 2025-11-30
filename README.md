@@ -22,7 +22,6 @@ It enhances Flutter's built-in `DraggableScrollableSheet` by providing a visible
 *   Customize sheet sizes (initial, min, max).
 *   Optional snapping behavior with custom snap points via `snap` and `snapSizes`.
 *   Customize grabber style (color, size, shape).
-*   Grabber is automatically hidden on desktop and web platforms for a native feel.
 *   Sheet has rounded top corners by default.
 
 ## Getting started
