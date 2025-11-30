@@ -1,3 +1,7 @@
+## 1.0.2
+
+* **Fix**: Corrected the CI badge link in the README files to point to the correct workflow.
+
 ## 1.0.1
 
 * **Patch**: Optimized the minimum supported versions for Dart and Flutter SDKs.
