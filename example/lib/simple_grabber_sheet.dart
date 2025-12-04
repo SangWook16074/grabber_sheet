@@ -43,19 +43,21 @@ class SimpleGrabberSheet extends StatelessWidget {
               bottomAreaPadding: const EdgeInsets.symmetric(horizontal: 16),
               builder:
                   (BuildContext context, ScrollController scrollController) {
-                return ListView.builder(
-                  controller: scrollController,
-                  itemCount: 30,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      title: Text(
-                        'Item $index',
-                        style: TextStyle(color: theme.colorScheme.onSurface),
-                      ),
+                    return ListView.builder(
+                      controller: scrollController,
+                      itemCount: 30,
+                      itemBuilder: (BuildContext context, int index) {
+                        return ListTile(
+                          title: Text(
+                            'Item $index',
+                            style: TextStyle(
+                              color: theme.colorScheme.onSurface,
+                            ),
+                          ),
+                        );
+                      },
                     );
                   },
-                );
-              },
             ),
           ],
         ),

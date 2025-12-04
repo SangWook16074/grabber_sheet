@@ -30,14 +30,14 @@ class ExampleHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('GrabberSheet Examples'),
-      ),
+      appBar: AppBar(title: const Text('GrabberSheet Examples')),
       body: ListView(
         children: [
           ListTile(
             title: const Text('Simple GrabberSheet'),
-            subtitle: const Text('A basic implementation of the grabber sheet.'),
+            subtitle: const Text(
+              'A basic implementation of the grabber sheet.',
+            ),
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -49,7 +49,8 @@ class ExampleHomePage extends StatelessWidget {
           ListTile(
             title: const Text('Responsive GrabberSheet'),
             subtitle: const Text(
-                'Shows a responsive layout and grabber visibility on non-mobile platforms.'),
+              'Shows a responsive layout and grabber visibility on non-mobile platforms.',
+            ),
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(

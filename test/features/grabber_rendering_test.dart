@@ -42,8 +42,7 @@ void main() {
   });
 
   group('Platform specific rendering', () {
-    testWidgets(
-        'shows grabber on desktop when showGrabberOnNonMobile is true',
+    testWidgets('shows grabber on desktop when showGrabberOnNonMobile is true',
         (WidgetTester tester) async {
       // Given
       debugDefaultTargetPlatformOverride = TargetPlatform.windows;
