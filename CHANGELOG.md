@@ -1,3 +1,7 @@
+## 1.1.0
+
+* **Feature**: Added `showGrabberOnNonMobile` option to allow displaying the grabber handle on desktop and web platforms.
+
 ## 1.0.2
 
 * **Fix**: Corrected the CI badge link in the README files to point to the correct workflow.

@@ -28,7 +28,7 @@ Flutter에 내장된 `DraggableScrollableSheet`를 기반으로, 눈에 띄는 �
 
 ```yaml
 dependencies:
-  grabber_sheet: ^1.0.1
+  grabber_sheet: ^1.1.0
 ```
 
 그 다음, 터미널에서 `flutter pub get`을 실행하여 패키지를 설치합니다.
@@ -170,6 +170,21 @@ GrabberSheet(
 
 <img width="250" src="https://github.com/user-attachments/assets/20d589b5-54c3-4da3-b420-0c1b10f3e9ef" />
 
+### 데스크톱 및 웹에서 그래버 표시하기
+
+기본적으로 그래버 핸들은 모바일 플랫폼(iOS, Android)에서만 표시됩니다. 하지만 `showGrabberOnNonMobile` 속성을 `true`로 설정하면 데스크톱(Windows, macOS, Linux) 및 웹 플랫폼에서도 그래버를 항상 표시하도록 강제할 수 있습니다. 이는 모든 플랫폼에서 일관된 UI를 제공하고자 할 때 유용합니다.
+
+```dart
+GrabberSheet(
+  showGrabberOnNonMobile: true,
+  builder: (context, scrollController) {
+    // ... Your content
+  },
+),
+```
+
+[GIF_PLACEHOLDER]
+
 ### 그래버 영역에 커스텀 위젯 추가하기
 
 `bottom` 프로퍼티를 사용하면 드래그 가능한 그래버 핸들 아래에 커스텀 위젯을 삽입할 수 있습니다. 핸들과 커스텀 위젯을 포함한 이 전체 영역을 드래그하여 시트를 조작할 수 있습니다. 이 기능은 제목, 액션 버튼 등 스크롤 영역과 분리되어 항상 보여야 하는 정보를 추가할 때 유용합니다.
@@ -206,7 +221,8 @@ GrabberSheet(
 | `maxChildSize`      | `double`                                 | 시트의 최대 크기 (비율).                                                                                                                        | `1.0`                                        |
 | `snap`              | `bool`                                   | `true`이면 드래그 후 가장 가까운 스냅 지점으로 이동합니다.                                                                                      | `false`                                      |
 | `snapSizes`         | `List<double>?`                          | 중간 스냅 지점 목록 (비율).                                                                                                                     | `null`                                       |
-| `showGrabber`       | `bool`                                   | 그래버 핸들을 표시할지 여부. 이 값과 관계없이 데스크톱 및 웹에서는 자동으로 숨겨집니다.                                                          | `true`                                       |
+| `showGrabber`       | `bool`                                   | 그래버 핸들을 표시할지 여부. `false`로 설정하면 모든 플랫폼에서 핸들이 숨겨집니다.                                                                    | `true`                                       |
+| `showGrabberOnNonMobile` | `bool` | 데스크톱 및 웹과 같은 비모바일 플랫폼에서 그래버 핸들을 표시할지 여부. | `false` |
 | `grabberStyle`      | `GrabberStyle`                           | 그래버 핸들의 시각적 스타일.                                                                                                                    | `const GrabberStyle()`                       |
 | `bottom`            | `Widget?`                                | 그래버 아래, 메인 콘텐츠 위에 표시할 커스텀 위젯.                                                                                               | `null`                                       |
 | `bottomAreaPadding` | `EdgeInsetsGeometry?`                    | `bottom` 위젯 영역의 패딩.                                                                                                                      | `null`                                       |

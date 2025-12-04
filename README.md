@@ -30,7 +30,7 @@ Add this to your package's `pubspec.yaml` file. Check the latest version on [pub
 
 ```yaml
 dependencies:
-  grabber_sheet: ^1.0.1
+  grabber_sheet: ^1.1.0
 ```
 
 Then, install it by running `flutter pub get` in your terminal.
@@ -171,6 +171,21 @@ You can also hide the grabber completely by setting `showGrabber: false`.
 
 <img width="250" src="https://github.com/user-attachments/assets/20d589b5-54c3-4da3-b420-0c1b10f3e9ef" />
 
+### Showing the Grabber on Desktop and Web
+
+By default, the grabber handle is only visible on mobile platforms (iOS, Android). However, you can force it to always be visible on desktop (Windows, macOS, Linux) and web platforms by setting the `showGrabberOnNonMobile` property to `true`. This is useful when you want to provide a consistent UI across all platforms.
+
+```dart
+GrabberSheet(
+  showGrabberOnNonMobile: true,
+  builder: (context, scrollController) {
+    // ... Your content
+  },
+),
+```
+
+[GIF_PLACEHOLDER]
+
 ### Adding a Custom Widget to the Grabber Area
 
 You can insert a custom widget into the draggable area below the grabber handle using the `bottom` property. This entire area (handle and custom widget) is draggable. This is useful for adding a title, action buttons, or any other information that should remain visible and separate from the scrollable content.
@@ -207,7 +222,8 @@ GrabberSheet(
 | `maxChildSize`      | `double`                                 | The maximum fractional size of the sheet.                                                                                                   | `1.0`                                        |
 | `snap`              | `bool`                                   | If true, the sheet will snap to the nearest snap point after dragging.                                                                      | `false`                                      |
 | `snapSizes`         | `List<double>?`                          | A list of intermediate fractional sizes to snap to.                                                                                         | `null`                                       |
-| `showGrabber`       | `bool`                                   | Whether to show the grabber handle. It is automatically hidden on desktop and web platforms regardless of this value.                       | `true`                                       |
+| `showGrabber`       | `bool`                                   | Whether to show the grabber handle. If `false`, the handle is hidden on all platforms.                                                      | `true`                                       |
+| `showGrabberOnNonMobile` | `bool` | Whether to show the grabber handle on non-mobile platforms like desktop and web. | `false` |
 | `grabberStyle`      | `GrabberStyle`                           | The visual style of the grabber handle.                                                                                                     | `const GrabberStyle()`                       |
 | `bottom`            | `Widget?`                                | A custom widget to display below the grabber and above the main content.                                                                    | `null`                                       |
 | `bottomAreaPadding` | `EdgeInsetsGeometry?`                    | The padding for the `bottom` widget area.                                                                                                   | `null`                                       |
