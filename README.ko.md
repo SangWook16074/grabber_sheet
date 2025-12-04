@@ -183,7 +183,7 @@ GrabberSheet(
 ),
 ```
 
-[GIF_PLACEHOLDER]
+![grabber_sheet_web](https://github.com/user-attachments/assets/c151bdad-254b-455b-b82a-1308b8863784)
 
 ### 그래버 영역에 커스텀 위젯 추가하기
 
