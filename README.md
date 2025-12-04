@@ -184,7 +184,8 @@ GrabberSheet(
 ),
 ```
 
-[GIF_PLACEHOLDER]
+![grabber_sheet_web](https://github.com/user-attachments/assets/631bc09f-b4a4-4736-8df4-a52501e6c192)
+
 
 ### Adding a Custom Widget to the Grabber Area
 
