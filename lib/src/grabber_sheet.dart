@@ -69,6 +69,11 @@ class GrabberSheet extends StatefulWidget {
   /// and the values in [snapSizes].
   final List<double>? snapSizes;
 
+  /// Whether to show the grabber handle on non-mobile platforms (desktop and web).
+  ///
+  /// Defaults to false, meaning the grabber is hidden on desktop and web.
+  final bool showGrabberOnNonMobile;
+
   /// Creates a new instance of [GrabberSheet].
   const GrabberSheet({
     super.key,
@@ -83,6 +88,7 @@ class GrabberSheet extends StatefulWidget {
     this.snap = false,
     this.snapSizes,
     this.backgroundColor,
+    this.showGrabberOnNonMobile = false,
   })  : assert(minChildSize >= 0.0),
         assert(maxChildSize <= 1.0),
         assert(minChildSize <= initialChildSize),
@@ -193,7 +199,10 @@ class _GrabberSheetState extends State<GrabberSheet> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           if (widget.showGrabber)
-                            _Grabber(style: widget.grabberStyle),
+                            _Grabber(
+                              style: widget.grabberStyle,
+                              showOnNonMobile: widget.showGrabberOnNonMobile,
+                            ),
                           if (widget.bottom != null)
                             Padding(
                               padding:
@@ -220,15 +229,20 @@ class _GrabberSheetState extends State<GrabberSheet> {
 class _Grabber extends StatelessWidget {
   const _Grabber({
     required this.style,
+    this.showOnNonMobile = false,
   });
 
   /// The visual style of the grabber handle.
   final GrabberStyle style;
 
+  /// Whether to show the grabber handle on non-mobile platforms.
+  final bool showOnNonMobile;
+
   @override
   Widget build(BuildContext context) {
-    // For a more native feel, the grabber is not shown on desktop and web platforms.
-    if (_isOnDesktopAndWeb) {
+    // For a more native feel, the grabber is not shown on desktop and web platforms,
+    // unless explicitly requested.
+    if (_isOnDesktopAndWeb && !showOnNonMobile) {
       return const SizedBox.shrink();
     }
 
