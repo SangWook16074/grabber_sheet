@@ -9,20 +9,32 @@
 
 A reusable and customizable draggable bottom sheet with a grabber handle, inspired by the modal sheets in popular apps like Google Maps.
 
-It enhances Flutter's built-in `DraggableScrollableSheet` by providing a visible grabber, simplifying scroll controller management, and ensuring predictable behavior.
+**Ideally suited for developers who need to build complex UIs within a bottom sheet while maintaining a separate, draggable grabber area and smooth snapping behavior.**
+
+It solves the common frustrations with Flutter's built-in `DraggableScrollableSheet`:
+1.  **Independent Grabber Area**: The grabber and header are separate from the scrollable content. Dragging the header moves the sheet; scrolling the content scrolls the list. No more gesture conflicts.
+2.  **Predictable Snapping**: Easily snap to specific heights without complex controller logic.
+3.  **Seamless Integration**: Works perfectly with `ListView`, `SingleChildScrollView`, and other scrollable widgets.
 
 <img width="250" src="https://github.com/user-attachments/assets/cc2a3eaf-c872-46f1-8b45-bbf83b781104" />
 
+## Why use GrabberSheet?
+
+If you've ever struggled with:
+*   The grabber disappearing when you scroll down.
+*   The sheet not moving when you try to drag the header.
+*   Janky snapping animations.
+
+Then `GrabberSheet` is the solution you've been looking for. It provides a robust, production-ready implementation of the "modal bottom sheet" pattern found in top-tier mobile apps.
+
 ## Features
 
-*   Draggable bottom sheet with a customizable grabber handle.
-*   Stable and predictable behavior, fixing common scroll controller conflicts.
-*   Use any widget as the content of the sheet via a `builder`.
-*   Insert a custom widget into the draggable grabber area.
-*   Customize sheet sizes (initial, min, max).
-*   Optional snapping behavior with custom snap points via `snap` and `snapSizes`.
-*   Customize grabber style (color, size, shape).
-*   Sheet has rounded top corners by default.
+*   **Conflict-Free Dragging**: Dedicated drag zone for the sheet, independent of the inner scroll view.
+*   **Customizable Grabber**: Style the handle to match your app's design.
+*   **Smooth Snapping**: Built-in support for snapping to min, max, and custom intermediate sizes.
+*   **Flexible Content**: Use any widget (ListView, Column, etc.) via a simple `builder`.
+*   **Header Support**: Insert custom widgets (titles, buttons) into the non-scrollable drag area.
+*   **Cross-Platform**: Works on Mobile, with optional desktop/web support for the grabber.
 
 ## Getting started
 
@@ -113,38 +125,29 @@ class ExampleHomePage extends StatelessWidget {
 
 ## Advanced Customization
 
-### Controlling Snap Behavior
+### Adding a Custom Widget to the Grabber Area
 
-By setting `snap` to `true`, the sheet will automatically animate to the nearest defined snap point when a drag gesture ends. This creates a clean, predictable motion for the user.
+You can insert a custom widget into the draggable area below the grabber handle using the `bottom` property. This entire area (handle and custom widget) is draggable. This is useful for adding a title, action buttons, or any other information that should remain visible and separate from the scrollable content.
 
-The snapping logic behaves differently based on the drag gesture:
-
-*   **Slow Drag:** If the user slowly drags the sheet and releases, it will snap to the *closest* snap point.
-*   **Fling:** If the user "flings" the sheet with a quick gesture, it will animate to the nearest boundary (either `minChildSize` or `maxChildSize`) in the direction of the fling.
-
-You can define the snap points using `minChildSize`, `maxChildSize`, and the optional `snapSizes` for any intermediate points.
-
-Here is an example with multiple intermediate snap points:
+The `bottomAreaPadding` property can be used to add padding around this custom widget.
 
 ```dart
 GrabberSheet(
-  // Enable snapping
-  snap: true, 
-  
-  // Define snap points: 0.2 (min), 0.5, 0.8 (intermediate), and 1.0 (max)
-  minChildSize: 0.2,
-  maxChildSize: 1.0,
-  initialChildSize: 0.5,
-  snapSizes: const [0.5, 0.8],
-  
+  bottom: Row(
+    children: [
+      const Text('sheet title'),
+      const Spacer(),
+      IconButton(onPressed: () {}, icon: const Icon(Icons.close)),
+    ],
+  ),
+  bottomAreaPadding: const EdgeInsets.symmetric(horizontal: 16),
   builder: (context, scrollController) {
-    // ... your content
+    // ... your list of locations
   },
 ),
 ```
 
-![snap gif](https://github.com/user-attachments/assets/3727d83a-456b-4fd9-a721-8ad3e2116005)
-
+<img width="250" src="https://github.com/user-attachments/assets/669f7506-2b92-408f-a239-240ac68ca621" />
 
 ### Customizing the Grabber
 
@@ -186,30 +189,37 @@ GrabberSheet(
 
 ![grabber_sheet_web](https://github.com/user-attachments/assets/631bc09f-b4a4-4736-8df4-a52501e6c192)
 
+### Controlling Snap Behavior
 
-### Adding a Custom Widget to the Grabber Area
+By setting `snap` to `true`, the sheet will automatically animate to the nearest defined snap point when a drag gesture ends. This creates a clean, predictable motion for the user.
 
-You can insert a custom widget into the draggable area below the grabber handle using the `bottom` property. This entire area (handle and custom widget) is draggable. This is useful for adding a title, action buttons, or any other information that should remain visible and separate from the scrollable content.
+The snapping logic behaves differently based on the drag gesture:
 
-The `bottomAreaPadding` property can be used to add padding around this custom widget.
+*   **Slow Drag:** If the user slowly drags the sheet and releases, it will snap to the *closest* snap point.
+*   **Fling:** If the user "flings" the sheet with a quick gesture, it will animate to the nearest boundary (either `minChildSize` or `maxChildSize`) in the direction of the fling.
+
+You can define the snap points using `minChildSize`, `maxChildSize`, and the optional `snapSizes` for any intermediate points.
+
+Here is an example with multiple intermediate snap points:
 
 ```dart
 GrabberSheet(
-  bottom: Row(
-    children: [
-      const Text('sheet title'),
-      const Spacer(),
-      IconButton(onPressed: () {}, icon: const Icon(Icons.close)),
-    ],
-  ),
-  bottomAreaPadding: const EdgeInsets.symmetric(horizontal: 16),
+  // Enable snapping
+  snap: true, 
+  
+  // Define snap points: 0.2 (min), 0.5, 0.8 (intermediate), and 1.0 (max)
+  minChildSize: 0.2,
+  maxChildSize: 1.0,
+  initialChildSize: 0.5,
+  snapSizes: const [0.5, 0.8],
+  
   builder: (context, scrollController) {
-    // ... your list of locations
+    // ... your content
   },
 ),
 ```
 
-<img width="250" src="https://github.com/user-attachments/assets/669f7506-2b92-408f-a239-240ac68ca621" />
+![snap gif](https://github.com/user-attachments/assets/3727d83a-456b-4fd9-a721-8ad3e2116005)
 
 ## Properties
 
