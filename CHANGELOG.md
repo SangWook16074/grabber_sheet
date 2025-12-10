@@ -1,3 +1,13 @@
+## 1.1.2
+
+* **Docs**: Updated `CHANGELOG.md` to include missing version history.
+* **Meta**: Improved package scoring by addressing maintenance issues.
+
+## 1.1.1
+
+* **Docs**: Enhanced discoverability and clarity of package documentation.
+* **Meta**: Updated `pubspec.yaml` with clearer description and topics.
+
 ## 1.1.0
 
 * **Feature**: Added `showGrabberOnNonMobile` option to allow displaying the grabber handle on desktop and web platforms.

@@ -1,12 +1,12 @@
 name: grabber_sheet
-description: "A draggable bottom sheet solving gesture conflicts. Features an independent grabber, smooth snapping, and seamless scroll integration. The ultimate DraggableScrollableSheet alternative."
+description: "A draggable bottom sheet solving gesture conflicts. Features an independent grabber, smooth snapping, and seamless scrolling. The ultimate DraggableScrollableSheet alternative."
 topics:
   - bottom-sheet
   - draggable-sheet
   - grabber
   - ui-ux
   - scrolling
-version: 1.1.1
+version: 1.1.2
 homepage: https://github.com/SangWook16074/grabber_sheet
 repository: https://github.com/SangWook16074/grabber_sheet.git
 issue_tracker: https://github.com/SangWook16074/grabber_sheet/issues
