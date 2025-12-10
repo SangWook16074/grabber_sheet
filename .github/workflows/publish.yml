@@ -1,13 +1,12 @@
-name: CI
+name: Publish
 
 on:
   push:
-    branches:
-      - 'main'
-  workflow_dispatch:
+    tags:
+      - 'v*'
 
 jobs:
-  build-and-test:
+  publish:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -26,11 +25,15 @@ jobs:
       - name: Analyze project source
         run: flutter analyze
 
-      - name: Run tests with coverage
-        run: flutter test --coverage
+      - name: Run tests
+        run: flutter test
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: coverage/lcov.info
+      - name: Configure pub.dev credentials
+        run: |
+          mkdir -p ~/.config/dart
+          echo "$PUB_DEV_CREDENTIALS" > ~/.config/dart/pub-credentials.json
+        env:
+          PUB_DEV_CREDENTIALS: ${{ secrets.PUB_DEV_CREDENTIALS }}
+
+      - name: Publish to pub.dev
+        run: flutter pub publish --force
