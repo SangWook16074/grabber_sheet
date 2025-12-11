@@ -42,7 +42,7 @@ Add this to your package's `pubspec.yaml` file. Check the latest version on [pub
 
 ```yaml
 dependencies:
-  grabber_sheet: ^1.1.0
+  grabber_sheet: ^1.1.2
 ```
 
 Then, install it by running `flutter pub get` in your terminal.

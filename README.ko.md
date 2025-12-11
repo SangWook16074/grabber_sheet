@@ -40,7 +40,7 @@ Flutter의 기본 `DraggableScrollableSheet`를 사용할 때 겪는 흔한 문�
 
 ```yaml
 dependencies:
-  grabber_sheet: ^1.1.0
+  grabber_sheet: ^1.1.2
 ```
 
 그 다음, 터미널에서 `flutter pub get`을 실행하여 패키지를 설치합니다.
