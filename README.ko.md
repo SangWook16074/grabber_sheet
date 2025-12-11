@@ -5,11 +5,9 @@
 [![codecov](https://codecov.io/gh/SangWook16074/grabber_sheet/branch/main/graph/badge.svg)](https://codecov.io/gh/SangWook16074/grabber_sheet)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/SangWook16074/grabber_sheet/blob/main/LICENSE)
 
-구글 지도(Google Maps)와 같은 인기 앱의 모달 시트에서 영감을 받은, 커스터마이징 가능한 드래그형 하단 시트(bottom sheet)입니다.
+Google 지도와 같은 인기 앱의 모달 시트에서 영감을 받은 재사용 가능하고 사용자 정의 가능한 그래버 핸들이 있는 드래그 가능한 하단 시트입니다.
 
-**복잡한 UI를 구성하면서도 독립된 그래버(드래그 핸들) 영역과 부드러운 스냅 동작이 필요한 개발자에게 가장 이상적인 솔루션입니다.**
-
-Flutter의 기본 `DraggableScrollableSheet`를 사용할 때 겪는 흔한 문제들을 해결했습니다:
+Flutter의 내장 `DraggableScrollableSheet`의 일반적인 문제점들을 해결합니다:
 1.  **독립된 그래버 영역**: 그래버와 헤더가 스크롤 가능한 콘텐츠와 분리되어 있습니다. 헤더를 드래그하면 시트가 움직이고, 콘텐츠를 스크롤하면 리스트가 움직입니다. 더 이상 제스처 충돌로 고생하지 마세요.
 2.  **예측 가능한 스냅(Snapping)**: 복잡한 컨트롤러 로직 없이도 원하는 높이에 정확히 멈추게 할 수 있습니다.
 3.  **완벽한 연동**: `ListView`, `SingleChildScrollView` 등 모든 스크롤 위젯과 자연스럽게 동작합니다.
@@ -40,7 +38,7 @@ Flutter의 기본 `DraggableScrollableSheet`를 사용할 때 겪는 흔한 문�
 
 ```yaml
 dependencies:
-  grabber_sheet: ^1.1.2
+  grabber_sheet: ^1.1.3
 ```
 
 그 다음, 터미널에서 `flutter pub get`을 실행하여 패키지를 설치합니다.

@@ -9,8 +9,6 @@
 
 A reusable and customizable draggable bottom sheet with a grabber handle, inspired by the modal sheets in popular apps like Google Maps.
 
-**Ideally suited for developers who need to build complex UIs within a bottom sheet while maintaining a separate, draggable grabber area and smooth snapping behavior.**
-
 It solves the common frustrations with Flutter's built-in `DraggableScrollableSheet`:
 1.  **Independent Grabber Area**: The grabber and header are separate from the scrollable content. Dragging the header moves the sheet; scrolling the content scrolls the list. No more gesture conflicts.
 2.  **Predictable Snapping**: Easily snap to specific heights without complex controller logic.
@@ -42,7 +40,7 @@ Add this to your package's `pubspec.yaml` file. Check the latest version on [pub
 
 ```yaml
 dependencies:
-  grabber_sheet: ^1.1.2
+  grabber_sheet: ^1.1.3
 ```
 
 Then, install it by running `flutter pub get` in your terminal.

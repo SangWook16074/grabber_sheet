@@ -1,3 +1,8 @@
+## 1.1.3
+
+* **Docs**: Optimized `pubspec.yaml` description for better search visibility on pub.dev.
+* **Docs**: Simplified `README.md` and `README.ko.md` introductions for improved readability.
+
 ## 1.1.2
 
 * **Docs**: Updated `CHANGELOG.md` to include missing version history.
