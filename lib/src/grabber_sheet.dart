@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'grabber_sheet_controller.dart';
 import 'grabber_style.dart';
 
 /// A customizable draggable bottom sheet that uses a builder pattern for its content.
@@ -69,6 +70,14 @@ class GrabberSheet extends StatefulWidget {
   /// and the values in [snapSizes].
   final List<double>? snapSizes;
 
+  /// Whether to show the grabber handle on non-mobile platforms (desktop and web).
+  ///
+  /// Defaults to false, meaning the grabber is hidden on desktop and web.
+  final bool showGrabberOnNonMobile;
+
+  /// A controller to programmatically control the sheet.
+  final GrabberSheetController? controller;
+
   /// Creates a new instance of [GrabberSheet].
   const GrabberSheet({
     super.key,
@@ -83,6 +92,8 @@ class GrabberSheet extends StatefulWidget {
     this.snap = false,
     this.snapSizes,
     this.backgroundColor,
+    this.showGrabberOnNonMobile = false,
+    this.controller,
   })  : assert(minChildSize >= 0.0),
         assert(maxChildSize <= 1.0),
         assert(minChildSize <= initialChildSize),
@@ -95,7 +106,7 @@ class GrabberSheet extends StatefulWidget {
 /// The state object for the [GrabberSheet] widget.
 class _GrabberSheetState extends State<GrabberSheet> {
   /// The controller for the underlying [DraggableScrollableSheet].
-  late final DraggableScrollableController _controller;
+  late DraggableScrollableController _controller;
 
   /// The current size of the sheet, updated during dragging.
   late double _newSize = widget.initialChildSize;
@@ -103,17 +114,40 @@ class _GrabberSheetState extends State<GrabberSheet> {
   @override
   void initState() {
     super.initState();
-    _controller = DraggableScrollableController();
+    _controller = widget.controller ?? DraggableScrollableController();
+  }
+
+  @override
+  void didUpdateWidget(GrabberSheet oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.controller != oldWidget.controller) {
+      if (oldWidget.controller == null) {
+        // We were using an internal controller, dispose it.
+        _controller.dispose();
+      }
+      _controller = widget.controller ?? DraggableScrollableController();
+    }
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    // Only dispose if we created it internally.
+    if (widget.controller == null) {
+      _controller.dispose();
+    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    // Update constraints in the controller if it's a GrabberSheetController.
+    if (_controller is GrabberSheetController) {
+      (_controller as GrabberSheetController).internalUpdateConstraints(
+        widget.minChildSize,
+        widget.maxChildSize,
+      );
+    }
+
     final theme = Theme.of(context);
     final Color sheetColor =
         widget.backgroundColor ?? theme.colorScheme.surface;
@@ -193,7 +227,10 @@ class _GrabberSheetState extends State<GrabberSheet> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           if (widget.showGrabber)
-                            _Grabber(style: widget.grabberStyle),
+                            _Grabber(
+                              style: widget.grabberStyle,
+                              showOnNonMobile: widget.showGrabberOnNonMobile,
+                            ),
                           if (widget.bottom != null)
                             Padding(
                               padding:
@@ -220,15 +257,20 @@ class _GrabberSheetState extends State<GrabberSheet> {
 class _Grabber extends StatelessWidget {
   const _Grabber({
     required this.style,
+    this.showOnNonMobile = false,
   });
 
   /// The visual style of the grabber handle.
   final GrabberStyle style;
 
+  /// Whether to show the grabber handle on non-mobile platforms.
+  final bool showOnNonMobile;
+
   @override
   Widget build(BuildContext context) {
-    // For a more native feel, the grabber is not shown on desktop and web platforms.
-    if (_isOnDesktopAndWeb) {
+    // For a more native feel, the grabber is not shown on desktop and web platforms,
+    // unless explicitly requested.
+    if (_isOnDesktopAndWeb && !showOnNonMobile) {
       return const SizedBox.shrink();
     }
 
