@@ -24,6 +24,8 @@ It enhances Flutter's built-in `DraggableScrollableSheet` by providing a visible
 *   Customize grabber style (color, size, shape).
 *   Grabber is automatically hidden on desktop and web platforms for a native feel.
 *   Sheet has rounded top corners by default.
+*   **Programmatic Control**: Use `GrabberSheetController` to `maximize()`, `minimize()`, or `animateTo()` specific sizes.
+*   **State Callbacks**: Receive notifications on `onSizeChanged` during dragging/resizing and `onSnap` when the sheet settles at a snap point.
 
 ## Getting started
 
@@ -114,6 +116,159 @@ class ExampleHomePage extends StatelessWidget {
 
 ## Advanced Customization
 
+### Programmatic Control & State Listeners
+
+You can use `GrabberSheetController` to control the sheet programmatically and callbacks to listen for state changes. This example from `example/lib/main.dart` demonstrates how to use the controller with Floating Action Buttons (FABs) and display sheet status.
+
+Below is an example of controlling the sheet with `GrabberSheetController` and listening to its state changes.
+
+<!-- Attach your FAB demo GIF here, e.g., <img width="250" src="https://github.com/user-attachments/assets/YOUR_FAB_DEMO_GIF_HERE" alt="Example of GrabberSheet with FAB control" /> -->
+
+```dart
+// The complete code for ExampleHomePage from example/lib/main.dart
+class ExampleHomePage extends StatefulWidget {
+  const ExampleHomePage({super.key});
+
+  @override
+  State<ExampleHomePage> createState() => _ExampleHomePageState();
+}
+
+class _ExampleHomePageState extends State<ExampleHomePage> {
+  final GrabberSheetController _grabberSheetController = GrabberSheetController();
+  String _currentSheetStatus = 'Idle';
+  double _currentSize = 0.5;
+
+  @override
+  void initState() {
+    super.initState();
+    _grabberSheetController.addListener(() {
+      if (_grabberSheetController.isAttached && mounted) {
+        setState(() {
+          _currentSize = _grabberSheetController.size;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _grabberSheetController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final sheetColor = Colors.blue.shade100;
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text('GrabberSheet Example'),
+        backgroundColor: sheetColor,
+      ),
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FloatingActionButton.small(
+            heroTag: 'maximize',
+            onPressed: () => _grabberSheetController.maximize(),
+            tooltip: 'Maximize',
+            child: const Icon(Icons.keyboard_arrow_up),
+          ),
+          const SizedBox(height: 8),
+          FloatingActionButton.small(
+            heroTag: 'minimize',
+            onPressed: () => _grabberSheetController.minimize(),
+            tooltip: 'Minimize',
+            child: const Icon(Icons.keyboard_arrow_down),
+          ),
+          const SizedBox(height: 8),
+          FloatingActionButton.small(
+            heroTag: 'animate',
+            onPressed: () => _grabberSheetController.animateTo(
+              0.7,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            ),
+            tooltip: 'Animate to 0.7',
+            child: const Icon(Icons.height),
+          ),
+        ],
+      ),
+      body: Stack(
+        children: [
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Background Content',
+                  style: theme.textTheme.headlineMedium,
+                ),
+                const SizedBox(height: 20),
+                Text('Sheet Size: ${_currentSize.toStringAsFixed(2)}'),
+                Text('Sheet Status: $_currentSheetStatus'),
+              ],
+            ),
+          ),
+          GrabberSheet(
+            controller: _grabberSheetController, // 컨트롤러 연결
+            initialChildSize: 0.5,
+            minChildSize: 0.2,
+            maxChildSize: 0.8,
+            snap: true,
+            snapSizes: const [.5],
+            backgroundColor: sheetColor,
+            grabberStyle: GrabberStyle(color: Colors.grey.shade400),
+            bottom: Row(
+              children: [
+                const Text('sheet title'),
+                const Spacer(),
+                IconButton(onPressed: () {}, icon: const Icon(Icons.close)),
+              ],
+            ),
+            bottomAreaPadding: const EdgeInsets.symmetric(horizontal: 16),
+            onSizeChanged: (size) {
+              // debugPrint('onSizeChanged: ${size.toStringAsFixed(2)}');
+              if (mounted) {
+                setState(() {
+                  _currentSheetStatus = 'Dragging/Resizing';
+                  _currentSize = size;
+                });
+              }
+            },
+            onSnap: (size) {
+              // debugPrint('onSnap: ${size.toStringAsFixed(2)}');
+              if (mounted) {
+                setState(() {
+                  _currentSheetStatus = 'Snapped to ${size.toStringAsFixed(2)}';
+                  _currentSize = size;
+                });
+              }
+            },
+            builder: (BuildContext context, ScrollController scrollController) {
+              return ListView.builder(
+                controller: scrollController,
+                itemCount: 30,
+                itemBuilder: (BuildContext context, int index) {
+                  return ListTile(
+                    title: Text(
+                      'Item $index',
+                      style: TextStyle(color: theme.colorScheme.onSurface),
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
 ### Controlling Snap Behavior
 
 By setting `snap` to `true`, the sheet will automatically animate to the nearest defined snap point when a drag gesture ends. This creates a clean, predictable motion for the user.
@@ -194,33 +349,36 @@ GrabberSheet(
 ),
 ```
 
-<img width="250" src="https://github.com/user-attachments/assets/669f7506-2b92-408f-a239-240ac68ca621" />
+<img width="250" src="https://github.com/user-attachments/assets/669f7506-2b92-408f-a212-240ac68ca621" />
 
 ## Properties
 
 ### GrabberSheet
 
-| Property            | Type                                     | Description                                                                                                                                 | Default Value                                |
-| ------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| `builder`           | `Widget Function(BuildContext, ScrollController)` | **Required.** Builds the scrollable content of the sheet. Provides a `ScrollController` to be used by the content.                      | -                                            |
-| `initialChildSize`  | `double`                                 | The initial fractional size of the sheet.                                                                                                   | `0.5`                                        |
-| `minChildSize`      | `double`                                 | The minimum fractional size of the sheet.                                                                                                   | `0.25`                                       |
-| `maxChildSize`      | `double`                                 | The maximum fractional size of the sheet.                                                                                                   | `1.0`                                        |
-| `snap`              | `bool`                                   | If true, the sheet will snap to the nearest snap point after dragging.                                                                      | `false`                                      |
-| `snapSizes`         | `List<double>?`                          | A list of intermediate fractional sizes to snap to.                                                                                         | `null`                                       |
-| `showGrabber`       | `bool`                                   | Whether to show the grabber handle. It is automatically hidden on desktop and web platforms regardless of this value.                       | `true`                                       |
-| `grabberStyle`      | `GrabberStyle`                           | The visual style of the grabber handle.                                                                                                     | `const GrabberStyle()`                       |
-| `bottom`            | `Widget?`                                | A custom widget to display below the grabber and above the main content.                                                                    | `null`                                       |
-| `bottomAreaPadding` | `EdgeInsetsGeometry?`                    | The padding for the `bottom` widget area.                                                                                                   | `null`                                       |
-| `backgroundColor`   | `Color?`                                 | The background color of the sheet container. If null, it uses the theme's `colorScheme.surface`. The sheet has a default top border radius of 16.0. | `Theme.of(context).colorScheme.surface`      |
+| Property            | Type                                     | Description                                                                                                                                                                                                                           | Default Value                                |
+| ------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| `builder`           | `Widget Function(BuildContext, ScrollController)` | **Required.** Builds the scrollable content of the sheet. Provides a `ScrollController` to be used by the content.                                                                                                    | -                                            |
+| `initialChildSize`  | `double`                                 | The initial fractional size of the sheet.                                                                                                                                                                                             | `0.5`                                        |
+| `minChildSize`      | `double`                                 | The minimum fractional size of the sheet.                                                                                                                                                                                             | `0.25`                                       |
+| `maxChildSize`      | `double`                                 | The maximum fractional size of the sheet.                                                                                                                                                                                             | `1.0`                                        |
+| `snap`              | `bool`                                   | If true, the sheet will snap to the nearest snap point after dragging.                                                                                                                                                                | `false`                                      |
+| `snapSizes`         | `List<double>?`                          | A list of intermediate fractional sizes to snap to.                                                                                                                                                                                   | `null`                                       |
+| `showGrabber`       | `bool`                                   | Whether to show the grabber handle. It is automatically hidden on desktop and web platforms regardless of this value.                                                                                                                 | `true`                                       |
+| `grabberStyle`      | `GrabberStyle`                           | The visual style of the grabber handle.                                                                                                                                                                                               | `const GrabberStyle()`                       |
+| `bottom`            | `Widget?`                                | A custom widget to display below the grabber and above the main content.                                                                                                                                                              | `null`                                       |
+| `bottomAreaPadding` | `EdgeInsetsGeometry?`                    | The padding for the `bottom` widget area.                                                                                                                                                                                             | `null`                                       |
+| `backgroundColor`   | `Color?`                                 | The background color of the sheet container. If null, it uses the theme's `colorScheme.surface`. The sheet has a default top border radius of 16.0.                                                                                   | `Theme.of(context).colorScheme.surface`      |
+| `controller`        | `GrabberSheetController?`                | An optional controller to programmatically control the sheet's size and state. Provides `maximize()`, `minimize()`, and all `DraggableScrollableController` methods.                                                                | `null`                                       |
+| `onSizeChanged`     | `ValueChanged<double>?`                  | Callback that is called whenever the sheet's fractional size changes (during dragging or animation).                                                                                                                                  | `null`                                       |
+| `onSnap`            | `ValueChanged<double>?`                  | Callback that is called when the sheet completes a snap animation and settles at a specific fractional size.                                                                                                                          | `null`                                       |
 
 ### GrabberStyle
 
-| Property | Type                 | Description                                       | Default Value                                  |
-| -------- | -------------------- | ------------------------------------------------- | ---------------------------------------------- |
-| `color`    | `Color`              | The background color of the grabber handle.       | `Colors.grey`                                  |
-| `width`    | `double`             | The width of the grabber handle.                  | `48.0`                                         |
-| `height`   | `double`             | The height of the grabber handle.                 | `5.0`                                          |
+| Property | Type                 | Description                                       | Default Value                                |
+| -------- | -------------------- | ------------------------------------------------- | -------------------------------------------- |
+| `color`    | `Color`              | The background color of the grabber handle.       | `Colors.grey`                                |
+| `width`    | `double`             | The width of the grabber handle.                  | `48.0`                                       |
+| `height`   | `double`             | The height of the grabber handle.                 | `5.0`                                        |
 | `radius`   | `Radius`             | The border radius of the grabber handle's corners. | `const Radius.circular(8.0)`                   |
 | `margin`   | `EdgeInsetsGeometry` | The margin surrounding the grabber handle.        | `const EdgeInsets.symmetric(vertical: 10.0)` |
 

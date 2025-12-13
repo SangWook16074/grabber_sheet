@@ -118,8 +118,12 @@ class ExampleHomePage extends StatelessWidget {
 
 `GrabberSheetController`를 사용하여 시트를 제어하고 콜백으로 상태 변화를 감지하는 예제입니다. `example/lib/main.dart` 파일의 `ExampleHomePage` 클래스에 이 전체 로직이 구현되어 있습니다.
 
+아래는 `GrabberSheetController`를 이용한 시트 제어 및 상태 변화를 리스닝하는 예시입니다.
+
+<!-- 여기에 FAB 데모 GIF 이미지를 첨부하세요. 예: <img width="250" src="https://github.com/user-attachments/assets/YOUR_FAB_DEMO_GIF_HERE" alt="FAB 제어 GrabberSheet 예시" /> -->
+
 ```dart
-// example/lib/main.dart 파일의 ExampleHomePage 클래스 코드
+// The complete code for ExampleHomePage from example/lib/main.dart
 class ExampleHomePage extends StatefulWidget {
   const ExampleHomePage({super.key});
 
@@ -278,10 +282,10 @@ class _ExampleHomePageState extends State<ExampleHomePage> {
 
 ```dart
 GrabberSheet(
-  // 스냅 기능 활성화
+  // Enable snapping
   snap: true, 
   
-  // 스냅 지점 정의: 0.2 (최소), 0.5, 0.8 (중간), 1.0 (최대)
+  // Define snap points: 0.2 (min), 0.5, 0.8 (intermediate), and 1.0 (max)
   minChildSize: 0.2,
   maxChildSize: 1.0,
   initialChildSize: 0.5,
