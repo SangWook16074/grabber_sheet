@@ -22,6 +22,8 @@ Flutter에 내장된 `DraggableScrollableSheet`를 기반으로, 눈에 띄는 �
 *   그래버 스타일(색상, 크기, 모양) 커스터마이징 가능
 *   네이티브한 느낌을 위해 데스크톱 및 웹 플랫폼에서는 그래버가 자동으로 숨겨집니다.
 *   시트는 기본적으로 상단에 둥근 모서리를 가집니다.
+*   **프로그래밍 방식 제어**: `GrabberSheetController`를 사용하여 시트를 `maximize()`, `minimize()`하거나 특정 크기로 `animateTo()`할 수 있습니다.
+*   **상태 콜백**: 드래그/리사이징 중 `onSizeChanged` 알림을 받고, 시트가 스냅 지점에 멈췄을 때 `onSnap` 알림을 받을 수 있습니다.
 
 ## 시작하기
 
@@ -112,6 +114,155 @@ class ExampleHomePage extends StatelessWidget {
 
 ## 고급 커스터마이징
 
+### 프로그래밍 방식 제어 및 상태 리스닝 (예시: `example/lib/main.dart`)
+
+`GrabberSheetController`를 사용하여 시트를 제어하고 콜백으로 상태 변화를 감지하는 예제입니다. `example/lib/main.dart` 파일의 `ExampleHomePage` 클래스에 이 전체 로직이 구현되어 있습니다.
+
+```dart
+// example/lib/main.dart 파일의 ExampleHomePage 클래스 코드
+class ExampleHomePage extends StatefulWidget {
+  const ExampleHomePage({super.key});
+
+  @override
+  State<ExampleHomePage> createState() => _ExampleHomePageState();
+}
+
+class _ExampleHomePageState extends State<ExampleHomePage> {
+  final GrabberSheetController _grabberSheetController = GrabberSheetController();
+  String _currentSheetStatus = 'Idle';
+  double _currentSize = 0.5;
+
+  @override
+  void initState() {
+    super.initState();
+    _grabberSheetController.addListener(() {
+      if (_grabberSheetController.isAttached && mounted) {
+        setState(() {
+          _currentSize = _grabberSheetController.size;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _grabberSheetController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final sheetColor = Colors.blue.shade100;
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text('GrabberSheet Example'),
+        backgroundColor: sheetColor,
+      ),
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FloatingActionButton.small(
+            heroTag: 'maximize',
+            onPressed: () => _grabberSheetController.maximize(),
+            tooltip: 'Maximize',
+            child: const Icon(Icons.keyboard_arrow_up),
+          ),
+          const SizedBox(height: 8),
+          FloatingActionButton.small(
+            heroTag: 'minimize',
+            onPressed: () => _grabberSheetController.minimize(),
+            tooltip: 'Minimize',
+            child: const Icon(Icons.keyboard_arrow_down),
+          ),
+          const SizedBox(height: 8),
+          FloatingActionButton.small(
+            heroTag: 'animate',
+            onPressed: () => _grabberSheetController.animateTo(
+              0.7,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            ),
+            tooltip: 'Animate to 0.7',
+            child: const Icon(Icons.height),
+          ),
+        ],
+      ),
+      body: Stack(
+        children: [
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Background Content',
+                  style: theme.textTheme.headlineMedium,
+                ),
+                const SizedBox(height: 20),
+                Text('Sheet Size: ${_currentSize.toStringAsFixed(2)}'),
+                Text('Sheet Status: $_currentSheetStatus'),
+              ],
+            ),
+          ),
+          GrabberSheet(
+            controller: _grabberSheetController, // 컨트롤러 연결
+            initialChildSize: 0.5,
+            minChildSize: 0.2,
+            maxChildSize: 0.8,
+            snap: true,
+            snapSizes: const [.5],
+            backgroundColor: sheetColor,
+            grabberStyle: GrabberStyle(color: Colors.grey.shade400),
+            bottom: Row(
+              children: [
+                const Text('sheet title'),
+                const Spacer(),
+                IconButton(onPressed: () {}, icon: const Icon(Icons.close)),
+              ],
+            ),
+            bottomAreaPadding: const EdgeInsets.symmetric(horizontal: 16),
+            onSizeChanged: (size) {
+              // debugPrint('onSizeChanged: ${size.toStringAsFixed(2)}');
+              if (mounted) {
+                setState(() {
+                  _currentSheetStatus = 'Dragging/Resizing';
+                  _currentSize = size;
+                });
+              }
+            },
+            onSnap: (size) {
+              // debugPrint('onSnap: ${size.toStringAsFixed(2)}');
+              if (mounted) {
+                setState(() {
+                  _currentSheetStatus = 'Snapped to ${size.toStringAsFixed(2)}';
+                  _currentSize = size;
+                });
+              }
+            },
+            builder: (BuildContext context, ScrollController scrollController) {
+              return ListView.builder(
+                controller: scrollController,
+                itemCount: 30,
+                itemBuilder: (BuildContext context, int index) {
+                  return ListTile(
+                    title: Text(
+                      'Item $index',
+                      style: TextStyle(color: theme.colorScheme.onSurface),
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
 ### 스냅 동작 제어하기
 
 `snap` 프로퍼티를 `true`로 설정하면, 사용자가 드래그를 놓았을 때 시트가 가장 가까운 스냅 지점으로 자동으로 부드럽게 이동합니다. 이는 사용자에게 깔끔하고 예측 가능한 움직임을 제공합니다.
@@ -193,33 +344,36 @@ GrabberSheet(
 ),
 ```
 
-<img width="250" src="https://github.com/user-attachments/assets/669f7506-2b92-408f-a239-240ac68ca621" />
+<img width="250" src="https://github.com/user-attachments/assets/669f7506-2b92-408f-a212-240ac68ca621" />
 
 ## 속성 (Properties)
 
 ### GrabberSheet
 
-| 프로퍼티            | 타입                                     | 설명                                                                                                                                            | 기본값                                       |
-| ------------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| `builder`           | `Widget Function(BuildContext, ScrollController)` | **(필수)** 시트의 스크롤 가능한 콘텐츠를 빌드합니다. 콘텐츠에서 사용할 `ScrollController`를 제공합니다.                                     | -                                            |
-| `initialChildSize`  | `double`                                 | 시트의 초기 크기 (비율).                                                                                                                        | `0.5`                                        |
-| `minChildSize`      | `double`                                 | 시트의 최소 크기 (비율).                                                                                                                        | `0.25`                                       |
-| `maxChildSize`      | `double`                                 | 시트의 최대 크기 (비율).                                                                                                                        | `1.0`                                        |
-| `snap`              | `bool`                                   | `true`이면 드래그 후 가장 가까운 스냅 지점으로 이동합니다.                                                                                      | `false`                                      |
-| `snapSizes`         | `List<double>?`                          | 중간 스냅 지점 목록 (비율).                                                                                                                     | `null`                                       |
-| `showGrabber`       | `bool`                                   | 그래버 핸들을 표시할지 여부. 이 값과 관계없이 데스크톱 및 웹에서는 자동으로 숨겨집니다.                                                          | `true`                                       |
-| `grabberStyle`      | `GrabberStyle`                           | 그래버 핸들의 시각적 스타일.                                                                                                                    | `const GrabberStyle()`                       |
-| `bottom`            | `Widget?`                                | 그래버 아래, 메인 콘텐츠 위에 표시할 커스텀 위젯.                                                                                               | `null`                                       |
-| `bottomAreaPadding` | `EdgeInsetsGeometry?`                    | `bottom` 위젯 영역의 패딩.                                                                                                                      | `null`                                       |
-| `backgroundColor`   | `Color?`                                 | 시트 컨테이너의 배경색. `null`이면 테마의 `colorScheme.surface`를 사용합니다. 시트는 기본적으로 16.0의 상단 모서리 반경을 가집니다. | `Theme.of(context).colorScheme.surface`      |
+| 프로퍼티            | 타입                                     | 설명                                                                                                                                                                                                                           | 기본값                                       |
+| ------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| `builder`           | `Widget Function(BuildContext, ScrollController)` | **(필수)** 시트의 스크롤 가능한 콘텐츠를 빌드합니다. 콘텐츠에서 사용할 `ScrollController`를 제공합니다.                                                                                                    | -                                            |
+| `initialChildSize`  | `double`                                 | 시트의 초기 크기 (비율).                                                                                                                                                                                                                            | `0.5`                                        |
+| `minChildSize`      | `double`                                 | 시트의 최소 크기 (비율).                                                                                                                                                                                                                            | `0.25`                                       |
+| `maxChildSize`      | `double`                                 | 시트의 최대 크기 (비율).                                                                                                                                                                                                                            | `1.0`                                        |
+| `snap`              | `bool`                                   | `true`이면 드래그 후 가장 가까운 스냅 지점으로 이동합니다.                                                                                                                                                                | `false`                                      |
+| `snapSizes`         | `List<double>?`                          | 중간 스냅 지점 목록 (비율).                                                                                                                                                                                                                  | `null`                                       |
+| `showGrabber`       | `bool`                                   | 그래버 핸들을 표시할지 여부. 이 값과 관계없이 데스크톱 및 웹에서는 자동으로 숨겨집니다.                                                                                                                                                                | `true`                                       |
+| `grabberStyle`      | `GrabberStyle`                           | 그래버 핸들의 시각적 스타일.                                                                                                                                                                                                                              | `const GrabberStyle()`                       |
+| `bottom`            | `Widget?`                                | 그래버 아래, 메인 콘텐츠 위에 표시할 커스텀 위젯.                                                                                                                                                                                                                            | `null`                                       |
+| `bottomAreaPadding` | `EdgeInsetsGeometry?`                    | `bottom` 위젯 영역의 패딩.                                                                                                                                                                                                                            | `null`                                       |
+| `backgroundColor`   | `Color?`                                 | 시트 컨테이너의 배경색. `null`이면 테마의 `colorScheme.surface`를 사용합니다. 시트는 기본적으로 16.0의 상단 모서리 반경을 가집니다.                                                                                                                  | `Theme.of(context).colorScheme.surface`      |
+| `controller`        | `GrabberSheetController?`                | 시트의 크기와 상태를 프로그래밍 방식으로 제어하기 위한 선택적 컨트롤러입니다. `maximize()`, `minimize()` 및 모든 `DraggableScrollableController` 메서드를 제공합니다.                                                                | `null`                                       |
+| `onSizeChanged`     | `ValueChanged<double>?`                  | 시트의 비율 크기가 변경될 때마다(드래그 또는 애니메이션 중) 호출되는 콜백입니다.                                                                                                                                                                 | `null`                                       |
+| `onSnap`            | `ValueChanged<double>?`                  | 시트가 스냅 애니메이션을 완료하고 특정 비율 크기에 안착했을 때 호출되는 콜백입니다.                                                                                                                                                         | `null`                                       |
 
 ### GrabberStyle
 
-| 프로퍼티 | 타입                 | 설명                               | 기본값                                         |
-| -------- | -------------------- | ---------------------------------- | ---------------------------------------------- |
-| `color`    | `Color`              | 그래버 핸들의 배경색.              | `Colors.grey`                                  |
-| `width`    | `double`             | 그래버 핸들의 너비.                | `48.0`                                         |
-| `height`   | `double`             | 그래버 핸들의 높이.                | `5.0`                                          |
+| 프로퍼티 | 타입                 | 설명                               | 기본값                                       |
+| -------- | -------------------- | ---------------------------------- | -------------------------------------------- |
+| `color`    | `Color`              | 그래버 핸들의 배경색.              | `Colors.grey`                                |
+| `width`    | `double`             | 그래버 핸들의 너비.                | `48.0`                                       |
+| `height`   | `double`             | 그래버 핸들의 높이.                | `5.0`                                        |
 | `radius`   | `Radius`             | 그래버 핸들 모서리의 둥글기.       | `const Radius.circular(8.0)`                   |
 | `margin`   | `EdgeInsetsGeometry` | 그래버 핸들 주변의 여백.           | `const EdgeInsets.symmetric(vertical: 10.0)` |
 
@@ -227,4 +381,3 @@ GrabberSheet(
 ## 추가 정보
 
 이슈 제기, 기능 요청, 또는 기여를 원하시면 [GitHub repository](https://github.com/SangWook16074/grabber_sheet)를 방문해주세요.
-�� 원하시면 [GitHub repository](https://github.com/SangWook16074/grabber_sheet)를 방문해주세요.
