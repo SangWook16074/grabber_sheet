@@ -211,18 +211,8 @@ GrabberSheet(
 
 전체 구현 코드는 `example/lib/main.dart`에서 확인할 수 있습니다.
 
-<!-- 여기에 FAB 데모 GIF 이미지를 첨부하세요. 예: <img width="250" src="https://github.com/user-attachments/assets/YOUR_FAB_DEMO_GIF_HERE" alt="FAB 제어 GrabberSheet 예시" /> -->
-
 ```dart
-class ExampleHomePage extends StatefulWidget {
-  const ExampleHomePage({super.key});
-
-  @override
-  State<ExampleHomePage> createState() => _ExampleHomePageState();
-}
-
 class _ExampleHomePageState extends State<ExampleHomePage> {
-  // 1. Create a controller
   final GrabberSheetController _grabberSheetController = GrabberSheetController();
   String _currentSheetStatus = 'Idle';
   double _currentSize = 0.5;
@@ -239,24 +229,13 @@ class _ExampleHomePageState extends State<ExampleHomePage> {
       }
     });
   }
-
-  @override
-  void dispose() {
-    _grabberSheetController.dispose();
-    super.dispose();
-  }
+  ...
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final sheetColor = Colors.blue.shade100;
-
+    ...
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text('GrabberSheet Example'),
-        backgroundColor: sheetColor,
-      ),
+      ...
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -267,7 +246,7 @@ class _ExampleHomePageState extends State<ExampleHomePage> {
             tooltip: 'Maximize',
             child: const Icon(Icons.keyboard_arrow_up),
           ),
-          const SizedBox(height: 8),
+          ...
           FloatingActionButton.small(
             heroTag: 'minimize',
             // Control: Minimize the sheet
@@ -275,7 +254,7 @@ class _ExampleHomePageState extends State<ExampleHomePage> {
             tooltip: 'Minimize',
             child: const Icon(Icons.keyboard_arrow_down),
           ),
-          const SizedBox(height: 8),
+          ...
           FloatingActionButton.small(
             heroTag: 'animate',
             // Control: Animate to a specific size (0.7)
@@ -309,20 +288,8 @@ class _ExampleHomePageState extends State<ExampleHomePage> {
             controller: _grabberSheetController, // Attach the controller
             initialChildSize: 0.5,
             minChildSize: 0.2,
-            maxChildSize: 0.8,
-            snap: true,
-            snapSizes: const [.5],
-            backgroundColor: sheetColor,
-            grabberStyle: GrabberStyle(color: Colors.grey.shade400),
-            bottom: Row(
-              children: [
-                const Text('sheet title'),
-                const Spacer(),
-                IconButton(onPressed: () {}, icon: const Icon(Icons.close)),
-              ],
-            ),
-            bottomAreaPadding: const EdgeInsets.symmetric(horizontal: 16),
-            // Callback: Triggered during drag/resize
+            maxChildSize: 0.8
+            ...
             onSizeChanged: (size) {
               if (mounted) {
                 setState(() {
@@ -360,6 +327,8 @@ class _ExampleHomePageState extends State<ExampleHomePage> {
     );
   }
 }
+```
+<img width="250" src="https://github.com/user-attachments/assets/b90799fa-5db5-4e6a-bb9b-3750198877d7" alt="FAB 제어 GrabberSheet 예시" />
 
 ## 속성 (Properties)
 
