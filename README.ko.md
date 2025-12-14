@@ -11,6 +11,24 @@ Flutter에 내장된 `DraggableScrollableSheet`를 기반으로, 눈에 띄는 �
 
 <img width="250" src="https://github.com/user-attachments/assets/cc2a3eaf-c872-46f1-8b45-bbf83b781104" />
 
+## 목차
+
+- [주요 특징](#주요-특징)
+- [시작하기](#시작하기)
+- [호환성](#호환성)
+- [기본 사용법](#기본-사용법)
+- [고급 커스터마이징](#고급-커스터마이징)
+  - [스냅 동작 제어하기](#스냅-동작-제어하기)
+  - [그래버 핸들 꾸미기](#그래버-핸들-꾸미기)
+  - [그래버 영역에 커스텀 위젯 추가하기](#그래버-영역에-커스텀-위젯-추가하기)
+  - [프로그래밍 방식 제어 및 상태 리스닝](#프로그래밍-방식-제어-및-상태-리스닝)
+- [속성 (Properties)](#속성-properties)
+  - [GrabberSheet](#grabbersheet-1)
+  - [GrabberStyle](#grabberstyle-1)
+- [추가 정보](#추가-정보)
+
+---
+
 ## 주요 특징
 
 *   커스터마이징 가능한 그래버(grabber) 핸들이 있는 드래그형 하단 시트
@@ -194,7 +212,7 @@ GrabberSheet(
 ),
 ```
 
-<img width="250" src="https://github.com/user-attachments/assets/669f7506-2b92-408f-a212-240ac68ca621" />
+<img width="250" src="https://github.com/user-attachments/assets/669f7506-2b92-408f-a239-240ac68ca621" />
 
 ### 프로그래밍 방식 제어 및 상태 리스닝
 
