@@ -3,7 +3,7 @@
 # grabber_sheet
 
 [![pub.dev](https://img.shields.io/pub/v/grabber_sheet.svg)](https://pub.dev/packages/grabber_sheet)
-[![Test](https://github.com/SangWook16074/grabber_sheet/actions/workflows/test.yml/badge.svg)](https://github.com/SangWook16074/grabber_sheet/actions/workflows/test.yml)
+[![Test](https://github.com/SangWook16074/grabber_sheet/actions/workflows/ci.yml/badge.svg)](https://github.com/SangWook16074/grabber_sheet/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/SangWook16074/grabber_sheet/branch/main/graph/badge.svg)](https://codecov.io/gh/SangWook16074/grabber_sheet)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/SangWook16074/grabber_sheet/blob/main/LICENSE)
 
@@ -27,9 +27,21 @@
 
 A reusable and customizable draggable bottom sheet with a grabber handle, inspired by the modal sheets in popular apps like Google Maps.
 
-It enhances Flutter's built-in `DraggableScrollableSheet` by providing a visible grabber, simplifying scroll controller management, and ensuring predictable behavior.
+It solves the common frustrations with Flutter's built-in `DraggableScrollableSheet`:
+1.  **Independent Grabber Area**: The grabber and header are separate from the scrollable content. Dragging the header moves the sheet; scrolling the content scrolls the list. No more gesture conflicts.
+2.  **Predictable Snapping**: Easily snap to specific heights without complex controller logic.
+3.  **Seamless Integration**: Works perfectly with `ListView`, `SingleChildScrollView`, and other scrollable widgets.
 
 <img width="250" src="https://github.com/user-attachments/assets/cc2a3eaf-c872-46f1-8b45-bbf83b781104" />
+
+## Why use GrabberSheet?
+
+If you've ever struggled with:
+*   The grabber disappearing when you scroll down.
+*   The sheet not moving when you try to drag the header.
+*   Janky snapping animations.
+
+Then `GrabberSheet` is the solution you've been looking for. It provides a robust, production-ready implementation of the "modal bottom sheet" pattern found in top-tier mobile apps.
 
 ## Features
 
@@ -51,7 +63,7 @@ Add this to your package's `pubspec.yaml` file. Check the latest version on [pub
 
 ```yaml
 dependencies:
-  grabber_sheet: ^1.0.1
+  grabber_sheet: ^1.1.3
 ```
 
 Then, install it by running `flutter pub get` in your terminal.
@@ -133,6 +145,70 @@ class ExampleHomePage extends StatelessWidget {
 ```
 
 ## Advanced Customization
+
+### Adding a Custom Widget to the Grabber Area
+
+You can insert a custom widget into the draggable area below the grabber handle using the `bottom` property. This entire area (handle and custom widget) is draggable. This is useful for adding a title, action buttons, or any other information that should remain visible and separate from the scrollable content.
+
+The `bottomAreaPadding` property can be used to add padding around this custom widget.
+
+```dart
+GrabberSheet(
+  bottom: Row(
+    children: [
+      const Text('sheet title'),
+      const Spacer(),
+      IconButton(onPressed: () {}, icon: const Icon(Icons.close)),
+    ],
+  ),
+  bottomAreaPadding: const EdgeInsets.symmetric(horizontal: 16),
+  builder: (context, scrollController) {
+    // ... your list of locations
+  },
+),
+```
+
+<img width="250" src="https://github.com/user-attachments/assets/669f7506-2b92-408f-a239-240ac68ca621" />
+
+### Customizing the Grabber
+
+The appearance of the grabber handle can be fully customized using the `grabberStyle` property.
+
+```dart
+GrabberSheet(
+  grabberStyle: GrabberStyle(
+    width: 60,
+    height: 6,
+    margin: const EdgeInsets.symmetric(vertical: 10),
+    color: Colors.grey.shade300,
+    radius: const Radius.circular(12),
+  ),
+  builder: (context, scrollController) {
+    // ... your content
+  },
+),
+```
+
+<img width="250" src="https://github.com/user-attachments/assets/8d062fa4-cdda-4445-9d90-b34aa3fce1c5" />
+
+You can also hide the grabber completely by setting `showGrabber: false`.
+
+<img width="250" src="https://github.com/user-attachments/assets/20d589b5-54c3-4da3-b420-0c1b10f3e9ef" />
+
+### Showing the Grabber on Desktop and Web
+
+By default, the grabber handle is only visible on mobile platforms (iOS, Android). However, you can force it to always be visible on desktop (Windows, macOS, Linux) and web platforms by setting the `showGrabberOnNonMobile` property to `true`. This is useful when you want to provide a consistent UI across all platforms.
+
+```dart
+GrabberSheet(
+  showGrabberOnNonMobile: true,
+  builder: (context, scrollController) {
+    // ... Your content
+  },
+),
+```
+
+![grabber_sheet_web](https://github.com/user-attachments/assets/631bc09f-b4a4-4736-8df4-a52501e6c192)
 
 ### Controlling Snap Behavior
 

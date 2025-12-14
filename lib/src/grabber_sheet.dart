@@ -196,11 +196,12 @@ class _GrabberSheetState extends State<GrabberSheet> {
                 ),
                 child: Column(
                   children: <Widget>[
-                                      GestureDetector(
-                                        onVerticalDragStart: (details) {
-                                          _newSize = _controller.size;
-                                        },
-                                        onVerticalDragUpdate: (details) {                        final newPixel = _controller.pixels - details.delta.dy;
+                    GestureDetector(
+                      onVerticalDragStart: (details) {
+                        _newSize = _controller.size;
+                      },
+                      onVerticalDragUpdate: (details) {
+                        final newPixel = _controller.pixels - details.delta.dy;
                         // Convert pixel value to fractional size and clamp it.
                         _newSize =
                             _controller.pixelsToSize(newPixel).clamp(0.0, 1.0);

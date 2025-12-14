@@ -31,7 +31,8 @@ class ExampleHomePage extends StatefulWidget {
 }
 
 class _ExampleHomePageState extends State<ExampleHomePage> {
-  final GrabberSheetController _grabberSheetController = GrabberSheetController();
+  final GrabberSheetController _grabberSheetController =
+      GrabberSheetController();
   String _currentSheetStatus = 'Idle';
   double _currentSize = 0.5;
 

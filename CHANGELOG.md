@@ -1,3 +1,26 @@
+## 1.1.3
+
+* **Docs**: Optimized `pubspec.yaml` description for better search visibility on pub.dev.
+* **Docs**: Simplified `README.md` and `README.ko.md` introductions for improved readability.
+
+## 1.1.2
+
+* **Docs**: Updated `CHANGELOG.md` to include missing version history.
+* **Meta**: Improved package scoring by addressing maintenance issues.
+
+## 1.1.1
+
+* **Docs**: Enhanced discoverability and clarity of package documentation.
+* **Meta**: Updated `pubspec.yaml` with clearer description and topics.
+
+## 1.1.0
+
+* **Feature**: Added `showGrabberOnNonMobile` option to allow displaying the grabber handle on desktop and web platforms.
+
+## 1.0.2
+
+* **Fix**: Corrected the CI badge link in the README files to point to the correct workflow.
+
 ## 1.0.1
 
 * **Patch**: Optimized the minimum supported versions for Dart and Flutter SDKs.

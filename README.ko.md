@@ -1,15 +1,27 @@
 # grabber_sheet (한국어)
 
 [![pub.dev](https://img.shields.io/pub/v/grabber_sheet.svg)](https://pub.dev/packages/grabber_sheet)
-[![Test](https://github.com/SangWook16074/grabber_sheet/actions/workflows/test.yml/badge.svg)](https://github.com/SangWook16074/grabber_sheet/actions/workflows/test.yml)
+[![Test](https://github.com/SangWook16074/grabber_sheet/actions/workflows/ci.yml/badge.svg)](https://github.com/SangWook16074/grabber_sheet/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/SangWook16074/grabber_sheet/branch/main/graph/badge.svg)](https://codecov.io/gh/SangWook16074/grabber_sheet)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/SangWook16074/grabber_sheet/blob/main/LICENSE)
 
-구글 지도(Google Maps)와 같은 인기 앱의 모달 시트에서 영감을 받은, 커스터마이징 가능한 드래그형 하단 시트(bottom sheet)입니다.
+Google 지도와 같은 인기 앱의 모달 시트에서 영감을 받은 재사용 가능하고 사용자 정의 가능한 그래버 핸들이 있는 드래그 가능한 하단 시트입니다.
 
-Flutter에 내장된 `DraggableScrollableSheet`를 기반으로, 눈에 띄는 그래버를 추가하고 스크롤 컨트롤러 관리를 단순화하여 예측 가능한 동작을 보장합니다.
+Flutter의 내장 `DraggableScrollableSheet`의 일반적인 문제점들을 해결합니다:
+1.  **독립된 그래버 영역**: 그래버와 헤더가 스크롤 가능한 콘텐츠와 분리되어 있습니다. 헤더를 드래그하면 시트가 움직이고, 콘텐츠를 스크롤하면 리스트가 움직입니다. 더 이상 제스처 충돌로 고생하지 마세요.
+2.  **예측 가능한 스냅(Snapping)**: 복잡한 컨트롤러 로직 없이도 원하는 높이에 정확히 멈추게 할 수 있습니다.
+3.  **완벽한 연동**: `ListView`, `SingleChildScrollView` 등 모든 스크롤 위젯과 자연스럽게 동작합니다.
 
-<img width="250" src="https://github.com/user-attachments/assets/cc2a3eaf-c872-46f1-8b45-bbf83b781104" />
+<img width="250" src="https://github.com/user-attachments/assets/cc2a3eaf-c872-46f1-4b45-bbf83b781104" />
+
+## 왜 GrabberSheet를 사용해야 하나요?
+
+다음과 같은 문제로 고민해 본 적이 있다면 `GrabberSheet`가 정답입니다.
+*   스크롤을 내릴 때 그래버가 함께 사라져 버리는 문제
+*   헤더를 잡고 끌었는데 시트가 움직이지 않는 문제
+*   스냅 애니메이션이 버벅거리거나 부자연스러운 문제
+
+`GrabberSheet`는 인기 있는 모바일 앱들이 사용하는 "모달 바텀 시트" 패턴을 프로덕션 레벨의 품질로 제공합니다.
 
 ## 목차
 
@@ -49,7 +61,7 @@ Flutter에 내장된 `DraggableScrollableSheet`를 기반으로, 눈에 띄는 �
 
 ```yaml
 dependencies:
-  grabber_sheet: ^1.0.1
+  grabber_sheet: ^1.1.3
 ```
 
 그 다음, 터미널에서 `flutter pub get`을 실행하여 패키지를 설치합니다.
@@ -131,6 +143,71 @@ class ExampleHomePage extends StatelessWidget {
 ```
 
 ## 고급 커스터마이징
+
+### 그래버 영역에 커스텀 위젯 추가하기
+
+`bottom` 프로퍼티를 사용하면 드래그 가능한 그래버 핸들 아래에 커스텀 위젯을 삽입할 수 있습니다. 핸들과 커스텀 위젯을 포함한 이 전체 영역을 드래그하여 시트를 조작할 수 있습니다. 이 기능은 제목, 액션 버튼 등 스크롤 영역과 분리되어 항상 보여야 하는 정보를 추가할 때 유용합니다.
+
+`bottomAreaPadding` 프로퍼티를 사용하여 이 커스텀 위젯 주변에 패딩을 추가할 수 있습니다.
+
+```dart
+GrabberSheet(
+  bottom: Row(
+    children: [
+      const Text('sheet title'),
+      const Spacer(),
+      IconButton(onPressed: () {}, icon: const Icon(Icons.close)),
+    ],
+  ),
+  bottomAreaPadding: const EdgeInsets.symmetric(horizontal: 16),
+  builder: (context, scrollController) {
+    // ... your list of locations
+  },
+),
+```
+
+<img width="250" src="https://github.com/user-attachments/assets/669f7506-2b92-408f-a239-240ac68ca621" />
+
+### 그래버 핸들 꾸미기
+
+그래버 핸들의 모양은 `grabberStyle` 프로퍼티를 통해 자유롭게 변경할 수 있습니다.
+
+```dart
+GrabberSheet(
+  grabberStyle: GrabberStyle(
+    width: 60,
+    height: 6,
+    margin: const EdgeInsets.symmetric(vertical: 10),
+    color: Colors.grey.shade300,
+    radius: const Radius.circular(12),
+  ),
+  builder: (context, scrollController) {
+    // ... Your content
+  },
+),
+```
+
+<img width="250" src="https://github.com/user-attachments/assets/8d062fa4-cdda-4445-9d90-b34aa3fce1c5" />
+
+
+`showGrabber: false`로 설정하여 그래버를 완전히 숨길 수도 있습니다.
+
+<img width="250" src="https://github.com/user-attachments/assets/20d589b5-54c3-4da3-b420-0c1b10f3e9ef" />
+
+### 데스크톱 및 웹에서 그래버 표시하기
+
+기본적으로 그래버 핸들은 모바일 플랫폼(iOS, Android)에서만 표시됩니다. 하지만 `showGrabberOnNonMobile` 속성을 `true`로 설정하면 데스크톱(Windows, macOS, Linux) 및 웹 플랫폼에서도 그래버를 항상 표시하도록 강제할 수 있습니다. 이는 모든 플랫폼에서 일관된 UI를 제공하고자 할 때 유용합니다.
+
+```dart
+GrabberSheet(
+  showGrabberOnNonMobile: true,
+  builder: (context, scrollController) {
+    // ... Your content
+  },
+),
+```
+
+![grabber_sheet_web](https://github.com/user-attachments/assets/c151bdad-254b-455b-b82a-1308b8863784)
 
 ### 스냅 동작 제어하기
 
