@@ -11,7 +11,8 @@ void main() {
       controller = GrabberSheetController();
     });
 
-    testWidgets('maximize() and minimize() update sheet extent', (WidgetTester tester) async {
+    testWidgets('maximize() and minimize() update sheet extent',
+        (WidgetTester tester) async {
       double currentExtent = 0.0;
       const minSize = 0.2;
       const maxSize = 0.9;
