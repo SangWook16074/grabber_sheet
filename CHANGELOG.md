@@ -1,3 +1,11 @@
+## 1.2.0
+
+* **Feat**: Added `GrabberSheetController` for programmatic control (`maximize`, `minimize`, `animateTo`).
+* **Feat**: Added `onSizeChanged` and `onSnap` callbacks for monitoring sheet state.
+* **Feat**: Added `borderRadius` property to `GrabberSheet` for customizing sheet corners.
+* **Docs**: Reorganized documentation sections for better readability.
+* **Docs**: Updated Korean documentation (`README.ko.md`).
+
 ## 1.1.3
 
 * **Docs**: Optimized `pubspec.yaml` description for better search visibility on pub.dev.

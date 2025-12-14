@@ -12,7 +12,7 @@ Flutter의 내장 `DraggableScrollableSheet`의 일반적인 문제점들을 해
 2.  **예측 가능한 스냅(Snapping)**: 복잡한 컨트롤러 로직 없이도 원하는 높이에 정확히 멈추게 할 수 있습니다.
 3.  **완벽한 연동**: `ListView`, `SingleChildScrollView` 등 모든 스크롤 위젯과 자연스럽게 동작합니다.
 
-<img width="250" src="https://github.com/user-attachments/assets/cc2a3eaf-c872-46f1-4b45-bbf83b781104" />
+<img width="250" src="https://github.com/user-attachments/assets/cc2a3eaf-c872-46f1-8b45-bbf83b781104" />
 
 ## 왜 GrabberSheet를 사용해야 하나요?
 
@@ -34,6 +34,7 @@ Flutter의 내장 `DraggableScrollableSheet`의 일반적인 문제점들을 해
   - [그래버 핸들 꾸미기](#그래버-핸들-꾸미기)
   - [그래버 영역에 커스텀 위젯 추가하기](#그래버-영역에-커스텀-위젯-추가하기)
   - [프로그래밍 방식 제어 및 상태 리스닝](#프로그래밍-방식-제어-및-상태-리스닝)
+  - [데스크톱 및 웹에서 그래버 표시하기](#데스크톱-및-웹에서-그래버-표시하기)
 - [속성 (Properties)](#속성-properties)
   - [GrabberSheet](#grabbersheet-1)
   - [GrabberStyle](#grabberstyle-1)
@@ -51,7 +52,7 @@ Flutter의 내장 `DraggableScrollableSheet`의 일반적인 문제점들을 해
 *   `snap` 및 `snapSizes`를 통한 스냅 동작 및 사용자 정의 스냅 지점 설정 가능
 *   그래버 스타일(색상, 크기, 모양) 커스터마이징 가능
 *   네이티브한 느낌을 위해 데스크톱 및 웹 플랫폼에서는 그래버가 자동으로 숨겨집니다.
-*   시트는 기본적으로 상단에 둥근 모서리를 가집니다.
+*   시트는 기본적으로 상단에 둥근 모서리를 가집니다(커스터마이징 가능).
 *   **프로그래밍 방식 제어**: `GrabberSheetController`를 사용하여 시트를 `maximize()`, `minimize()`하거나 특정 크기로 `animateTo()`할 수 있습니다.
 *   **상태 콜백**: 드래그/리사이징 중 `onSizeChanged` 알림을 받고, 시트가 스냅 지점에 멈췄을 때 `onSnap` 알림을 받을 수 있습니다.
 
@@ -61,7 +62,7 @@ Flutter의 내장 `DraggableScrollableSheet`의 일반적인 문제점들을 해
 
 ```yaml
 dependencies:
-  grabber_sheet: ^1.1.3
+  grabber_sheet: ^1.2.0
 ```
 
 그 다음, 터미널에서 `flutter pub get`을 실행하여 패키지를 설치합니다.
@@ -109,6 +110,7 @@ class ExampleHomePage extends StatelessWidget {
             snap: true,
             snapSizes: const [.5],
             backgroundColor: sheetColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(30)), // 둥근 모서리 설정
             grabberStyle: GrabberStyle(color: Colors.grey.shade400),
             bottom: Row(
               children: [
@@ -143,71 +145,6 @@ class ExampleHomePage extends StatelessWidget {
 ```
 
 ## 고급 커스터마이징
-
-### 그래버 영역에 커스텀 위젯 추가하기
-
-`bottom` 프로퍼티를 사용하면 드래그 가능한 그래버 핸들 아래에 커스텀 위젯을 삽입할 수 있습니다. 핸들과 커스텀 위젯을 포함한 이 전체 영역을 드래그하여 시트를 조작할 수 있습니다. 이 기능은 제목, 액션 버튼 등 스크롤 영역과 분리되어 항상 보여야 하는 정보를 추가할 때 유용합니다.
-
-`bottomAreaPadding` 프로퍼티를 사용하여 이 커스텀 위젯 주변에 패딩을 추가할 수 있습니다.
-
-```dart
-GrabberSheet(
-  bottom: Row(
-    children: [
-      const Text('sheet title'),
-      const Spacer(),
-      IconButton(onPressed: () {}, icon: const Icon(Icons.close)),
-    ],
-  ),
-  bottomAreaPadding: const EdgeInsets.symmetric(horizontal: 16),
-  builder: (context, scrollController) {
-    // ... your list of locations
-  },
-),
-```
-
-<img width="250" src="https://github.com/user-attachments/assets/669f7506-2b92-408f-a239-240ac68ca621" />
-
-### 그래버 핸들 꾸미기
-
-그래버 핸들의 모양은 `grabberStyle` 프로퍼티를 통해 자유롭게 변경할 수 있습니다.
-
-```dart
-GrabberSheet(
-  grabberStyle: GrabberStyle(
-    width: 60,
-    height: 6,
-    margin: const EdgeInsets.symmetric(vertical: 10),
-    color: Colors.grey.shade300,
-    radius: const Radius.circular(12),
-  ),
-  builder: (context, scrollController) {
-    // ... Your content
-  },
-),
-```
-
-<img width="250" src="https://github.com/user-attachments/assets/8d062fa4-cdda-4445-9d90-b34aa3fce1c5" />
-
-
-`showGrabber: false`로 설정하여 그래버를 완전히 숨길 수도 있습니다.
-
-<img width="250" src="https://github.com/user-attachments/assets/20d589b5-54c3-4da3-b420-0c1b10f3e9ef" />
-
-### 데스크톱 및 웹에서 그래버 표시하기
-
-기본적으로 그래버 핸들은 모바일 플랫폼(iOS, Android)에서만 표시됩니다. 하지만 `showGrabberOnNonMobile` 속성을 `true`로 설정하면 데스크톱(Windows, macOS, Linux) 및 웹 플랫폼에서도 그래버를 항상 표시하도록 강제할 수 있습니다. 이는 모든 플랫폼에서 일관된 UI를 제공하고자 할 때 유용합니다.
-
-```dart
-GrabberSheet(
-  showGrabberOnNonMobile: true,
-  builder: (context, scrollController) {
-    // ... Your content
-  },
-),
-```
-
-![grabber_sheet_web](https://github.com/user-attachments/assets/c151bdad-254b-455b-b82a-1308b8863784)
 
 ### 스냅 동작 제어하기
 
@@ -425,6 +362,21 @@ class _ExampleHomePageState extends State<ExampleHomePage> {
 ```
 <img width="250" src="https://github.com/user-attachments/assets/b90799fa-5db5-4e6a-bb9b-3750198877d7" alt="FAB 제어 GrabberSheet 예시" />
 
+### 데스크톱 및 웹에서 그래버 표시하기
+
+기본적으로 그래버 핸들은 모바일 플랫폼(iOS, Android)에서만 표시됩니다. 하지만 `showGrabberOnNonMobile` 속성을 `true`로 설정하면 데스크톱(Windows, macOS, Linux) 및 웹 플랫폼에서도 그래버를 항상 표시하도록 강제할 수 있습니다. 이는 모든 플랫폼에서 일관된 UI를 제공하고자 할 때 유용합니다.
+
+```dart
+GrabberSheet(
+  showGrabberOnNonMobile: true,
+  builder: (context, scrollController) {
+    // ... Your content
+  },
+),
+```
+
+![grabber_sheet_web](https://github.com/user-attachments/assets/c151bdad-254b-455b-b82a-1308b8863784)
+
 ## 속성 (Properties)
 
 ### GrabberSheet
@@ -441,7 +393,8 @@ class _ExampleHomePageState extends State<ExampleHomePage> {
 | `grabberStyle`      | `GrabberStyle`                           | 그래버 핸들의 시각적 스타일.                                                                                                                                                                                                                              | `const GrabberStyle()`                       |
 | `bottom`            | `Widget?`                                | 그래버 아래, 메인 콘텐츠 위에 표시할 커스텀 위젯.                                                                                                                                                                                                                            | `null`                                       |
 | `bottomAreaPadding` | `EdgeInsetsGeometry?`                    | `bottom` 위젯 영역의 패딩.                                                                                                                                                                                                                            | `null`                                       |
-| `backgroundColor`   | `Color?`                                 | 시트 컨테이너의 배경색. `null`이면 테마의 `colorScheme.surface`를 사용합니다. 시트는 기본적으로 16.0의 상단 모서리 반경을 가집니다.                                                                                                                  | `Theme.of(context).colorScheme.surface`      |
+| `backgroundColor`   | `Color?`                                 | 시트 컨테이너의 배경색. `null`이면 테마의 `colorScheme.surface`를 사용합니다.                                                                                                                  | `Theme.of(context).colorScheme.surface`      |
+| `borderRadius`      | `BorderRadiusGeometry?`                  | 시트의 모서리 둥글기. `null`이면 상단 좌우 모서리가 16.0인 기본값을 사용합니다.                                                                                                                                                                                                    | `const BorderRadius.vertical(top: Radius.circular(16.0))` |
 | `controller`        | `GrabberSheetController?`                | 시트의 크기와 상태를 프로그래밍 방식으로 제어하기 위한 선택적 컨트롤러입니다. `maximize()`, `minimize()` 및 모든 `DraggableScrollableController` 메서드를 제공합니다.                                                                | `null`                                       |
 | `onSizeChanged`     | `ValueChanged<double>?`                  | 시트의 비율 크기가 변경될 때마다(드래그 또는 애니메이션 중) 호출되는 콜백입니다.                                                                                                                                                                 | `null`                                       |
 | `onSnap`            | `ValueChanged<double>?`                  | 시트가 스냅 애니메이션을 완료하고 특정 비율 크기에 안착했을 때 호출되는 콜백입니다.                                                                                                                                                         | `null`                                       |

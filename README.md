@@ -18,6 +18,7 @@
   - [Customizing the Grabber](#customizing-the-grabber)
   - [Adding a Custom Widget to the Grabber Area](#adding-a-custom-widget-to-the-grabber-area)
   - [Programmatic Control & State Listeners](#programmatic-control--state-listeners)
+  - [Showing the Grabber on Desktop and Web](#showing-the-grabber-on-desktop-and-web)
 - [Properties](#properties)
   - [GrabberSheet](#grabbersheet-1)
   - [GrabberStyle](#grabberstyle-1)
@@ -53,7 +54,7 @@ Then `GrabberSheet` is the solution you've been looking for. It provides a robus
 *   Optional snapping behavior with custom snap points via `snap` and `snapSizes`.
 *   Customize grabber style (color, size, shape).
 *   Grabber is automatically hidden on desktop and web platforms for a native feel.
-*   Sheet has rounded top corners by default.
+*   Sheet has rounded top corners by default (customizable via `borderRadius`).
 *   **Programmatic Control**: Use `GrabberSheetController` to `maximize()`, `minimize()`, or `animateTo()` specific sizes.
 *   **State Callbacks**: Receive notifications on `onSizeChanged` during dragging/resizing and `onSnap` when the sheet settles at a snap point.
 
@@ -63,7 +64,7 @@ Add this to your package's `pubspec.yaml` file. Check the latest version on [pub
 
 ```yaml
 dependencies:
-  grabber_sheet: ^1.1.3
+  grabber_sheet: ^1.2.0
 ```
 
 Then, install it by running `flutter pub get` in your terminal.
@@ -111,6 +112,7 @@ class ExampleHomePage extends StatelessWidget {
             snap: true,
             snapSizes: const [.5],
             backgroundColor: sheetColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(30)), // Custom border radius
             grabberStyle: GrabberStyle(color: Colors.grey.shade400),
             bottom: Row(
               children: [
@@ -146,70 +148,6 @@ class ExampleHomePage extends StatelessWidget {
 
 ## Advanced Customization
 
-### Adding a Custom Widget to the Grabber Area
-
-You can insert a custom widget into the draggable area below the grabber handle using the `bottom` property. This entire area (handle and custom widget) is draggable. This is useful for adding a title, action buttons, or any other information that should remain visible and separate from the scrollable content.
-
-The `bottomAreaPadding` property can be used to add padding around this custom widget.
-
-```dart
-GrabberSheet(
-  bottom: Row(
-    children: [
-      const Text('sheet title'),
-      const Spacer(),
-      IconButton(onPressed: () {}, icon: const Icon(Icons.close)),
-    ],
-  ),
-  bottomAreaPadding: const EdgeInsets.symmetric(horizontal: 16),
-  builder: (context, scrollController) {
-    // ... your list of locations
-  },
-),
-```
-
-<img width="250" src="https://github.com/user-attachments/assets/669f7506-2b92-408f-a239-240ac68ca621" />
-
-### Customizing the Grabber
-
-The appearance of the grabber handle can be fully customized using the `grabberStyle` property.
-
-```dart
-GrabberSheet(
-  grabberStyle: GrabberStyle(
-    width: 60,
-    height: 6,
-    margin: const EdgeInsets.symmetric(vertical: 10),
-    color: Colors.grey.shade300,
-    radius: const Radius.circular(12),
-  ),
-  builder: (context, scrollController) {
-    // ... your content
-  },
-),
-```
-
-<img width="250" src="https://github.com/user-attachments/assets/8d062fa4-cdda-4445-9d90-b34aa3fce1c5" />
-
-You can also hide the grabber completely by setting `showGrabber: false`.
-
-<img width="250" src="https://github.com/user-attachments/assets/20d589b5-54c3-4da3-b420-0c1b10f3e9ef" />
-
-### Showing the Grabber on Desktop and Web
-
-By default, the grabber handle is only visible on mobile platforms (iOS, Android). However, you can force it to always be visible on desktop (Windows, macOS, Linux) and web platforms by setting the `showGrabberOnNonMobile` property to `true`. This is useful when you want to provide a consistent UI across all platforms.
-
-```dart
-GrabberSheet(
-  showGrabberOnNonMobile: true,
-  builder: (context, scrollController) {
-    // ... Your content
-  },
-),
-```
-
-![grabber_sheet_web](https://github.com/user-attachments/assets/631bc09f-b4a4-4736-8df4-a52501e6c192)
-
 ### Controlling Snap Behavior
 
 By setting `snap` to `true`, the sheet will automatically animate to the nearest defined snap point when a drag gesture ends. This creates a clean, predictable motion for the user.
@@ -241,7 +179,6 @@ GrabberSheet(
 ```
 
 ![snap gif](https://github.com/user-attachments/assets/3727d83a-456b-4fd9-a721-8ad3e2116005)
-
 
 ### Customizing the Grabber
 
@@ -426,6 +363,21 @@ class _ExampleHomePageState extends State<ExampleHomePage> {
 ```
 <img width="250" src="https://github.com/user-attachments/assets/b90799fa-5db5-4e6a-bb9b-3750198877d7" alt="Example of GrabberSheet with FAB control" />
 
+### Showing the Grabber on Desktop and Web
+
+By default, the grabber handle is only visible on mobile platforms (iOS, Android). However, you can force it to always be visible on desktop (Windows, macOS, Linux) and web platforms by setting the `showGrabberOnNonMobile` property to `true`. This is useful when you want to provide a consistent UI across all platforms.
+
+```dart
+GrabberSheet(
+  showGrabberOnNonMobile: true,
+  builder: (context, scrollController) {
+    // ... Your content
+  },
+),
+```
+
+![grabber_sheet_web](https://github.com/user-attachments/assets/631bc09f-b4a4-4736-8df4-a52501e6c192)
+
 ## Properties
 
 ### GrabberSheet
@@ -442,7 +394,8 @@ class _ExampleHomePageState extends State<ExampleHomePage> {
 | `grabberStyle`      | `GrabberStyle`                           | The visual style of the grabber handle.                                                                                                                                                                                               | `const GrabberStyle()`                       |
 | `bottom`            | `Widget?`                                | A custom widget to display below the grabber and above the main content.                                                                                                                                                              | `null`                                       |
 | `bottomAreaPadding` | `EdgeInsetsGeometry?`                    | The padding for the `bottom` widget area.                                                                                                                                                                                             | `null`                                       |
-| `backgroundColor`   | `Color?`                                 | The background color of the sheet container. If null, it uses the theme's `colorScheme.surface`. The sheet has a default top border radius of 16.0.                                                                                   | `Theme.of(context).colorScheme.surface`      |
+| `backgroundColor`   | `Color?`                                 | The background color of the sheet container. If null, it uses the theme's `colorScheme.surface`.                                                                                   | `Theme.of(context).colorScheme.surface`      |
+| `borderRadius`      | `BorderRadiusGeometry?`                  | The border radius of the sheet. If null, defaults to a top-left and top-right radius of 16.0.                                                                                                                                         | `const BorderRadius.vertical(top: Radius.circular(16.0))` |
 | `controller`        | `GrabberSheetController?`                | An optional controller to programmatically control the sheet's size and state. Provides `maximize()`, `minimize()`, and all `DraggableScrollableController` methods.                                                                | `null`                                       |
 | `onSizeChanged`     | `ValueChanged<double>?`                  | Callback that is called whenever the sheet's fractional size changes (during dragging or animation).                                                                                                                                  | `null`                                       |
 | `onSnap`            | `ValueChanged<double>?`                  | Callback that is called when the sheet completes a snap animation and settles at a specific fractional size.                                                                                                                          | `null`                                       |
