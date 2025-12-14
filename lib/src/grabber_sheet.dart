@@ -88,6 +88,11 @@ class GrabberSheet extends StatefulWidget {
   /// The callback receives the snapped fractional size.
   final ValueChanged<double>? onSnap;
 
+  /// The border radius of the sheet.
+  ///
+  /// If null, defaults to a top-left and top-right radius of 16.0.
+  final BorderRadiusGeometry? borderRadius;
+
   /// Creates a new instance of [GrabberSheet].
   const GrabberSheet({
     super.key,
@@ -106,6 +111,7 @@ class GrabberSheet extends StatefulWidget {
     this.controller,
     this.onSizeChanged,
     this.onSnap,
+    this.borderRadius,
   })  : assert(minChildSize >= 0.0),
         assert(maxChildSize <= 1.0),
         assert(minChildSize <= initialChildSize),
@@ -182,10 +188,11 @@ class _GrabberSheetState extends State<GrabberSheet> {
               return Container(
                 decoration: BoxDecoration(
                   color: sheetColor,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(16.0),
-                    topRight: Radius.circular(16.0),
-                  ),
+                  borderRadius: widget.borderRadius ??
+                      const BorderRadius.only(
+                        topLeft: Radius.circular(16.0),
+                        topRight: Radius.circular(16.0),
+                      ),
                 ),
                 child: Column(
                   children: <Widget>[

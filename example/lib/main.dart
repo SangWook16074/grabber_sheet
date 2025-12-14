@@ -117,6 +117,10 @@ class _ExampleHomePageState extends State<ExampleHomePage> {
             snap: true,
             snapSizes: const [.5],
             backgroundColor: sheetColor,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(30),
+              topRight: Radius.circular(30),
+            ),
             grabberStyle: GrabberStyle(color: Colors.grey.shade400),
             bottom: Row(
               children: [
