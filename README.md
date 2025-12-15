@@ -7,6 +7,24 @@
 [![codecov](https://codecov.io/gh/SangWook16074/grabber_sheet/branch/main/graph/badge.svg)](https://codecov.io/gh/SangWook16074/grabber_sheet)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/SangWook16074/grabber_sheet/blob/main/LICENSE)
 
+A reusable and customizable draggable bottom sheet with a grabber handle, inspired by the modal sheets in popular apps like Google Maps.
+
+It solves the common frustrations with Flutter's built-in `DraggableScrollableSheet`:
+1.  **Independent Grabber Area**: The grabber and header are separate from the scrollable content. Dragging the header moves the sheet; scrolling the content scrolls the list. No more gesture conflicts.
+2.  **Predictable Snapping**: Easily snap to specific heights without complex controller logic.
+3.  **Seamless Integration**: Works perfectly with `ListView`, `SingleChildScrollView`, and other scrollable widgets.
+
+<img width="250" src="https://github.com/user-attachments/assets/cc2a3eaf-c872-46f1-8b45-bbf83b781104" />
+
+## Why use GrabberSheet?
+
+If you've ever struggled with:
+*   The grabber disappearing when you scroll down.
+*   The sheet not moving when you try to drag the header.
+*   Janky snapping animations.
+
+Then `GrabberSheet` is the solution you've been looking for. It provides a robust, production-ready implementation of the "modal bottom sheet" pattern found in top-tier mobile apps.
+
 ## Table of Contents
 
 - [Features](#features)
@@ -25,24 +43,6 @@
 - [Additional information](#additional-information)
 
 ---
-
-A reusable and customizable draggable bottom sheet with a grabber handle, inspired by the modal sheets in popular apps like Google Maps.
-
-It solves the common frustrations with Flutter's built-in `DraggableScrollableSheet`:
-1.  **Independent Grabber Area**: The grabber and header are separate from the scrollable content. Dragging the header moves the sheet; scrolling the content scrolls the list. No more gesture conflicts.
-2.  **Predictable Snapping**: Easily snap to specific heights without complex controller logic.
-3.  **Seamless Integration**: Works perfectly with `ListView`, `SingleChildScrollView`, and other scrollable widgets.
-
-<img width="250" src="https://github.com/user-attachments/assets/cc2a3eaf-c872-46f1-8b45-bbf83b781104" />
-
-## Why use GrabberSheet?
-
-If you've ever struggled with:
-*   The grabber disappearing when you scroll down.
-*   The sheet not moving when you try to drag the header.
-*   Janky snapping animations.
-
-Then `GrabberSheet` is the solution you've been looking for. It provides a robust, production-ready implementation of the "modal bottom sheet" pattern found in top-tier mobile apps.
 
 ## Features
 
