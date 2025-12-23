@@ -1,3 +1,11 @@
+## 1.2.1
+
+* **Docs**: Comprehensive refactor of `README.md` and `README.ko.md` for high impact and clarity.
+  - **Hero Section**: Redesigned to immediately highlight solved pain points (gesture conflicts).
+  - **Structure**: Moved "Usage" section to the top for quicker onboarding.
+  - **Comparison**: Added a detailed comparison table with `DraggableScrollableSheet`.
+  - **Visuals**: Restored and improved screenshots and GIFs for better feature demonstration.
+
 ## 1.2.0
 
 * **Feat**: Added `GrabberSheetController` for programmatic control (`maximize`, `minimize`, `animateTo`).
