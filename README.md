@@ -2,21 +2,16 @@
 
 # grabber_sheet
 
+**The Scrollable Sheet that *Actually* Works.**
+
+<img width="250" src="https://github.com/user-attachments/assets/cc2a3eaf-c872-46f1-8b45-bbf83b781104" />
+
 [![pub.dev](https://img.shields.io/pub/v/grabber_sheet.svg)](https://pub.dev/packages/grabber_sheet)
 [![Test](https://github.com/SangWook16074/grabber_sheet/actions/workflows/ci.yml/badge.svg)](https://github.com/SangWook16074/grabber_sheet/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/SangWook16074/grabber_sheet/branch/main/graph/badge.svg)](https://codecov.io/gh/SangWook16074/grabber_sheet)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/SangWook16074/grabber_sheet/blob/main/LICENSE)
 
-**Tired of DraggableScrollableSheet gesture conflicts? `grabber_sheet` offers a customizable, smooth-snapping bottom sheet with a persistent grabber, solving common UI frustrations.**
-
-<img width="250" src="https://github.com/user-attachments/assets/cc2a3eaf-c872-46f1-8b45-bbf83b781104" />
-
-## ✨ Who Needs This?
-
-*   **Frustrated by `DraggableScrollableSheet` gesture conflicts?** When your list scrolls, but the sheet tries to drag? `GrabberSheet` solves it.
-*   **Struggling to keep your header/grabber visible?** `GrabberSheet` ensures your draggable area stays separate and accessible.
-*   **Want smooth, predictable snapping without complex logic?** Define your snap points, and `GrabberSheet` handles the rest.
-*   **Looking for a polished, app-like bottom sheet UI?** Inspired by popular apps, `GrabberSheet` delivers a premium experience.
+Stop fighting with `DraggableScrollableSheet` gesture conflicts. `GrabberSheet` provides a smooth, customizable bottom sheet with a persistent grabber that just works.
 
 ## Why `GrabberSheet`?
 
@@ -28,6 +23,13 @@ I built this because `DraggableScrollableSheet` was too frustrating. The gesture
 | **Gesture Conflicts** | ⚠️ (Scroll vs. Drag fights) | ✅ (Perfectly separated) |
 | **Snap Animation** | ⚠️ (Complex logic required) | ✅ (Simple parameter) |
 | **Ease of Use** | 🔥 Hard | 🍰 Easy |
+
+## ✨ Who Needs This?
+
+*   **Frustrated by `DraggableScrollableSheet` gesture conflicts?** When your list scrolls, but the sheet tries to drag? `GrabberSheet` solves it.
+*   **Struggling to keep your header/grabber visible?** `GrabberSheet` ensures your draggable area stays separate and accessible.
+*   **Want smooth, predictable snapping without complex logic?** Define your snap points, and `GrabberSheet` handles the rest.
+*   **Looking for a polished, app-like bottom sheet UI?** Inspired by popular apps, `GrabberSheet` delivers a premium experience.
 
 ## Table of Contents
 
