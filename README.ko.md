@@ -5,30 +5,32 @@
 [![codecov](https://codecov.io/gh/SangWook16074/grabber_sheet/branch/main/graph/badge.svg)](https://codecov.io/gh/SangWook16074/grabber_sheet)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/SangWook16074/grabber_sheet/blob/main/LICENSE)
 
-Google 지도와 같은 인기 앱의 모달 시트에서 영감을 받은 재사용 가능하고 사용자 정의 가능한 그래버 핸들이 있는 드래그 가능한 하단 시트입니다.
-
-Flutter의 내장 `DraggableScrollableSheet`의 일반적인 문제점들을 해결합니다:
-1.  **독립된 그래버 영역**: 그래버와 헤더가 스크롤 가능한 콘텐츠와 분리되어 있습니다. 헤더를 드래그하면 시트가 움직이고, 콘텐츠를 스크롤하면 리스트가 움직입니다. 더 이상 제스처 충돌로 고생하지 마세요.
-2.  **예측 가능한 스냅(Snapping)**: 복잡한 컨트롤러 로직 없이도 원하는 높이에 정확히 멈추게 할 수 있습니다.
-3.  **완벽한 연동**: `ListView`, `SingleChildScrollView` 등 모든 스크롤 위젯과 자연스럽게 동작합니다.
+**`DraggableScrollableSheet`의 제스처 충돌에 지치셨나요? `grabber_sheet`는 끊김 없는 스크롤과 부드러운 스냅(Snap), 그리고 항상 고정된 그래버를 제공하여 여러분의 UI 고민을 해결해 드립니다.**
 
 <img width="250" src="https://github.com/user-attachments/assets/cc2a3eaf-c872-46f1-8b45-bbf83b781104" />
 
-## 왜 GrabberSheet를 사용해야 하나요?
+## ✨ 이런 분들에게 필요합니다
 
-다음과 같은 문제로 고민해 본 적이 있다면 `GrabberSheet`가 정답입니다.
-*   스크롤을 내릴 때 그래버가 함께 사라져 버리는 문제
-*   헤더를 잡고 끌었는데 시트가 움직이지 않는 문제
-*   스냅 애니메이션이 버벅거리거나 부자연스러운 문제
+*   **`DraggableScrollableSheet`의 제스처 충돌로 고통받는 분:** 리스트를 스크롤했는데 시트가 드래그되는 경험, 이제 그만하세요.
+*   **헤더나 그래버가 자꾸 사라져서 고민인 분:** `GrabberSheet`는 드래그 영역을 확실하게 분리하여 언제나 접근 가능하게 만듭니다.
+*   **복잡한 로직 없이 깔끔한 스냅(Snap)을 원하는 분:** 스냅 지점만 설정하면 나머지는 알아서 처리해 드립니다.
+*   **완성도 높은 앱 수준의 바텀 시트 UI를 찾는 분:** 유명 앱들에서 보던 바로 그 프리미엄한 사용성을 제공합니다.
 
-`GrabberSheet`는 인기 있는 모바일 앱들이 사용하는 "모달 바텀 시트" 패턴을 프로덕션 레벨의 품질로 제공합니다.
+## 왜 `GrabberSheet`인가요?
+
+`DraggableScrollableSheet`의 제스처 충돌과 사라지는 그래버 문제, 더 이상 참지 마세요. `GrabberSheet`는 이 문제들을 즉시 해결합니다.
+
+| 기능 | DraggableScrollableSheet | GrabberSheet |
+| :--- | :---: | :---: |
+| **헤더/그래버 고정** | ❌ (직접 구현 필요) | ✅ (기본 제공) |
+| **제스처 충돌** | ⚠️ (스크롤 vs 드래그 싸움) | ✅ (완벽 분리) |
+| **Snap 애니메이션** | ⚠️ (복잡한 로직 필요) | ✅ (파라미터 하나로 끝) |
+| **사용 난이도** | 🔥 어려움 | 🍰 쉬움 |
 
 ## 목차
 
-- [주요 특징](#주요-특징)
-- [시작하기](#시작하기)
-- [호환성](#호환성)
-- [기본 사용법](#기본-사용법)
+- [설치 (Installation)](#설치-installation)
+- [사용법 (단 3줄)](#사용법-단-3줄)
 - [고급 커스터마이징](#고급-커스터마이징)
   - [스냅 동작 제어하기](#스냅-동작-제어하기)
   - [그래버 핸들 꾸미기](#그래버-핸들-꾸미기)
@@ -42,30 +44,11 @@ Flutter의 내장 `DraggableScrollableSheet`의 일반적인 문제점들을 해
 
 ---
 
-## 주요 특징
+## 설치 (Installation)
 
-*   커스터마이징 가능한 그래버(grabber) 핸들이 있는 드래그형 하단 시트
-*   스크롤 컨트롤러 충돌 문제를 해결한 안정적이고 예측 가능한 동작
-*   빌더(`builder`)를 통해 어떤 위젯이든 시트의 콘텐츠로 사용 가능
-*   드래그 가능한 그래버 영역에 커스텀 위젯 삽입 가능
-*   시트 크기(초기, 최소, 최대) 조절 가능
-*   `snap` 및 `snapSizes`를 통한 스냅 동작 및 사용자 정의 스냅 지점 설정 가능
-*   그래버 스타일(색상, 크기, 모양) 커스터마이징 가능
-*   네이티브한 느낌을 위해 데스크톱 및 웹 플랫폼에서는 그래버가 자동으로 숨겨집니다.
-*   시트는 기본적으로 상단에 둥근 모서리를 가집니다(커스터마이징 가능).
-*   **프로그래밍 방식 제어**: `GrabberSheetController`를 사용하여 시트를 `maximize()`, `minimize()`하거나 특정 크기로 `animateTo()`할 수 있습니다.
-*   **상태 콜백**: 드래그/리사이징 중 `onSizeChanged` 알림을 받고, 시트가 스냅 지점에 멈췄을 때 `onSnap` 알림을 받을 수 있습니다.
-
-## 시작하기
-
-`pubspec.yaml` 파일에 아래 의존성을 추가하세요. 최신 버전은 [pub.dev](https://pub.dev/packages/grabber_sheet)에서 확인하실 수 있습니다.
-
-```yaml
-dependencies:
-  grabber_sheet: ^1.2.0
+```bash
+flutter pub add grabber_sheet
 ```
-
-그 다음, 터미널에서 `flutter pub get`을 실행하여 패키지를 설치합니다.
 
 ## 호환성
 
@@ -73,75 +56,20 @@ dependencies:
 *   **Flutter**: `>=3.0.0`
 *   **Dart**: `>=3.0.0 <4.0.0`
 
-## 기본 사용법
+## 사용법 (단 3줄)
 
-`GrabberSheet`의 간단한 사용 예제입니다.
+리스트를 `GrabberSheet`로 감싸고 `ScrollController`만 연결하면 끝입니다.
 
 ```dart
-import 'package:flutter/material.dart';
-import 'package:grabber_sheet/grabber_sheet.dart';
-
-class ExampleHomePage extends StatelessWidget {
-  const ExampleHomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final sheetColor = Colors.blue.shade100;
-
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text('GrabberSheet Example'),
-        backgroundColor: sheetColor,
-      ),
-      body: Stack(
-        children: [
-          Center(
-            child: Text(
-              'Background Content',
-              style: theme.textTheme.headlineMedium,
-            ),
-          ),
-          GrabberSheet(
-            initialChildSize: 0.5,
-            minChildSize: 0.2,
-            maxChildSize: 0.8,
-            snap: true,
-            snapSizes: const [.5],
-            backgroundColor: sheetColor,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(30)), // 둥근 모서리 설정
-            grabberStyle: GrabberStyle(color: Colors.grey.shade400),
-            bottom: Row(
-              children: [
-                const Text('sheet title'),
-                const Spacer(),
-                IconButton(onPressed: () {}, icon: const Icon(Icons.close)),
-              ],
-            ),
-            bottomAreaPadding: const EdgeInsets.symmetric(horizontal: 16),
-            builder: (BuildContext context, ScrollController scrollController) {
-              return ListView.builder(
-                controller: scrollController,
-                itemCount: 30,
-                itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    title: Text(
-                      'Item $index',
-                      style: TextStyle(
-                        color: theme.colorScheme.onSurface,
-                      ),
-                    ),
-                  );
-                },
-              );
-            },
-          ),
-        ],
-      ),
+GrabberSheet(
+  snap: true, // 자동 스냅 활성화!
+  builder: (context, controller) {
+    return ListView.builder(
+      controller: controller, // <--- 이것만 연결하면 됩니다!
+      itemBuilder: (context, index) => ListTile(title: Text('Item $index')),
     );
-  }
-}
+  },
+)
 ```
 
 ## 고급 커스터마이징

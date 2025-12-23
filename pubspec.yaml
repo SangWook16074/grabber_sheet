@@ -1,5 +1,5 @@
 name: grabber_sheet
-description: "A customizable draggable bottom sheet inspired by modal sheets in popular apps. Solves gesture conflicts with an independent grabber and smooth snapping. The ultimate DraggableScrollableSheet alternative."
+description: "Tired of DraggableScrollableSheet gesture conflicts? grabber_sheet offers a customizable, smooth-snapping bottom sheet with a persistent grabber, solving common UI frustrations."
 topics:
   - bottom-sheet
   - draggable-sheet

@@ -7,30 +7,32 @@
 [![codecov](https://codecov.io/gh/SangWook16074/grabber_sheet/branch/main/graph/badge.svg)](https://codecov.io/gh/SangWook16074/grabber_sheet)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/SangWook16074/grabber_sheet/blob/main/LICENSE)
 
-A reusable and customizable draggable bottom sheet with a grabber handle, inspired by the modal sheets in popular apps like Google Maps.
-
-It solves the common frustrations with Flutter's built-in `DraggableScrollableSheet`:
-1.  **Independent Grabber Area**: The grabber and header are separate from the scrollable content. Dragging the header moves the sheet; scrolling the content scrolls the list. No more gesture conflicts.
-2.  **Predictable Snapping**: Easily snap to specific heights without complex controller logic.
-3.  **Seamless Integration**: Works perfectly with `ListView`, `SingleChildScrollView`, and other scrollable widgets.
+**Tired of DraggableScrollableSheet gesture conflicts? `grabber_sheet` offers a customizable, smooth-snapping bottom sheet with a persistent grabber, solving common UI frustrations.**
 
 <img width="250" src="https://github.com/user-attachments/assets/cc2a3eaf-c872-46f1-8b45-bbf83b781104" />
 
-## Why use GrabberSheet?
+## ✨ Who Needs This?
 
-If you've ever struggled with:
-*   The grabber disappearing when you scroll down.
-*   The sheet not moving when you try to drag the header.
-*   Janky snapping animations.
+*   **Frustrated by `DraggableScrollableSheet` gesture conflicts?** When your list scrolls, but the sheet tries to drag? `GrabberSheet` solves it.
+*   **Struggling to keep your header/grabber visible?** `GrabberSheet` ensures your draggable area stays separate and accessible.
+*   **Want smooth, predictable snapping without complex logic?** Define your snap points, and `GrabberSheet` handles the rest.
+*   **Looking for a polished, app-like bottom sheet UI?** Inspired by popular apps, `GrabberSheet` delivers a premium experience.
 
-Then `GrabberSheet` is the solution you've been looking for. It provides a robust, production-ready implementation of the "modal bottom sheet" pattern found in top-tier mobile apps.
+## Why `GrabberSheet`?
+
+I built this because `DraggableScrollableSheet` was too frustrating. The gesture conflicts and disappearing grabbers were deal-breakers for a polished app. `GrabberSheet` fixes these core issues instantly.
+
+| Feature | DraggableScrollableSheet | GrabberSheet |
+| :--- | :---: | :---: |
+| **Fixed Header/Grabber** | ❌ (Must implement manually) | ✅ (Built-in) |
+| **Gesture Conflicts** | ⚠️ (Scroll vs. Drag fights) | ✅ (Perfectly separated) |
+| **Snap Animation** | ⚠️ (Complex logic required) | ✅ (Simple parameter) |
+| **Ease of Use** | 🔥 Hard | 🍰 Easy |
 
 ## Table of Contents
 
-- [Features](#features)
-- [Getting started](#getting-started)
-- [Compatibility](#compatibility)
-- [Basic Usage](#basic-usage)
+- [Installation](#installation)
+- [Usage (Just 3 lines)](#usage-just-3-lines)
 - [Advanced Customization](#advanced-customization)
   - [Controlling Snap Behavior](#controlling-snap-behavior)
   - [Customizing the Grabber](#customizing-the-grabber)
@@ -44,30 +46,11 @@ Then `GrabberSheet` is the solution you've been looking for. It provides a robus
 
 ---
 
-## Features
+## Installation
 
-*   Draggable bottom sheet with a customizable grabber handle.
-*   Stable and predictable behavior, fixing common scroll controller conflicts.
-*   Use any widget as the content of the sheet via a `builder`.
-*   Insert a custom widget into the draggable grabber area.
-*   Customize sheet sizes (initial, min, max).
-*   Optional snapping behavior with custom snap points via `snap` and `snapSizes`.
-*   Customize grabber style (color, size, shape).
-*   Grabber is automatically hidden on desktop and web platforms for a native feel.
-*   Sheet has rounded top corners by default (customizable via `borderRadius`).
-*   **Programmatic Control**: Use `GrabberSheetController` to `maximize()`, `minimize()`, or `animateTo()` specific sizes.
-*   **State Callbacks**: Receive notifications on `onSizeChanged` during dragging/resizing and `onSnap` when the sheet settles at a snap point.
-
-## Getting started
-
-Add this to your package's `pubspec.yaml` file. Check the latest version on [pub.dev](https://pub.dev/packages/grabber_sheet).
-
-```yaml
-dependencies:
-  grabber_sheet: ^1.2.0
+```bash
+flutter pub add grabber_sheet
 ```
-
-Then, install it by running `flutter pub get` in your terminal.
 
 ## Compatibility
 
@@ -75,75 +58,20 @@ This package is compatible with the following SDK versions:
 *   **Flutter**: `>=3.0.0`
 *   **Dart**: `>=3.0.0 <4.0.0`
 
-## Basic Usage
+## Usage (Just 3 lines)
 
-Here's a simple example of how to use `GrabberSheet`:
+Simply wrap your list with `GrabberSheet` and pass the `ScrollController`. That's it.
 
 ```dart
-import 'package:flutter/material.dart';
-import 'package:grabber_sheet/grabber_sheet.dart';
-
-class ExampleHomePage extends StatelessWidget {
-  const ExampleHomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final sheetColor = Colors.blue.shade100;
-
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text('GrabberSheet Example'),
-        backgroundColor: sheetColor,
-      ),
-      body: Stack(
-        children: [
-          Center(
-            child: Text(
-              'Background Content',
-              style: theme.textTheme.headlineMedium,
-            ),
-          ),
-          GrabberSheet(
-            initialChildSize: 0.5,
-            minChildSize: 0.2,
-            maxChildSize: 0.8,
-            snap: true,
-            snapSizes: const [.5],
-            backgroundColor: sheetColor,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(30)), // Custom border radius
-            grabberStyle: GrabberStyle(color: Colors.grey.shade400),
-            bottom: Row(
-              children: [
-                const Text('sheet title'),
-                const Spacer(),
-                IconButton(onPressed: () {}, icon: const Icon(Icons.close)),
-              ],
-            ),
-            bottomAreaPadding: const EdgeInsets.symmetric(horizontal: 16),
-            builder: (BuildContext context, ScrollController scrollController) {
-              return ListView.builder(
-                controller: scrollController,
-                itemCount: 30,
-                itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    title: Text(
-                      'Item $index',
-                      style: TextStyle(
-                        color: theme.colorScheme.onSurface,
-                      ),
-                    ),
-                  );
-                },
-              );
-            },
-          ),
-        ],
-      ),
+GrabberSheet(
+  snap: true, // Auto-snap enabled!
+  builder: (context, controller) {
+    return ListView.builder(
+      controller: controller, // <--- Just connect this!
+      itemBuilder: (context, index) => ListTile(title: Text('Item $index')),
     );
-  }
-}
+  },
+)
 ```
 
 ## Advanced Customization
