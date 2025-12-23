@@ -58,7 +58,8 @@ void main() {
       expect(currentExtent, closeTo(minSize, 0.01));
     });
 
-    testWidgets('GrabberSheet initializes with an internal controller when none is provided',
+    testWidgets(
+        'GrabberSheet initializes with an internal controller when none is provided',
         (WidgetTester tester) async {
       const initialSize = 0.6; // A distinct initial size to verify
 
@@ -87,11 +88,13 @@ void main() {
       expect(draggableSheetFinder, findsOneWidget);
 
       // Verify that the initialChildSize property was correctly passed down
-      final DraggableScrollableSheet draggableSheet = tester.widget(draggableSheetFinder);
+      final DraggableScrollableSheet draggableSheet =
+          tester.widget(draggableSheetFinder);
       expect(draggableSheet.initialChildSize, initialSize);
     });
 
-    testWidgets('Switching from internal to external controller works correctly',
+    testWidgets(
+        'Switching from internal to external controller works correctly',
         (WidgetTester tester) async {
       // 1. Start with internal controller
       await tester.pumpWidget(
@@ -134,7 +137,8 @@ void main() {
       expect(externalController.size, closeTo(0.9, 0.01));
     });
 
-    testWidgets('Switching from external to internal controller works correctly',
+    testWidgets(
+        'Switching from external to internal controller works correctly',
         (WidgetTester tester) async {
       // 1. Start with external controller
       final externalController = GrabberSheetController();
@@ -174,10 +178,10 @@ void main() {
       // we verify the widget still exists and has the correct properties.
       final draggableSheetFinder = find.byType(DraggableScrollableSheet);
       expect(draggableSheetFinder, findsOneWidget);
-      
-      // Ensure the external controller is no longer attached (optional check if possible, 
-      // but standard DraggableScrollableController doesn't have an 'isAttached' property exposed easily 
-      // without trying to use it. Trying to use it might throw if it was disposed, but here we just want to ensure 
+
+      // Ensure the external controller is no longer attached (optional check if possible,
+      // but standard DraggableScrollableController doesn't have an 'isAttached' property exposed easily
+      // without trying to use it. Trying to use it might throw if it was disposed, but here we just want to ensure
       // the sheet is alive with its own internal controller).
     });
   });
