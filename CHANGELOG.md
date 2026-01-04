@@ -1,3 +1,9 @@
+## 1.2.2
+
+* **Docs**: Refined `README.md` and `README.ko.md` for better clarity and engagement.
+  - **Introduction**: Updated to emphasize solving gesture conflicts and the Google Maps inspiration.
+  - **Conciseness**: Simplified the "Why GrabberSheet?" section by removing redundant text and focusing on the comparison table.
+
 ## 1.2.1
 
 * **Docs**: Comprehensive refactor of `README.md` and `README.ko.md` for high impact and clarity.

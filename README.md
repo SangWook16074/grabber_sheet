@@ -1,9 +1,5 @@
 # GrabberSheet
 
-**Stop fighting gesture conflicts. A production-ready bottom sheet with a persistent grabber that just works.**
-
-<img width="250" src="https://github.com/user-attachments/assets/cc2a3eaf-c872-46f1-8b45-bbf83b781104" />
-
 [![pub.dev](https://img.shields.io/pub/v/grabber_sheet.svg)](https://pub.dev/packages/grabber_sheet)
 [![Test](https://github.com/SangWook16074/grabber_sheet/actions/workflows/ci.yml/badge.svg)](https://github.com/SangWook16074/grabber_sheet/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/SangWook16074/grabber_sheet/branch/main/graph/badge.svg)](https://codecov.io/gh/SangWook16074/grabber_sheet)
@@ -11,7 +7,12 @@
 
 [**한국어 문서 (Korean Docs)**](README.ko.md)
 
----
+A reusable and customizable draggable bottom sheet for Flutter, inspired by the modal sheet in the Google Maps app.
+
+When building UIs with bottom sheets, developers often face the repetitive task of manually implementing drag handling and scroll physics. `grabber_sheet` solves this by providing a pre-built, robust drag mechanism that works seamlessly with your content, while offering extensive customization options to fit any design.
+
+<img width="250" src="https://github.com/user-attachments/assets/cc2a3eaf-c872-46f1-8b45-bbf83b781104" />
+
 
 ## 🚀 Installation
 
@@ -19,7 +20,7 @@
 flutter pub add grabber_sheet
 ```
 
-## ⚡ Usage (3 Lines of Code)
+## ⚡ Simple Usage
 
 Wrap your list, connect the controller. **Done.**
 
@@ -38,11 +39,6 @@ GrabberSheet(
 ---
 
 ## 💡 Why GrabberSheet?
-
-You've probably faced it: **`DraggableScrollableSheet` gesture conflicts.**
-The list scrolls when you want to drag the sheet. The header disappears. It feels "janky."
-
-`GrabberSheet` solves these pain points instantly.
 
 | Pain Point | DraggableScrollableSheet | GrabberSheet |
 | :--- | :---: | :---: |

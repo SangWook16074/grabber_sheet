@@ -1,9 +1,5 @@
 # GrabberSheet (한국어)
 
-**제스처 충돌과 싸우지 마세요. 완벽하게 동작하는 그래버가 포함된 상용 수준의 바텀 시트입니다.**
-
-<img width="250" src="https://github.com/user-attachments/assets/cc2a3eaf-c872-46f1-8b45-bbf83b781104" />
-
 [![pub.dev](https://img.shields.io/pub/v/grabber_sheet.svg)](https://pub.dev/packages/grabber_sheet)
 [![Test](https://github.com/SangWook16074/grabber_sheet/actions/workflows/ci.yml/badge.svg)](https://github.com/SangWook16074/grabber_sheet/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/SangWook16074/grabber_sheet/branch/main/graph/badge.svg)](https://codecov.io/gh/SangWook16074/grabber_sheet)
@@ -11,7 +7,12 @@
 
 [**English Documentation**](README.md)
 
----
+Google Maps 앱의 모달 시트에서 영감을 받은, 재사용 가능하고 커스터마이징이 가능한 Flutter용 드래그 가능한 바텀 시트입니다.
+
+바텀 시트가 포함된 UI를 개발할 때, 개발자들은 드래그 핸들링과 스크롤 물리 효과를 매번 직접 구현해야 하는 번거로움에 직면합니다. `grabber_sheet`는 콘텐츠와 완벽하게 연동되는 강력한 드래그 메커니즘을 미리 구축하여 제공함으로써 이 문제를 해결하며, 어떤 디자인에도 맞출 수 있는 폭넓은 커스터마이징 옵션을 제공합니다.
+
+<img width="250" src="https://github.com/user-attachments/assets/cc2a3eaf-c872-46f1-8b45-bbf83b781104" />
+
 
 ## 🚀 설치 (Installation)
 
@@ -19,7 +20,7 @@
 flutter pub add grabber_sheet
 ```
 
-## ⚡ 3줄로 끝내는 사용법
+## ⚡ 초간단 사용법
 
 리스트를 감싸고, 컨트롤러만 연결하면 **끝입니다.**
 
@@ -38,11 +39,6 @@ GrabberSheet(
 ---
 
 ## 💡 왜 GrabberSheet 인가요?
-
-`DraggableScrollableSheet`를 쓰면서 **스크롤과 드래그가 싸우는 경험**, 다들 겪어보셨을 겁니다.
-리스트를 내리고 싶은데 시트가 내려가고, 헤더는 겹치고, 애니메이션은 부자연스럽죠.
-
-`GrabberSheet`는 이 개발자의 고통을 즉시 해결합니다.
 
 | Pain Point (문제점) | DraggableScrollableSheet | GrabberSheet |
 | :--- | :---: | :---: |
