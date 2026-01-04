@@ -27,6 +27,7 @@ class SimpleExamplePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Simple GrabberSheet'),
         actions: [
+          // Navigate to the Advanced Example page to see more features.
           TextButton(
             onPressed: () {
               Navigator.of(context).push(
