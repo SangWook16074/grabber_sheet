@@ -1,12 +1,12 @@
 name: grabber_sheet
-description: "Stop fighting gesture conflicts. A production-ready bottom sheet with a persistent grabber that just works."
+description: "A reusable and customizable draggable bottom sheet for Flutter, inspired by the modal sheet in the Google Maps app."
 topics:
   - bottom-sheet
   - draggable-sheet
   - grabber
   - ui-ux
   - scrolling
-version: 1.2.1
+version: 1.2.2
 homepage: https://github.com/SangWook16074/grabber_sheet
 repository: https://github.com/SangWook16074/grabber_sheet.git
 issue_tracker: https://github.com/SangWook16074/grabber_sheet/issues
