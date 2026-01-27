@@ -6,7 +6,9 @@ import '../common/test_app_harness.dart';
 
 void main() {
   group('Animation Control Tests', () {
-    testWidgets('should accept snapAnimationDuration and snapAnimationCurve parameters', (WidgetTester tester) async {
+    testWidgets(
+        'should accept snapAnimationDuration and snapAnimationCurve parameters',
+        (WidgetTester tester) async {
       // This test is expected to fail compilation initially because parameters don't exist yet.
       await tester.pumpWidget(
         TestAppHarness(
@@ -24,7 +26,7 @@ void main() {
           ),
         ),
       );
-      
+
       // If code compiles and runs, we verify nothing crashes
       expect(find.byType(GrabberSheet), findsOneWidget);
     });
