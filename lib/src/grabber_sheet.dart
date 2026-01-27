@@ -234,8 +234,9 @@ class _GrabberSheetState extends State<GrabberSheet> {
                         : null,
                     child: Container(
                       key: const Key('grabber_sheet_scrim'),
-                      color: widget.scrimColor
-                          .withOpacity(widget.scrimColor.opacity * progress),
+                      color: widget.scrimColor.withAlpha(
+                        (widget.scrimColor.a * 255 * progress).round().clamp(0, 255),
+                      ),
                     ),
                   );
                 },
