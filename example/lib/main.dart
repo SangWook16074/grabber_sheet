@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:grabber_sheet/grabber_sheet.dart';
-import 'advanced_example.dart';
+
 
 void main() => runApp(const DraggableSheetExampleApp());
 

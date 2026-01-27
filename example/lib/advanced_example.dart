@@ -132,7 +132,7 @@ class _AdvancedExamplePageState extends State<AdvancedExamplePage> {
             snapAnimationCurve:
                 Curves.elasticOut, // More pronounced curve for demo
             showScrim: true, // Show scrim for demo
-            scrimColor: Colors.black.withOpacity(0.5), // Custom scrim color
+            scrimColor: const Color(0x80000000), // Custom scrim color (0x80 is 0.5 opacity)
             dismissOnScrimTap: true, // Allow dismissing by tapping scrim
             // --- End of New properties ---
             builder: (BuildContext context, ScrollController scrollController) {
