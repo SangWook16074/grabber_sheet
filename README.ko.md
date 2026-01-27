@@ -131,6 +131,30 @@ GrabberSheet(
 
 ![grabber_sheet_web](https://github.com/user-attachments/assets/c151bdad-254b-455b-b82a-1308b8863784)
 
+### 6. 스냅 애니메이션 제어
+스냅 애니메이션의 시간과 커브를 커스터마이징하여 앱의 움직임을 섬세하게 조절할 수 있습니다.
+
+```dart
+GrabberSheet(
+  snap: true,
+  snapAnimationDuration: const Duration(milliseconds: 500), // 기본값은 300ms
+  snapAnimationCurve: Curves.bounceOut, // 기본값은 Curves.easeOut
+  // ...
+)
+```
+
+### 7. 스크림 (배경 오버레이)
+시트 뒤편에 반투명 오버레이(스크림)를 추가하여 시트 콘텐츠에 집중도를 높일 수 있습니다. 또한, 이 오버레이를 탭하여 시트를 닫는 기능도 제공합니다.
+
+```dart
+GrabberSheet(
+  showScrim: true,
+  scrimColor: Colors.black.withOpacity(0.6), // 기본값은 Colors.black54
+  dismissOnScrimTap: true, // 기본값은 true
+  // ...
+)
+```
+
 ---
 
 ## 📘 속성 (Properties)
@@ -149,6 +173,11 @@ GrabberSheet(
 | `controller` | 시트 위치를 코드로 제어. | `null` |
 | `onSizeChanged` | 크기 변경 시 호출되는 콜백. | `null` |
 | `onSnap` | 스냅 완료 시 호출되는 콜백. | `null` |
+| `snapAnimationDuration` | 스냅 애니메이션의 지속 시간. | `300ms` |
+| `snapAnimationCurve` | 스냅 애니메이션의 커브. | `Curves.easeOut` |
+| `showScrim` | 배경 오버레이(스크림) 표시 여부. | `false` |
+| `scrimColor` | 배경 오버레이의 색상. | `Colors.black54` |
+| `dismissOnScrimTap` | 스크림 탭 시 시트 닫기 여부. | `true` |
 
 ---
 

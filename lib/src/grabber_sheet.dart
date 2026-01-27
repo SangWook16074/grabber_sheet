@@ -93,6 +93,31 @@ class GrabberSheet extends StatefulWidget {
   /// If null, defaults to a top-left and top-right radius of 16.0.
   final BorderRadiusGeometry? borderRadius;
 
+  /// The duration of the snap animation.
+  ///
+  /// Defaults to `const Duration(milliseconds: 300)`.
+  final Duration snapAnimationDuration;
+
+  /// The curve of the snap animation.
+  ///
+  /// Defaults to `Curves.easeOut`.
+  final Curve snapAnimationCurve;
+
+  /// Whether to show a scrim (overlay) behind the sheet.
+  ///
+  /// Defaults to false.
+  final bool showScrim;
+
+  /// The color of the scrim.
+  ///
+  /// Defaults to `Colors.black54`.
+  final Color scrimColor;
+
+  /// Whether tapping the scrim should dismiss the sheet (animate to minChildSize).
+  ///
+  /// Defaults to true.
+  final bool dismissOnScrimTap;
+
   /// Creates a new instance of [GrabberSheet].
   const GrabberSheet({
     super.key,
@@ -112,6 +137,11 @@ class GrabberSheet extends StatefulWidget {
     this.onSizeChanged,
     this.onSnap,
     this.borderRadius,
+    this.snapAnimationDuration = const Duration(milliseconds: 300),
+    this.snapAnimationCurve = Curves.easeOut,
+    this.showScrim = false,
+    this.scrimColor = Colors.black54,
+    this.dismissOnScrimTap = true,
   })  : assert(minChildSize >= 0.0),
         assert(maxChildSize <= 1.0),
         assert(minChildSize <= initialChildSize),
@@ -128,6 +158,10 @@ class _GrabberSheetState extends State<GrabberSheet> {
 
   /// The current size of the sheet, updated during dragging.
   late double _newSize = widget.initialChildSize;
+
+  /// Notifier for the current size, used to update the scrim opacity.
+  late final ValueNotifier<double> _currentSizeNotifier =
+      ValueNotifier(widget.initialChildSize);
 
   @override
   void initState() {
@@ -149,6 +183,7 @@ class _GrabberSheetState extends State<GrabberSheet> {
 
   @override
   void dispose() {
+    _currentSizeNotifier.dispose();
     // Only dispose if we created it internally.
     if (widget.controller == null) {
       _controller.dispose();
@@ -172,119 +207,159 @@ class _GrabberSheetState extends State<GrabberSheet> {
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        return NotificationListener<DraggableScrollableNotification>(
-          onNotification: (notification) {
-            widget.onSizeChanged?.call(notification.extent);
-            return false;
-          },
-          child: DraggableScrollableSheet(
-            controller: _controller,
-            initialChildSize: widget.initialChildSize,
-            minChildSize: widget.minChildSize,
-            maxChildSize: widget.maxChildSize,
-            snap: widget.snap,
-            snapSizes: widget.snapSizes,
-            builder: (BuildContext context, ScrollController scrollController) {
-              return Container(
-                decoration: BoxDecoration(
-                  color: sheetColor,
-                  borderRadius: widget.borderRadius ??
-                      const BorderRadius.only(
-                        topLeft: Radius.circular(16.0),
-                        topRight: Radius.circular(16.0),
-                      ),
-                ),
-                child: Column(
-                  children: <Widget>[
-                    GestureDetector(
-                      onVerticalDragStart: (details) {
-                        _newSize = _controller.size;
-                      },
-                      onVerticalDragUpdate: (details) {
-                        final newPixel = _controller.pixels - details.delta.dy;
-                        // Convert pixel value to fractional size and clamp it.
-                        _newSize =
-                            _controller.pixelsToSize(newPixel).clamp(0.0, 1.0);
+        return Stack(
+          children: [
+            if (widget.showScrim)
+              ValueListenableBuilder<double>(
+                valueListenable: _currentSizeNotifier,
+                builder: (context, currentSize, child) {
+                  double progress = 0.0;
+                  if (widget.maxChildSize > widget.minChildSize) {
+                    progress = (currentSize - widget.minChildSize) /
+                        (widget.maxChildSize - widget.minChildSize);
+                  }
+                  progress = progress.clamp(0.0, 1.0);
 
-                        _controller.jumpTo(_newSize);
-                      },
-                      onVerticalDragEnd: (details) {
-                        // If snapping is disabled, do nothing.
-                        if (!widget.snap) return;
+                  if (progress <= 0) return const SizedBox.shrink();
 
-                        final double velocity = details.primaryVelocity ?? 0.0;
-                        // A velocity threshold to determine if it's a fling.
-                        const double flingVelocity = 300.0;
-
-                        // Combine min/max with custom snapSizes, remove duplicates, and sort.
-                        final Set<double> allSnapPoints = {
-                          widget.minChildSize,
-                          widget.maxChildSize,
-                          ...?widget.snapSizes,
-                        };
-                        final List<double> sortedSnapPoints =
-                            allSnapPoints.toList()..sort();
-
-                        double targetSize;
-
-                        if (velocity.abs() > flingVelocity) {
-                          // On a fling, animate to the min or max extent.
-                          targetSize = velocity < 0
-                              ? sortedSnapPoints.last
-                              : sortedSnapPoints.first;
-                        } else {
-                          // On a slow drag, find the closest snap point.
-                          targetSize = sortedSnapPoints.reduce(
-                            (a, b) =>
-                                (_newSize - a).abs() < (_newSize - b).abs()
-                                    ? a
-                                    : b,
-                          );
-                        }
-
-                        // Animate the sheet to the determined target size.
-                        _controller.animateTo(
-                          targetSize,
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeOut,
-                        );
-
-                        // Trigger onSnap callback after animation
-                        if (widget.onSnap != null) {
-                          Future.delayed(const Duration(milliseconds: 300), () {
-                            if (mounted) {
-                              widget.onSnap!(targetSize);
-                            }
-                          });
-                        }
-                      },
-                      child: Container(
-                        color: Colors.transparent,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (widget.showGrabber)
-                              _Grabber(
-                                style: widget.grabberStyle,
-                                showOnNonMobile: widget.showGrabberOnNonMobile,
-                              ),
-                            if (widget.bottom != null)
-                              Padding(
-                                padding:
-                                    widget.bottomAreaPadding ?? EdgeInsets.zero,
-                                child: widget.bottom,
-                              ),
-                          ],
-                        ),
-                      ),
+                  return GestureDetector(
+                    onTap: widget.dismissOnScrimTap
+                        ? () {
+                            _controller.animateTo(
+                              widget.minChildSize,
+                              duration: widget.snapAnimationDuration,
+                              curve: widget.snapAnimationCurve,
+                            );
+                          }
+                        : null,
+                    child: Container(
+                      key: const Key('grabber_sheet_scrim'),
+                      color: widget.scrimColor
+                          .withOpacity(widget.scrimColor.opacity * progress),
                     ),
-                    // The main content of the sheet.
-                    Expanded(child: widget.builder(context, scrollController)),
-                  ],
-                ),
-              );
-            },
-          ),
+                  );
+                },
+              ),
+            NotificationListener<DraggableScrollableNotification>(
+              onNotification: (notification) {
+                widget.onSizeChanged?.call(notification.extent);
+                _currentSizeNotifier.value = notification.extent;
+                return false;
+              },
+              child: DraggableScrollableSheet(
+                controller: _controller,
+                initialChildSize: widget.initialChildSize,
+                minChildSize: widget.minChildSize,
+                maxChildSize: widget.maxChildSize,
+                snap: widget.snap,
+                snapSizes: widget.snapSizes,
+                builder:
+                    (BuildContext context, ScrollController scrollController) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: sheetColor,
+                      borderRadius: widget.borderRadius ??
+                          const BorderRadius.only(
+                            topLeft: Radius.circular(16.0),
+                            topRight: Radius.circular(16.0),
+                          ),
+                    ),
+                    child: Column(
+                      children: <Widget>[
+                        GestureDetector(
+                          onVerticalDragStart: (details) {
+                            _newSize = _controller.size;
+                          },
+                          onVerticalDragUpdate: (details) {
+                            final newPixel =
+                                _controller.pixels - details.delta.dy;
+                            // Convert pixel value to fractional size and clamp it.
+                            _newSize = _controller
+                                .pixelsToSize(newPixel)
+                                .clamp(0.0, 1.0);
+
+                            _controller.jumpTo(_newSize);
+                          },
+                          onVerticalDragEnd: (details) {
+                            // If snapping is disabled, do nothing.
+                            if (!widget.snap) return;
+
+                            final double velocity =
+                                details.primaryVelocity ?? 0.0;
+                            // A velocity threshold to determine if it's a fling.
+                            const double flingVelocity = 300.0;
+
+                            // Combine min/max with custom snapSizes, remove duplicates, and sort.
+                            final Set<double> allSnapPoints = {
+                              widget.minChildSize,
+                              widget.maxChildSize,
+                              ...?widget.snapSizes,
+                            };
+                            final List<double> sortedSnapPoints =
+                                allSnapPoints.toList()..sort();
+
+                            double targetSize;
+
+                            if (velocity.abs() > flingVelocity) {
+                              // On a fling, animate to the min or max extent.
+                              targetSize = velocity < 0
+                                  ? sortedSnapPoints.last
+                                  : sortedSnapPoints.first;
+                            } else {
+                              // On a slow drag, find the closest snap point.
+                              targetSize = sortedSnapPoints.reduce(
+                                (a, b) =>
+                                    (_newSize - a).abs() < (_newSize - b).abs()
+                                        ? a
+                                        : b,
+                              );
+                            }
+
+                            // Animate the sheet to the determined target size.
+                            _controller
+                                .animateTo(
+                              targetSize,
+                              duration: widget.snapAnimationDuration,
+                              curve: widget.snapAnimationCurve,
+                            )
+                                .then((_) {
+                              // Trigger onSnap callback after animation completes
+                              if (mounted && widget.onSnap != null) {
+                                widget.onSnap!(targetSize);
+                              }
+                            });
+                          },
+                          child: Container(
+                            color: Colors.transparent,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (widget.showGrabber)
+                                  _Grabber(
+                                    style: widget.grabberStyle,
+                                    showOnNonMobile:
+                                        widget.showGrabberOnNonMobile,
+                                  ),
+                                if (widget.bottom != null)
+                                  Padding(
+                                    padding: widget.bottomAreaPadding ??
+                                        EdgeInsets.zero,
+                                    child: widget.bottom,
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        // The main content of the sheet.
+                        Expanded(
+                            child: widget.builder(context, scrollController)),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         );
       },
     );

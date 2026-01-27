@@ -129,7 +129,31 @@ GrabberSheet(
 )
 ```
 
-![grabber_sheet_web](https://github.com/user-attachments/assets/631bc09f-b4a4-4736-8df4-a52501e6c192)
+![grabber_sheet_web](https://github.com/user-attachments/assets/631bc09f-b4a4-4736-4df4-a52501e6c192)
+
+### 6. Snap Animation Control
+Customize the duration and curve of the snap animation for a personalized feel.
+
+```dart
+GrabberSheet(
+  snap: true,
+  snapAnimationDuration: const Duration(milliseconds: 500), // Default is 300ms
+  snapAnimationCurve: Curves.bounceOut, // Default is Curves.easeOut
+  // ...
+)
+```
+
+### 7. Scrim Overlay
+Add a semi-transparent overlay behind the sheet to draw focus to the sheet content. You can also dismiss the sheet by tapping this overlay.
+
+```dart
+GrabberSheet(
+  showScrim: true,
+  scrimColor: Colors.black.withOpacity(0.6), // Default is Colors.black54
+  dismissOnScrimTap: true, // Default is true
+  // ...
+)
+```
 
 ---
 
@@ -149,6 +173,11 @@ GrabberSheet(
 | `controller` | Control sheet position programmatically. | `null` |
 | `onSizeChanged` | Callback for size changes during drag/animation. | `null` |
 | `onSnap` | Callback when snapping completes. | `null` |
+| `snapAnimationDuration` | Duration of the snap animation. | `300ms` |
+| `snapAnimationCurve` | Curve of the snap animation. | `Curves.easeOut` |
+| `showScrim` | Toggle the visibility of the background overlay. | `false` |
+| `scrimColor` | Color of the background overlay. | `Colors.black54` |
+| `dismissOnScrimTap` | Dismisses the sheet when the scrim is tapped. | `true` |
 
 ---
 

@@ -1,3 +1,9 @@
+## 1.3.0
+
+*   **Feat**: Added `snapAnimationDuration` and `snapAnimationCurve` properties to control snap animation.
+*   **Feat**: Implemented scrim (background overlay) with `showScrim`, `scrimColor`, and `dismissOnScrimTap` properties.
+*   **Fix**: Improved `onSnap` callback reliability by tying it to animation completion.
+
 ## 1.2.2
 
 * **Docs**: Refined `README.md` and `README.ko.md` for better clarity and engagement.

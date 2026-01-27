@@ -125,6 +125,13 @@ class _AdvancedExamplePageState extends State<AdvancedExamplePage> {
                 });
               }
             },
+            // --- New properties for demonstration ---
+            snapAnimationDuration: const Duration(milliseconds: 600), // Slower animation for demo
+            snapAnimationCurve: Curves.elasticOut, // More pronounced curve for demo
+            showScrim: true, // Show scrim for demo
+            scrimColor: Colors.black.withOpacity(0.5), // Custom scrim color
+            dismissOnScrimTap: true, // Allow dismissing by tapping scrim
+            // --- End of New properties ---
             builder: (BuildContext context, ScrollController scrollController) {
               return ListView.builder(
                 controller: scrollController,
