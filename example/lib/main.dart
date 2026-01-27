@@ -24,20 +24,7 @@ class SimpleExamplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text('Simple GrabberSheet'),
-        actions: [
-          // Navigate to the Advanced Example page to see more features.
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const AdvancedExamplePage()),
-              );
-            },
-            child: const Text('View Advanced'),
-          ),
-        ],
-      ),
+      appBar: AppBar(title: const Text('Simple GrabberSheet')),
       body: Stack(
         children: [
           const Center(child: Text('Map or Background Content Here')),
