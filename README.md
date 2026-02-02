@@ -129,7 +129,8 @@ GrabberSheet(
 )
 ```
 
-![grabber_sheet_web](https://github.com/user-attachments/assets/631bc09f-b4a4-4736-4df4-a52501e6c192)
+
+![grabber_sheet_web](https://github.com/user-attachments/assets/c151bdad-254b-455b-b82a-1308b8863784)
 
 ### 6. Snap Animation Control
 Customize the duration and curve of the snap animation for a personalized feel.
