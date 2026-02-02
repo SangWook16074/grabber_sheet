@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:grabber_sheet/grabber_sheet.dart';
 
-
 void main() => runApp(const DraggableSheetExampleApp());
 
 class DraggableSheetExampleApp extends StatelessWidget {
