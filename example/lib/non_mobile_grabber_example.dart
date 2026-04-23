@@ -127,7 +127,7 @@ class _NarrowLayout extends StatelessWidget {
           snapSizes: const [.5],
           backgroundColor: sheetColor,
           grabberStyle: GrabberStyle(color: Colors.grey.shade400),
-          bottom: Column(
+          header: Column(
             children: [
               Text('Responsive Layout', style: theme.textTheme.titleLarge),
               const SizedBox(height: 8),

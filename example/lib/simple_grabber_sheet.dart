@@ -33,14 +33,14 @@ class SimpleGrabberSheet extends StatelessWidget {
               snapSizes: const [.5],
               backgroundColor: sheetColor,
               grabberStyle: GrabberStyle(color: Colors.grey.shade400),
-              bottom: Row(
+              header: Row(
                 children: [
                   const Text('sheet title'),
                   const Spacer(),
                   IconButton(onPressed: () {}, icon: const Icon(Icons.close)),
                 ],
               ),
-              bottomAreaPadding: const EdgeInsets.symmetric(horizontal: 16),
+              headerAreaPadding: const EdgeInsets.symmetric(horizontal: 16),
               builder:
                   (BuildContext context, ScrollController scrollController) {
                     return ListView.builder(

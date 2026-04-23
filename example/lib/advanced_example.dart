@@ -101,14 +101,14 @@ class _AdvancedExamplePageState extends State<AdvancedExamplePage> {
               topRight: Radius.circular(30),
             ),
             grabberStyle: GrabberStyle(color: Colors.grey.shade400),
-            bottom: Row(
+            header: Row(
               children: [
                 const Text('Custom Header'),
                 const Spacer(),
                 IconButton(onPressed: () {}, icon: const Icon(Icons.close)),
               ],
             ),
-            bottomAreaPadding: const EdgeInsets.symmetric(horizontal: 16),
+            headerAreaPadding: const EdgeInsets.symmetric(horizontal: 16),
             onSizeChanged: (size) {
               if (mounted) {
                 setState(() {

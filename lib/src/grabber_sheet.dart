@@ -46,10 +46,29 @@ class GrabberSheet extends StatefulWidget {
   /// The visual style of the grabber handle, defined by a [GrabberStyle] object.
   final GrabberStyle grabberStyle;
 
+  /// A sticky header widget to display below the grabber.
+  ///
+  /// This area remains visible above the scrollable content, making it useful
+  /// for titles, actions, filters, and summary rows.
+  final Widget? header;
+
+  /// The padding for the sticky header widget.
+  final EdgeInsetsGeometry? headerAreaPadding;
+
   /// A custom widget to be displayed below the grabber.
+  ///
+  /// Deprecated in favor of [header].
+  @Deprecated(
+    'Use header instead. This will be removed in the next major version.',
+  )
   final Widget? bottom;
 
   /// The padding for the bottom widget.
+  ///
+  /// Deprecated in favor of [headerAreaPadding].
+  @Deprecated(
+    'Use headerAreaPadding instead. This will be removed in the next major version.',
+  )
   final EdgeInsetsGeometry? bottomAreaPadding;
 
   /// The background color of the sheet.
@@ -127,6 +146,8 @@ class GrabberSheet extends StatefulWidget {
     this.maxChildSize = 1.0,
     this.showGrabber = true,
     this.grabberStyle = const GrabberStyle(),
+    this.header,
+    this.headerAreaPadding,
     this.bottom,
     this.bottomAreaPadding,
     this.snap = false,
@@ -145,7 +166,15 @@ class GrabberSheet extends StatefulWidget {
   })  : assert(minChildSize >= 0.0),
         assert(maxChildSize <= 1.0),
         assert(minChildSize <= initialChildSize),
-        assert(initialChildSize <= maxChildSize);
+        assert(initialChildSize <= maxChildSize),
+        assert(
+          header == null || bottom == null,
+          'Use either header or bottom, not both.',
+        ),
+        assert(
+          headerAreaPadding == null || bottomAreaPadding == null,
+          'Use either headerAreaPadding or bottomAreaPadding, not both.',
+        );
 
   @override
   State<GrabberSheet> createState() => _GrabberSheetState();
@@ -204,6 +233,11 @@ class _GrabberSheetState extends State<GrabberSheet> {
     final theme = Theme.of(context);
     final Color sheetColor =
         widget.backgroundColor ?? theme.colorScheme.surface;
+    // ignore: deprecated_member_use_from_same_package
+    final Widget? effectiveHeader = widget.header ?? widget.bottom;
+    final EdgeInsetsGeometry effectiveHeaderPadding =
+        // ignore: deprecated_member_use_from_same_package
+        widget.headerAreaPadding ?? widget.bottomAreaPadding ?? EdgeInsets.zero;
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
@@ -343,11 +377,10 @@ class _GrabberSheetState extends State<GrabberSheet> {
                                     showOnNonMobile:
                                         widget.showGrabberOnNonMobile,
                                   ),
-                                if (widget.bottom != null)
+                                if (effectiveHeader != null)
                                   Padding(
-                                    padding: widget.bottomAreaPadding ??
-                                        EdgeInsets.zero,
-                                    child: widget.bottom,
+                                    padding: effectiveHeaderPadding,
+                                    child: effectiveHeader,
                                   ),
                               ],
                             ),
