@@ -10,6 +10,14 @@ const BorderRadius _defaultBorderRadius = BorderRadius.only(
   topRight: Radius.circular(16.0),
 );
 
+/// The default grabber style used when [GrabberStyle] properties are null.
+const GrabberStyle _defaultGrabberStyle = GrabberStyle(
+  color: Color(0xFF9E9E9E),
+  width: 32.0,
+  height: 4.0,
+  margin: EdgeInsets.symmetric(vertical: 22.0),
+);
+
 /// A design-system agnostic draggable bottom sheet with a grabber handle.
 ///
 /// [RawGrabberSheet] only depends on `package:flutter/widgets.dart`, so it can
@@ -88,6 +96,21 @@ class RawGrabberSheet extends StatefulWidget {
   /// Defaults to a top-left and top-right radius of 16.0.
   final BorderRadiusGeometry borderRadius;
 
+  /// The elevation of the sheet surface.
+  ///
+  /// Defaults to 0.
+  final double elevation;
+
+  /// The color of the shadow cast when [elevation] is greater than 0.
+  ///
+  /// Defaults to `Color(0xFF000000)`.
+  final Color shadowColor;
+
+  /// How the sheet content is clipped to the [borderRadius].
+  ///
+  /// Defaults to [Clip.none].
+  final Clip clipBehavior;
+
   /// The duration of the snap animation.
   ///
   /// Defaults to `const Duration(milliseconds: 300)`.
@@ -132,6 +155,9 @@ class RawGrabberSheet extends StatefulWidget {
     this.onSizeChanged,
     this.onSnap,
     this.borderRadius = _defaultBorderRadius,
+    this.elevation = 0.0,
+    this.shadowColor = const Color(0xFF000000),
+    this.clipBehavior = Clip.none,
     this.snapAnimationDuration = const Duration(milliseconds: 300),
     this.snapAnimationCurve = Curves.easeOut,
     this.showScrim = false,
@@ -140,7 +166,8 @@ class RawGrabberSheet extends StatefulWidget {
   }) : assert(minChildSize >= 0.0),
        assert(maxChildSize <= 1.0),
        assert(minChildSize <= initialChildSize),
-       assert(initialChildSize <= maxChildSize);
+       assert(initialChildSize <= maxChildSize),
+       assert(elevation >= 0.0);
 
   @override
   State<RawGrabberSheet> createState() => _RawGrabberSheetState();
@@ -214,11 +241,18 @@ class _RawGrabberSheetState extends State<RawGrabberSheet> {
             snap: widget.snap,
             snapSizes: widget.snapSizes,
             builder: (BuildContext context, ScrollController scrollController) {
-              return Container(
-                decoration: BoxDecoration(
-                  color: widget.backgroundColor,
-                  borderRadius: widget.borderRadius,
+              return PhysicalShape(
+                key: const Key('grabber_sheet_surface'),
+                clipper: ShapeBorderClipper(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: widget.borderRadius,
+                  ),
+                  textDirection: Directionality.maybeOf(context),
                 ),
+                color: widget.backgroundColor,
+                elevation: widget.elevation,
+                shadowColor: widget.shadowColor,
+                clipBehavior: widget.clipBehavior,
                 child: Column(
                   children: <Widget>[
                     _buildDragArea(),
@@ -366,6 +400,9 @@ class _Grabber extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
+    final GrabberStyle resolved = style.merge(_defaultGrabberStyle);
+    final double height = resolved.height!;
+
     return Container(
       width: double.infinity,
       color: const Color(0x00000000),
@@ -374,12 +411,14 @@ class _Grabber extends StatelessWidget {
         // This is the visible part of the grabber.
         child: Container(
           key: const Key('grabber'),
-          margin: style.margin,
-          width: style.width,
-          height: style.height,
+          margin: resolved.margin,
+          width: resolved.width,
+          height: height,
           decoration: BoxDecoration(
-            color: style.color,
-            borderRadius: BorderRadius.all(style.radius),
+            color: resolved.color,
+            borderRadius: BorderRadius.all(
+              resolved.radius ?? Radius.circular(height / 2),
+            ),
           ),
         ),
       ),
