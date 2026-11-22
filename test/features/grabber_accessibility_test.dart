@@ -77,6 +77,49 @@ void main() {
       expect(size, closeTo(0.25, 0.01));
     });
 
+    testWidgets('Enter and Space toggle the focused grabber when enabled', (
+      WidgetTester tester,
+    ) async {
+      double size = 0.5;
+      await tester.pumpWidget(
+        _sheet(
+          toggleOnGrabberTap: true,
+          onSizeChanged: (value) => size = value,
+        ),
+      );
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(size, closeTo(1.0, 0.01));
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.space);
+      await tester.pumpAndSettle();
+      expect(size, closeTo(0.25, 0.01));
+    });
+
+    testWidgets('arrow keys stay within the min and max sizes', (
+      WidgetTester tester,
+    ) async {
+      double size = 0.5;
+      await tester.pumpWidget(_sheet(onSizeChanged: (value) => size = value));
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pump();
+      for (var i = 0; i < 2; i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+        await tester.pumpAndSettle();
+      }
+      expect(size, closeTo(1.0, 0.01));
+
+      for (var i = 0; i < 3; i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+        await tester.pumpAndSettle();
+      }
+      expect(size, closeTo(0.25, 0.01));
+    });
+
     testWidgets('the grabber area is at least 48 logical pixels tall', (
       WidgetTester tester,
     ) async {
