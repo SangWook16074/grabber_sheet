@@ -1,16 +1,25 @@
-# grabber_sheet_example
+# grabber_sheet example
 
-A new Flutter project.
+This example app demonstrates how to use `grabber_sheet` in realistic Flutter layouts.
 
-## Getting Started
+## Included examples
 
-This project is a starting point for a Flutter application.
+- **Maps-style demo**: a flagship search-results sheet layered over faux map content
+- **Simple example**: the smallest setup needed to get a draggable sheet working
+- **Advanced example**: controller-based interactions, snapping, scrim, and callbacks
+- **Non-mobile example**: desktop/web-oriented layout behavior
 
-A few resources to get you started if this is your first Flutter project:
+## Run the example
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+```bash
+cd example
+flutter run
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## What to look at
+
+- `lib/main.dart` — minimal entry point
+- `lib/maps_example.dart` — product-style maps/search positioning demo
+- `lib/simple_grabber_sheet.dart` — quick-start usage
+- `lib/advanced_example.dart` — richer product-style usage
+- `lib/non_mobile_grabber_example.dart` — responsive and non-mobile behavior

@@ -1,12 +1,21 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:grabber_sheet/grabber_sheet.dart';
 
 import '../common/test_app_harness.dart';
 
+BorderRadiusGeometry _surfaceBorderRadius(WidgetTester tester) {
+  final surface = tester.widget<PhysicalShape>(
+    find.byKey(const Key('grabber_sheet_surface')),
+  );
+  final clipper = surface.clipper as ShapeBorderClipper;
+  return (clipper.shape as RoundedRectangleBorder).borderRadius;
+}
+
 void main() {
-  testWidgets('applies custom borderRadius when provided',
-      (WidgetTester tester) async {
+  testWidgets('applies custom borderRadius when provided', (
+    WidgetTester tester,
+  ) async {
     // Given
     const customBorderRadius = BorderRadius.only(
       topLeft: Radius.circular(30),
@@ -25,22 +34,12 @@ void main() {
     );
 
     // Then
-    final sheetContainerFinder = find.descendant(
-      of: find.byType(DraggableScrollableSheet),
-      matching: find.byWidgetPredicate((widget) {
-        if (widget is Container && widget.decoration is BoxDecoration) {
-          final decoration = widget.decoration as BoxDecoration;
-          return decoration.borderRadius == customBorderRadius;
-        }
-        return false;
-      }),
-    );
-
-    expect(sheetContainerFinder, findsOneWidget);
+    expect(_surfaceBorderRadius(tester), customBorderRadius);
   });
 
-  testWidgets('falls back to default borderRadius when null',
-      (WidgetTester tester) async {
+  testWidgets('falls back to the Material 3 borderRadius when null', (
+    WidgetTester tester,
+  ) async {
     // Given
     await tester.pumpWidget(
       TestAppHarness(
@@ -53,22 +52,9 @@ void main() {
     );
 
     // Then
-    const defaultBorderRadius = BorderRadius.only(
-      topLeft: Radius.circular(16.0),
-      topRight: Radius.circular(16.0),
+    expect(
+      _surfaceBorderRadius(tester),
+      const BorderRadius.vertical(top: Radius.circular(28.0)),
     );
-
-    final sheetContainerFinder = find.descendant(
-      of: find.byType(DraggableScrollableSheet),
-      matching: find.byWidgetPredicate((widget) {
-        if (widget is Container && widget.decoration is BoxDecoration) {
-          final decoration = widget.decoration as BoxDecoration;
-          return decoration.borderRadius == defaultBorderRadius;
-        }
-        return false;
-      }),
-    );
-
-    expect(sheetContainerFinder, findsOneWidget);
   });
 }

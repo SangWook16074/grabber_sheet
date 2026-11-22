@@ -1,7 +1,8 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+
 import 'grabber_sheet_controller.dart';
 import 'grabber_style.dart';
+import 'raw_grabber_sheet.dart';
 
 /// A customizable draggable bottom sheet that uses a builder pattern for its content.
 ///
@@ -12,7 +13,12 @@ import 'grabber_style.dart';
 /// It simplifies the management of scroll controllers by using a
 /// [DraggableScrollableController] internally and providing a [ScrollController]
 /// to the `builder`.
-class GrabberSheet extends StatefulWidget {
+///
+/// [GrabberSheet] resolves its visual defaults from the Material theme and
+/// builds a [RawGrabberSheet]. Use [RawGrabberSheet] directly from
+/// `package:grabber_sheet/raw_grabber_sheet.dart` for apps that do not use
+/// Material.
+class GrabberSheet extends StatelessWidget {
   /// A builder function that provides a [ScrollController] to the content.
   ///
   /// The content of the sheet, typically a scrollable widget like [ListView]
@@ -44,17 +50,36 @@ class GrabberSheet extends StatefulWidget {
   final bool showGrabber;
 
   /// The visual style of the grabber handle, defined by a [GrabberStyle] object.
+  ///
+  /// Null properties are resolved from [BottomSheetThemeData.dragHandleColor]
+  /// and [BottomSheetThemeData.dragHandleSize], then the Material drag handle
+  /// defaults (a 32x4 handle colored `colorScheme.onSurfaceVariant` in
+  /// Material 3).
   final GrabberStyle grabberStyle;
 
-  /// A custom widget to be displayed below the grabber.
-  final Widget? bottom;
+  /// Whether tapping the grabber toggles the sheet between [minChildSize]
+  /// and [maxChildSize].
+  ///
+  /// Keyboard users can always use the arrow keys to step through snap
+  /// points; when this is true, Enter and Space toggle the sheet as well.
+  ///
+  /// Defaults to false.
+  final bool toggleOnGrabberTap;
 
-  /// The padding for the bottom widget.
-  final EdgeInsetsGeometry? bottomAreaPadding;
+  /// A sticky header widget to display below the grabber.
+  ///
+  /// This area remains visible above the scrollable content, making it useful
+  /// for titles, actions, filters, and summary rows.
+  final Widget? header;
+
+  /// The padding for the sticky header widget.
+  final EdgeInsetsGeometry? headerAreaPadding;
 
   /// The background color of the sheet.
   ///
-  /// If null, it defaults to the theme's `colorScheme.surface`.
+  /// If null, defaults to [BottomSheetThemeData.backgroundColor], then
+  /// `colorScheme.surfaceContainerLow` (Material 3) or `colorScheme.surface`
+  /// (Material 2).
   final Color? backgroundColor;
 
   /// If true, the sheet will snap to the nearest snap point after dragging.
@@ -83,15 +108,42 @@ class GrabberSheet extends StatefulWidget {
   /// The callback receives the new fractional size of the sheet.
   final ValueChanged<double>? onSizeChanged;
 
-  /// Called when the sheet snaps to a specific size.
+  /// Called when the sheet settles on a snap point while [snap] is true.
   ///
-  /// The callback receives the snapped fractional size.
+  /// This is called regardless of whether the snap was triggered by dragging
+  /// the grabber, dragging the content, or tapping the scrim. It is called
+  /// once per snap point.
   final ValueChanged<double>? onSnap;
+
+  /// Whether the sheet, when dragged (or flung) to its minimum size, should
+  /// cause its parent sheet to close.
+  ///
+  /// See [DraggableScrollableSheet.shouldCloseOnMinExtent]. Defaults to true.
+  final bool shouldCloseOnMinExtent;
 
   /// The border radius of the sheet.
   ///
-  /// If null, defaults to a top-left and top-right radius of 16.0.
+  /// If null, defaults to the radius of [BottomSheetThemeData.shape] when it is
+  /// a [RoundedRectangleBorder], then a top radius of 28.0 (Material 3) or
+  /// 16.0 (Material 2).
   final BorderRadiusGeometry? borderRadius;
+
+  /// The elevation of the sheet surface.
+  ///
+  /// If null, defaults to [BottomSheetThemeData.elevation], then 0.
+  final double? elevation;
+
+  /// The color of the shadow cast when [elevation] is greater than 0.
+  ///
+  /// If null, defaults to [BottomSheetThemeData.shadowColor], then
+  /// `colorScheme.shadow`.
+  final Color? shadowColor;
+
+  /// How the sheet content is clipped to the [borderRadius].
+  ///
+  /// If null, defaults to [BottomSheetThemeData.clipBehavior], then
+  /// [Clip.none].
+  final Clip? clipBehavior;
 
   /// The duration of the snap animation.
   ///
@@ -127,8 +179,9 @@ class GrabberSheet extends StatefulWidget {
     this.maxChildSize = 1.0,
     this.showGrabber = true,
     this.grabberStyle = const GrabberStyle(),
-    this.bottom,
-    this.bottomAreaPadding,
+    this.toggleOnGrabberTap = false,
+    this.header,
+    this.headerAreaPadding,
     this.snap = false,
     this.snapSizes,
     this.backgroundColor,
@@ -136,292 +189,82 @@ class GrabberSheet extends StatefulWidget {
     this.controller,
     this.onSizeChanged,
     this.onSnap,
+    this.shouldCloseOnMinExtent = true,
     this.borderRadius,
+    this.elevation,
+    this.shadowColor,
+    this.clipBehavior,
     this.snapAnimationDuration = const Duration(milliseconds: 300),
     this.snapAnimationCurve = Curves.easeOut,
     this.showScrim = false,
     this.scrimColor = Colors.black54,
     this.dismissOnScrimTap = true,
-  })  : assert(minChildSize >= 0.0),
-        assert(maxChildSize <= 1.0),
-        assert(minChildSize <= initialChildSize),
-        assert(initialChildSize <= maxChildSize);
-
-  @override
-  State<GrabberSheet> createState() => _GrabberSheetState();
-}
-
-/// The state object for the [GrabberSheet] widget.
-class _GrabberSheetState extends State<GrabberSheet> {
-  /// The controller for the underlying [DraggableScrollableSheet].
-  late DraggableScrollableController _controller;
-
-  /// The current size of the sheet, updated during dragging.
-  late double _newSize = widget.initialChildSize;
-
-  /// Notifier for the current size, used to update the scrim opacity.
-  late final ValueNotifier<double> _currentSizeNotifier =
-      ValueNotifier(widget.initialChildSize);
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = widget.controller ?? DraggableScrollableController();
-  }
-
-  @override
-  void didUpdateWidget(GrabberSheet oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.controller != oldWidget.controller) {
-      if (oldWidget.controller == null) {
-        // We were using an internal controller, dispose it.
-        _controller.dispose();
-      }
-      _controller = widget.controller ?? DraggableScrollableController();
-    }
-  }
-
-  @override
-  void dispose() {
-    _currentSizeNotifier.dispose();
-    // Only dispose if we created it internally.
-    if (widget.controller == null) {
-      _controller.dispose();
-    }
-    super.dispose();
-  }
+  }) : assert(minChildSize >= 0.0),
+       assert(maxChildSize <= 1.0),
+       assert(minChildSize <= initialChildSize),
+       assert(initialChildSize <= maxChildSize);
 
   @override
   Widget build(BuildContext context) {
-    // Update constraints in the controller if it's a GrabberSheetController.
-    if (_controller is GrabberSheetController) {
-      (_controller as GrabberSheetController).internalUpdateConstraints(
-        widget.minChildSize,
-        widget.maxChildSize,
-      );
-    }
-
     final theme = Theme.of(context);
-    final Color sheetColor =
-        widget.backgroundColor ?? theme.colorScheme.surface;
+    final colorScheme = theme.colorScheme;
+    final bottomSheetTheme = theme.bottomSheetTheme;
+    final bool useMaterial3 = theme.useMaterial3;
+    final Size? themeHandleSize = bottomSheetTheme.dragHandleSize;
+    final ShapeBorder? themeShape = bottomSheetTheme.shape;
 
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        return Stack(
-          children: [
-            if (widget.showScrim)
-              ValueListenableBuilder<double>(
-                valueListenable: _currentSizeNotifier,
-                builder: (context, currentSize, child) {
-                  double progress = 0.0;
-                  if (widget.maxChildSize > widget.minChildSize) {
-                    progress = (currentSize - widget.minChildSize) /
-                        (widget.maxChildSize - widget.minChildSize);
-                  }
-                  progress = progress.clamp(0.0, 1.0);
-
-                  if (progress <= 0) return const SizedBox.shrink();
-
-                  return GestureDetector(
-                    onTap: widget.dismissOnScrimTap
-                        ? () {
-                            _controller.animateTo(
-                              widget.minChildSize,
-                              duration: widget.snapAnimationDuration,
-                              curve: widget.snapAnimationCurve,
-                            );
-                          }
-                        : null,
-                    child: Container(
-                      key: const Key('grabber_sheet_scrim'),
-                      color: widget.scrimColor.withAlpha(
-                        (widget.scrimColor.a * 255 * progress)
-                            .round()
-                            .clamp(0, 255),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            NotificationListener<DraggableScrollableNotification>(
-              onNotification: (notification) {
-                widget.onSizeChanged?.call(notification.extent);
-                _currentSizeNotifier.value = notification.extent;
-                return false;
-              },
-              child: DraggableScrollableSheet(
-                controller: _controller,
-                initialChildSize: widget.initialChildSize,
-                minChildSize: widget.minChildSize,
-                maxChildSize: widget.maxChildSize,
-                snap: widget.snap,
-                snapSizes: widget.snapSizes,
-                builder:
-                    (BuildContext context, ScrollController scrollController) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: sheetColor,
-                      borderRadius: widget.borderRadius ??
-                          const BorderRadius.only(
-                            topLeft: Radius.circular(16.0),
-                            topRight: Radius.circular(16.0),
-                          ),
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        GestureDetector(
-                          onVerticalDragStart: (details) {
-                            _newSize = _controller.size;
-                          },
-                          onVerticalDragUpdate: (details) {
-                            final newPixel =
-                                _controller.pixels - details.delta.dy;
-                            // Convert pixel value to fractional size and clamp it.
-                            _newSize = _controller
-                                .pixelsToSize(newPixel)
-                                .clamp(0.0, 1.0);
-
-                            _controller.jumpTo(_newSize);
-                          },
-                          onVerticalDragEnd: (details) {
-                            // If snapping is disabled, do nothing.
-                            if (!widget.snap) return;
-
-                            final double velocity =
-                                details.primaryVelocity ?? 0.0;
-                            // A velocity threshold to determine if it's a fling.
-                            const double flingVelocity = 300.0;
-
-                            // Combine min/max with custom snapSizes, remove duplicates, and sort.
-                            final Set<double> allSnapPoints = {
-                              widget.minChildSize,
-                              widget.maxChildSize,
-                              ...?widget.snapSizes,
-                            };
-                            final List<double> sortedSnapPoints =
-                                allSnapPoints.toList()..sort();
-
-                            double targetSize;
-
-                            if (velocity.abs() > flingVelocity) {
-                              // On a fling, animate to the min or max extent.
-                              targetSize = velocity < 0
-                                  ? sortedSnapPoints.last
-                                  : sortedSnapPoints.first;
-                            } else {
-                              // On a slow drag, find the closest snap point.
-                              targetSize = sortedSnapPoints.reduce(
-                                (a, b) =>
-                                    (_newSize - a).abs() < (_newSize - b).abs()
-                                        ? a
-                                        : b,
-                              );
-                            }
-
-                            // Animate the sheet to the determined target size.
-                            _controller
-                                .animateTo(
-                              targetSize,
-                              duration: widget.snapAnimationDuration,
-                              curve: widget.snapAnimationCurve,
-                            )
-                                .then((_) {
-                              // Trigger onSnap callback after animation completes
-                              if (mounted && widget.onSnap != null) {
-                                widget.onSnap!(targetSize);
-                              }
-                            });
-                          },
-                          child: Container(
-                            color: Colors.transparent,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                if (widget.showGrabber)
-                                  _Grabber(
-                                    style: widget.grabberStyle,
-                                    showOnNonMobile:
-                                        widget.showGrabberOnNonMobile,
-                                  ),
-                                if (widget.bottom != null)
-                                  Padding(
-                                    padding: widget.bottomAreaPadding ??
-                                        EdgeInsets.zero,
-                                    child: widget.bottom,
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        // The main content of the sheet.
-                        Expanded(
-                            child: widget.builder(context, scrollController)),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-/// A private widget representing the draggable handle area.
-class _Grabber extends StatelessWidget {
-  const _Grabber({
-    required this.style,
-    this.showOnNonMobile = false,
-  });
-
-  /// The visual style of the grabber handle.
-  final GrabberStyle style;
-
-  /// Whether to show the grabber handle on non-mobile platforms.
-  final bool showOnNonMobile;
-
-  @override
-  Widget build(BuildContext context) {
-    // For a more native feel, the grabber is not shown on desktop and web platforms,
-    // unless explicitly requested.
-    if (_isOnDesktopAndWeb && !showOnNonMobile) {
-      return const SizedBox.shrink();
-    }
-
-    return Container(
-      width: double.infinity,
-      color: Colors.transparent,
-      child: Align(
-        alignment: Alignment.topCenter,
-        // This is the visible part of the grabber.
-        child: Container(
-          key: const Key('grabber'),
-          margin: style.margin,
-          width: style.width,
-          height: style.height,
-          decoration: BoxDecoration(
-            color: style.color,
-            borderRadius: BorderRadius.all(style.radius),
-          ),
-        ),
+    final GrabberStyle effectiveGrabberStyle = grabberStyle.merge(
+      GrabberStyle(
+        color:
+            bottomSheetTheme.dragHandleColor ??
+            (useMaterial3
+                ? colorScheme.onSurfaceVariant
+                : colorScheme.onSurface.withValues(alpha: 0.4)),
+        width: themeHandleSize?.width,
+        height: themeHandleSize?.height,
       ),
     );
-  }
 
-  /// Checks if the current platform is a desktop or web environment.
-  bool get _isOnDesktopAndWeb {
-    return kIsWeb ||
-        switch (defaultTargetPlatform) {
-          TargetPlatform.macOS ||
-          TargetPlatform.linux ||
-          TargetPlatform.windows =>
-            true,
-          TargetPlatform.android ||
-          TargetPlatform.iOS ||
-          TargetPlatform.fuchsia =>
-            false,
-        };
+    return RawGrabberSheet(
+      builder: builder,
+      backgroundColor:
+          backgroundColor ??
+          bottomSheetTheme.backgroundColor ??
+          (useMaterial3
+              ? colorScheme.surfaceContainerLow
+              : colorScheme.surface),
+      initialChildSize: initialChildSize,
+      minChildSize: minChildSize,
+      maxChildSize: maxChildSize,
+      showGrabber: showGrabber,
+      grabberStyle: effectiveGrabberStyle,
+      toggleOnGrabberTap: toggleOnGrabberTap,
+      header: header,
+      headerAreaPadding: headerAreaPadding ?? EdgeInsets.zero,
+      snap: snap,
+      snapSizes: snapSizes,
+      showGrabberOnNonMobile: showGrabberOnNonMobile,
+      controller: controller,
+      onSizeChanged: onSizeChanged,
+      onSnap: onSnap,
+      shouldCloseOnMinExtent: shouldCloseOnMinExtent,
+      borderRadius:
+          borderRadius ??
+          (themeShape is RoundedRectangleBorder
+              ? themeShape.borderRadius
+              : null) ??
+          BorderRadius.vertical(
+            top: Radius.circular(useMaterial3 ? 28.0 : 16.0),
+          ),
+      elevation: elevation ?? bottomSheetTheme.elevation ?? 0.0,
+      shadowColor:
+          shadowColor ?? bottomSheetTheme.shadowColor ?? colorScheme.shadow,
+      clipBehavior: clipBehavior ?? bottomSheetTheme.clipBehavior ?? Clip.none,
+      snapAnimationDuration: snapAnimationDuration,
+      snapAnimationCurve: snapAnimationCurve,
+      showScrim: showScrim,
+      scrimColor: scrimColor,
+      dismissOnScrimTap: dismissOnScrimTap,
+    );
   }
 }

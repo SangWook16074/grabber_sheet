@@ -7,180 +7,273 @@
 
 [**English Documentation**](README.md)
 
-Google Maps 앱의 모달 시트에서 영감을 받은, 재사용 가능하고 커스터마이징이 가능한 Flutter용 드래그 가능한 바텀 시트입니다.
+A **Google Maps 스타일의 드래그 가능한 Flutter 바텀 시트**입니다.
 
-바텀 시트가 포함된 UI를 개발할 때, 개발자들은 드래그 핸들링과 스크롤 물리 효과를 매번 직접 구현해야 하는 번거로움에 직면합니다. `grabber_sheet`는 콘텐츠와 완벽하게 연동되는 강력한 드래그 메커니즘을 미리 구축하여 제공함으로써 이 문제를 해결하며, 어떤 디자인에도 맞출 수 있는 폭넓은 커스터마이징 옵션을 제공합니다.
+`grabber_sheet`는 다음이 필요한 앱을 위해 만들어졌습니다.
+- **눈에 보이는 그래버 핸들**
+- 스크롤 콘텐츠 위에 고정되는 **sticky header 영역**
+- 적은 API로 구현하는 **부드러운 크기 조절 + 스크롤 경험**
+
+`DraggableScrollableSheet`를 사용한 뒤, 그래버/헤더/스타일/컨트롤러를 매번 직접 조합해야 했던 경험이 있다면 이 패키지가 그 반복 작업을 줄여줍니다.
 
 <img width="250" src="https://github.com/user-attachments/assets/cc2a3eaf-c872-46f1-8b45-bbf83b781104" />
 
 
-## 🚀 설치 (Installation)
+## 왜 GrabberSheet를 써야 하나요?
+
+`grabber_sheet`는 단순히 스크롤되는 컨테이너가 아니라, 실제 제품 화면처럼 보이는 시트를 빠르게 만들고 싶을 때 적합합니다.
+
+### 특히 잘 맞는 경우
+- 지도 검색 결과 패널
+- 장소/주소 검색 플로우
+- 배달 / 차량 호출 추적 UI
+- 여행 / 탐색형 앱
+- 상품 빠른 미리보기 패널
+
+### 기본 제공되는 것
+- 내장 **그래버 핸들**
+- `header`로 만드는 **sticky 상단 영역**
+- 바로 연결되는 `ScrollController`
+- 선택적 **snap points**
+- `GrabberSheetController` 기반 프로그래밍 제어
+- 선택적 **스크림 오버레이**
+- 충분한 스타일 커스터마이징
+
+---
+
+## 설치 (Installation)
 
 ```bash
 flutter pub add grabber_sheet
 ```
 
-## ⚡ 초간단 사용법
+Dart 3.13 / Flutter 3.47 이상이 필요합니다. 1.x에서 업그레이드한다면 [2.0.0 마이그레이션 가이드](CHANGELOG.md#200)를 확인하세요.
 
-리스트를 감싸고, 컨트롤러만 연결하면 **끝입니다.**
+Material을 사용하지 않는다면 `package:grabber_sheet/raw_grabber_sheet.dart`를 import 해서 `package:flutter/widgets.dart`에만 의존하는 `RawGrabberSheet`를 사용할 수 있습니다.
+
+---
+
+## 빠른 시작
+
+스크롤 가능한 콘텐츠를 감싸고, 제공된 컨트롤러를 연결하면 됩니다.
 
 ```dart
 GrabberSheet(
   snap: true,
   builder: (context, controller) {
     return ListView.builder(
-      controller: controller, // <--- 핵심: 이 컨트롤러를 연결하세요!
-      itemBuilder: (context, index) => ListTile(title: Text('Item $index')),
+      controller: controller,
+      itemCount: 30,
+      itemBuilder: (context, index) {
+        return ListTile(title: Text('Place $index'));
+      },
     );
   },
 )
 ```
 
----
-
-## 💡 왜 GrabberSheet 인가요?
-
-| Pain Point (문제점) | DraggableScrollableSheet | GrabberSheet |
-| :--- | :---: | :---: |
-| **제스처 충돌** | ⚠️ 스크롤 vs 드래그 싸움 | ✅ **충돌 없음** (완벽한 제스처 분리) |
-| **헤더 / 그래버** | ❌ 직접 구현해야 함 (어려움) | ✅ **기본 내장 & 고정됨** |
-| **스냅(Snap) 동작** | ⚠️ 복잡한 수학 계산 필요 | ✅ **속성 하나로 끝** (`snap: true`) |
-| **개발 경험** | 🔥 스트레스 유발 | 🍰 **Plug & Play (즉시 사용)** |
+이게 핵심 사용법입니다.
 
 ---
 
-## 🎨 고급 커스터마이징
+## 무엇이 다른가요?
 
-### 1. 스마트 스냅 (Smart Snapping)
-`snap: true`만 켜면, **천천히 놓을 때(가까운 위치)**와 **빠르게 던질 때(관성)**를 자동으로 구분하여 자연스럽게 붙습니다.
+| 필요 기능 | 기본 `DraggableScrollableSheet` | `grabber_sheet` |
+| :--- | :--- | :--- |
+| 눈에 보이는 그래버 핸들 | 직접 구현 | 기본 제공 |
+| Sticky header 영역 | 직접 조합 | `header` |
+| ScrollController 연결 | 직접 관리 | builder에서 바로 제공 |
+| 프로그래밍 제어 | 기본 컨트롤러 | 더 친화적인 helper |
+| 제품형 UI 구성 | 조립이 더 필요 | 더 빠르게 구현 가능 |
+
+`grabber_sheet`는 Flutter의 모든 bottom sheet API를 대체하려는 패키지가 아닙니다.  
+대신, 이 특정 UI 패턴을 더 빠르고 재사용 가능하게 만드는 데 집중합니다.
+
+---
+
+## 주요 기능
+
+### 1. 내장 그래버
+
+```dart
+GrabberSheet(
+  builder: (context, controller) {
+    return ListView(controller: controller);
+  },
+)
+```
+
+<img width="250" src="https://github.com/user-attachments/assets/8d062fa4-cdda-4445-9d90-b34aa3fce1c5" />
+
+`showGrabber: false`로 숨길 수도 있습니다.
+
+---
+
+### 2. Sticky header 영역
+
+스크롤되지 않고 항상 보이는 제목/액션/필터가 필요하다면 `header`를 사용하세요.
+
+```dart
+GrabberSheet(
+  header: Row(
+    children: const [
+      Text('Locations'),
+      Spacer(),
+      CloseButton(),
+    ],
+  ),
+  builder: (context, controller) {
+    return ListView(controller: controller);
+  },
+)
+```
+
+<img width="250" src="https://github.com/user-attachments/assets/669f7506-2b92-408f-a239-240ac68ca621" />
+
+---
+
+### 3. 스냅
 
 ```dart
 GrabberSheet(
   snap: true,
   minChildSize: 0.2,
   maxChildSize: 1.0,
-  snapSizes: const [0.5], // 중간 스냅 지점 추가
-  // ...
+  snapSizes: const [0.5, 0.8],
+  builder: (context, controller) {
+    return ListView(controller: controller);
+  },
 )
 ```
 
 ![snap gif](https://github.com/user-attachments/assets/3727d83a-456b-4fd9-a721-8ad3e2116005)
 
-### 2. 그래버 스타일링
-앱의 디자인 시스템에 맞춰 그래버의 크기, 색상, 모양을 자유롭게 변경하세요.
+---
 
-```dart
-GrabberSheet(
-  grabberStyle: GrabberStyle(
-    width: 60,
-    height: 6,
-    color: Colors.grey.shade300,
-    radius: const Radius.circular(12),
-  ),
-  // ...
-)
-```
+### 4. 프로그래밍 제어
 
-<img width="250" src="https://github.com/user-attachments/assets/8d062fa4-cdda-4445-9d90-b34aa3fce1c5" />
-
-그래버를 완전히 숨길 수도 있습니다 (`showGrabber: false`).
-
-<img width="250" src="https://github.com/user-attachments/assets/20d589b5-54c3-4da3-b420-0c1b10f3e9ef" />
-
-### 3. 고정 헤더 (제목/버튼 영역)
-스크롤되지 않고 **항상 보이는** 제목이나 닫기 버튼이 필요하신가요? `bottom` 속성을 사용하세요.
-
-```dart
-GrabberSheet(
-  bottom: Row(
-    children: [
-      Text('Locations', style: TextStyle(fontSize: 18)),
-      Spacer(),
-      CloseButton(),
-    ],
-  ),
-  // ...
-)
-```
-
-<img width="250" src="https://github.com/user-attachments/assets/669f7506-2b92-408f-a239-240ac68ca621" />
-
-### 4. 프로그래밍 제어 (Controller)
-코드로 시트를 열거나 닫고, 특정 위치로 이동시킬 수 있습니다.
+`GrabberSheetController`로 시트를 열고, 줄이고, 특정 위치로 이동시킬 수 있습니다.
 
 ```dart
 final controller = GrabberSheetController();
 
-// ...
-controller.maximize(); // 최대 크기로
-controller.minimize(); // 최소 크기로
-controller.animateTo(0.5); // 50% 지점으로 이동
+GrabberSheet(
+  controller: controller,
+  builder: (context, scrollController) {
+    return ListView(controller: scrollController);
+  },
+);
+
+controller.maximize();
+controller.minimize();
+controller.animateTo(0.5);
 ```
 
 <img width="250" src="https://github.com/user-attachments/assets/b90799fa-5db5-4e6a-bb9b-3750198877d7" alt="FAB 제어 GrabberSheet 예시" />
 
-### 5. 데스크톱 & 웹 지원
-기본적으로 데스크톱/웹에서는 그래버가 숨겨집니다(플랫폼 표준). 필요하다면 강제로 표시할 수 있습니다.
+---
+
+### 5. 스크림 오버레이
+
+```dart
+GrabberSheet(
+  showScrim: true,
+  scrimColor: Colors.black54,
+  dismissOnScrimTap: true,
+  builder: (context, controller) {
+    return ListView(controller: controller);
+  },
+)
+```
+
+모달처럼 시트에 집중시켜야 하는 UI에 특히 유용합니다.
+
+---
+
+### 6. 데스크톱 / 웹 동작
+
+기본적으로 데스크톱/웹에서는 플랫폼 감각에 맞게 그래버가 숨겨집니다. 필요하면 강제로 보이게 할 수 있습니다.
 
 ```dart
 GrabberSheet(
   showGrabberOnNonMobile: true,
-  // ...
+  builder: (context, controller) {
+    return ListView(controller: controller);
+  },
 )
 ```
 
 ![grabber_sheet_web](https://github.com/user-attachments/assets/c151bdad-254b-455b-b82a-1308b8863784)
 
-### 6. 스냅 애니메이션 제어
-스냅 애니메이션의 시간과 커브를 커스터마이징하여 앱의 움직임을 섬세하게 조절할 수 있습니다.
-
-```dart
-GrabberSheet(
-  snap: true,
-  snapAnimationDuration: const Duration(milliseconds: 500), // 기본값은 300ms
-  snapAnimationCurve: Curves.bounceOut, // 기본값은 Curves.easeOut
-  // ...
-)
-```
-
-### 7. 스크림 (배경 오버레이)
-시트 뒤편에 반투명 오버레이(스크림)를 추가하여 시트 콘텐츠에 집중도를 높일 수 있습니다. 또한, 이 오버레이를 탭하여 시트를 닫는 기능도 제공합니다.
-
-```dart
-GrabberSheet(
-  showScrim: true,
-  scrimColor: Colors.black.withOpacity(0.6), // 기본값은 Colors.black54
-  dismissOnScrimTap: true, // 기본값은 true
-  // ...
-)
-```
-
 ---
 
-## 📘 속성 (Properties)
+## 주요 속성
 
 | 속성 | 설명 | 기본값 |
 | :--- | :--- | :--- |
-| `builder` | **(필수)** 콘텐츠 빌더. 제공된 `ScrollController`를 반드시 사용해야 합니다. | - |
-| `snap` | 자동 스냅 기능 활성화. | `false` |
-| `initialChildSize` | 초기 높이 비율 (0.0 - 1.0). | `0.5` |
+| `builder` | **필수.** 제공된 `ScrollController`를 연결해 콘텐츠를 빌드합니다. | - |
+| `initialChildSize` | 초기 높이 비율. | `0.5` |
 | `minChildSize` | 최소 높이 비율. | `0.25` |
 | `maxChildSize` | 최대 높이 비율. | `1.0` |
-| `snapSizes` | 중간 스냅 지점 목록 (예: `[0.5, 0.8]`). | `null` |
-| `showGrabber` | 그래버 핸들 표시 여부. | `true` |
-| `grabberStyle` | 그래버의 너비, 높이, 색상, 둥글기, 마진 설정. | `Default Style` |
-| `bottom` | 그래버 아래 고정될 위젯 (제목, 버튼 등). | `null` |
+| `snap` | 드래그 후 스냅 활성화. | `false` |
+| `snapSizes` | 추가 스냅 지점 목록. | `null` |
+| `showGrabber` | 그래버 표시 여부. | `true` |
+| `showGrabberOnNonMobile` | 데스크톱/웹에서도 그래버를 계속 표시할지 여부. | `false` |
+| `grabberStyle` | 그래버 스타일 설정. 비어 있는 값은 `BottomSheetThemeData` / M3 드래그 핸들을 따릅니다. | M3 드래그 핸들 |
+| `toggleOnGrabberTap` | 그래버 탭(또는 Enter/Space)으로 최소/최대 전환. | `false` |
+| `header` | 그래버 아래 고정되는 sticky 영역. | `null` |
+| `headerAreaPadding` | sticky 영역의 패딩. | `null` |
+| `backgroundColor` | 시트 배경색. | `BottomSheetThemeData.backgroundColor` → `surfaceContainerLow` (M3) |
+| `borderRadius` | 시트 모서리 둥글기. | 테마 shape → 상단 28 (M3) / 16 (M2) |
+| `elevation` | 시트 elevation. | `BottomSheetThemeData.elevation` → `0` |
+| `shadowColor` | 시트 그림자 색. | `BottomSheetThemeData.shadowColor` → `colorScheme.shadow` |
+| `clipBehavior` | 시트 모양대로 콘텐츠 클리핑. | `BottomSheetThemeData.clipBehavior` → `Clip.none` |
 | `controller` | 시트 위치를 코드로 제어. | `null` |
 | `onSizeChanged` | 크기 변경 시 호출되는 콜백. | `null` |
-| `onSnap` | 스냅 완료 시 호출되는 콜백. | `null` |
-| `snapAnimationDuration` | 스냅 애니메이션의 지속 시간. | `300ms` |
-| `snapAnimationCurve` | 스냅 애니메이션의 커브. | `Curves.easeOut` |
-| `showScrim` | 배경 오버레이(스크림) 표시 여부. | `false` |
-| `scrimColor` | 배경 오버레이의 색상. | `Colors.black54` |
-| `dismissOnScrimTap` | 스크림 탭 시 시트 닫기 여부. | `true` |
+| `onSnap` | 시트가 스냅 지점에 멈추면 1회 호출 (드래그 주체 무관). | `null` |
+| `shouldCloseOnMinExtent` | `DraggableScrollableSheet`에 그대로 전달. | `true` |
+| `snapAnimationDuration` | 스냅 애니메이션 지속 시간. | `300ms` |
+| `snapAnimationCurve` | 스냅 애니메이션 커브. | `Curves.easeOut` |
+| `showScrim` | 배경 스크림 표시 여부. | `false` |
+| `scrimColor` | 배경 스크림 색상. | `Colors.black54` |
+| `dismissOnScrimTap` | 스크림 탭 시 최소 크기로 줄일지 여부. | `true` |
 
 ---
 
-## 🤝 기여하기
+## 이런 경우에 잘 맞습니다
 
-버그를 발견하셨거나 기능 제안이 있으시다면 [GitHub repository](https://github.com/SangWook16074/grabber_sheet)를 방문해주세요.
+`grabber_sheet`는 다음이 필요할 때 잘 맞습니다.
+- 재사용 가능한 **in-page draggable sheet**
+- Maps/Search 스타일의 하단 결과 패널
+- 기본 제공되는 그래버와 sticky 상단 영역
+- 의존성이 매우 적은 패키지
+
+반대로 다음이 필요하면 다른 접근이 더 맞을 수 있습니다.
+- 전체 modal route 프레임워크
+- 매우 커스텀한 page transition
+- 모든 `showModalBottomSheet` 사용처의 완전한 대체
+
+---
+
+## 팁
+
+- builder에서 받은 `ScrollController`를 반드시 스크롤 위젯에 연결하세요.
+- 지도나 대시보드 같은 배경 위에 올릴 때는 `Stack` 안에서 사용하는 것이 좋습니다.
+- 버튼/선택/지도 이벤트에 따라 시트를 움직여야 한다면 `GrabberSheetController`를 사용하세요.
+- `bottom`, `bottomAreaPadding`은 2.0.0에서 제거되었습니다. `header`, `headerAreaPadding`을 사용하세요.
+
+---
+
+## 예시 사용처
+
+- 장소 검색 결과
+- 근처 장소 탐색 패널
+- 배달 / 차량 호출 상태 시트
+- 부동산/상품 미리보기 패널
+- 재생목록 / 큐 패널
+
+---
+
+## 기여하기
+
+버그나 기능 제안이 있다면 [GitHub repository](https://github.com/SangWook16074/grabber_sheet)에서 이슈를 열어주세요.

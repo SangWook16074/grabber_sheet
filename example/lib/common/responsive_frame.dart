@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// A widget that provides a responsive frame, centering its child with a
 /// fixed width on wider screens, while allowing it to fill the screen on narrower

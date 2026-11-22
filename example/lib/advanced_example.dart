@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:grabber_sheet/grabber_sheet.dart';
 
 class AdvancedExamplePage extends StatefulWidget {
@@ -101,14 +101,14 @@ class _AdvancedExamplePageState extends State<AdvancedExamplePage> {
               topRight: Radius.circular(30),
             ),
             grabberStyle: GrabberStyle(color: Colors.grey.shade400),
-            bottom: Row(
+            header: Row(
               children: [
                 const Text('Custom Header'),
                 const Spacer(),
                 IconButton(onPressed: () {}, icon: const Icon(Icons.close)),
               ],
             ),
-            bottomAreaPadding: const EdgeInsets.symmetric(horizontal: 16),
+            headerAreaPadding: const EdgeInsets.symmetric(horizontal: 16),
             onSizeChanged: (size) {
               if (mounted) {
                 setState(() {

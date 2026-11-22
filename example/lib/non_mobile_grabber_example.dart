@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:grabber_sheet/grabber_sheet.dart';
 
 class NonMobileGrabberExample extends StatelessWidget {
@@ -127,7 +127,7 @@ class _NarrowLayout extends StatelessWidget {
           snapSizes: const [.5],
           backgroundColor: sheetColor,
           grabberStyle: GrabberStyle(color: Colors.grey.shade400),
-          bottom: Column(
+          header: Column(
             children: [
               Text('Responsive Layout', style: theme.textTheme.titleLarge),
               const SizedBox(height: 8),

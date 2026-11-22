@@ -7,67 +7,92 @@
 
 [**한국어 문서 (Korean Docs)**](README.ko.md)
 
-A reusable and customizable draggable bottom sheet for Flutter, inspired by the modal sheet in the Google Maps app.
+A **Google Maps-style draggable bottom sheet for Flutter**.
 
-When building UIs with bottom sheets, developers often face the repetitive task of manually implementing drag handling and scroll physics. `grabber_sheet` solves this by providing a pre-built, robust drag mechanism that works seamlessly with your content, while offering extensive customization options to fit any design.
+`grabber_sheet` is built for apps that need a polished bottom surface with:
+- a **visible drag handle**
+- a **sticky header area** above the scrollable content
+- **smooth resizing + scrolling** with a small, simple API
+
+If you have ever used `DraggableScrollableSheet` and then had to manually wire the handle, header, styling, and controller behavior around it, this package is for you.
 
 <img width="250" src="https://github.com/user-attachments/assets/cc2a3eaf-c872-46f1-8b45-bbf83b781104" />
 
+## Why use GrabberSheet?
 
-## 🚀 Installation
+Use `grabber_sheet` when you want a sheet that feels like a real product surface, not just a scrollable container.
+
+### Best for
+- map result panels
+- place or address search flows
+- ride / delivery tracking UIs
+- travel and discovery apps
+- product quick-view panels
+
+### You get out of the box
+- built-in **grabber handle**
+- **sticky top area** via `header`
+- integrated `ScrollController` handoff
+- optional **snap points**
+- programmatic control with `GrabberSheetController`
+- optional **scrim overlay**
+- customizable styling
+
+---
+
+## Installation
 
 ```bash
 flutter pub add grabber_sheet
 ```
 
-## ⚡ Simple Usage
+Requires Dart 3.13 / Flutter 3.47 or later. Upgrading from 1.x? See the [2.0.0 migration guide](CHANGELOG.md#200).
 
-Wrap your list, connect the controller. **Done.**
+Not using Material? Import `package:grabber_sheet/raw_grabber_sheet.dart` and use `RawGrabberSheet`, which depends only on `package:flutter/widgets.dart`.
+
+---
+
+## Quick start
+
+Wrap your scrollable content and use the provided controller.
 
 ```dart
 GrabberSheet(
   snap: true,
   builder: (context, controller) {
     return ListView.builder(
-      controller: controller, // <--- Key Step: Connect this!
-      itemBuilder: (context, index) => ListTile(title: Text('Item $index')),
+      controller: controller,
+      itemCount: 30,
+      itemBuilder: (context, index) {
+        return ListTile(title: Text('Place $index'));
+      },
     );
   },
 )
 ```
 
----
-
-## 💡 Why GrabberSheet?
-
-| Pain Point | DraggableScrollableSheet | GrabberSheet |
-| :--- | :---: | :---: |
-| **Gesture Conflicts** | ⚠️ Scrolls when you want to Drag | ✅ **Zero Conflict** (Perfectly separated) |
-| **Header / Grabber** | ❌ Build it yourself (Hard) | ✅ **Built-in & Persistent** |
-| **Snapping** | ⚠️ Complex math required | ✅ **One Parameter** (`snap: true`) |
-| **Dev Experience** | 🔥 Frustrating | 🍰 **Plug & Play** |
+That is the core setup.
 
 ---
 
-## 🎨 Advanced Customization
+## What makes it different?
 
-### 1. Smart Snapping
-Enable `snap: true` for a polished feel. It handles both **slow drags** (closest point) and **fast flings** (momentum) automatically.
+| Need | Plain `DraggableScrollableSheet` | `grabber_sheet` |
+| :--- | :--- | :--- |
+| Visible drag handle | Build it yourself | Built in |
+| Sticky header area | Compose manually | `header` |
+| Scroll controller wiring | Manual care required | Builder gives it directly |
+| Programmatic surface control | Basic controller | Friendly controller helpers |
+| Product-style setup | More assembly | Faster to ship |
 
-```dart
-GrabberSheet(
-  snap: true,
-  minChildSize: 0.2,
-  maxChildSize: 1.0,
-  snapSizes: const [0.5], // Add intermediate snap points
-  // ...
-)
-```
+`grabber_sheet` does **not** try to replace every bottom-sheet API in Flutter.
+It focuses on one thing: making this specific UI pattern easy and reusable.
 
-![snap gif](https://github.com/user-attachments/assets/3727d83a-456b-4fd9-a721-8ad3e2116005)
+---
 
-### 2. Custom Grabber Styling
-Match your app's design system effortlessly.
+## Feature highlights
+
+### 1. Built-in grabber
 
 ```dart
 GrabberSheet(
@@ -77,111 +102,183 @@ GrabberSheet(
     color: Colors.grey.shade300,
     radius: const Radius.circular(12),
   ),
-  // ...
+  builder: (context, controller) {
+    return ListView(controller: controller);
+  },
 )
 ```
 
 <img width="250" src="https://github.com/user-attachments/assets/8d062fa4-cdda-4445-9d90-b34aa3fce1c5" />
 
-You can also hide the grabber completely (`showGrabber: false`).
+You can also hide it with `showGrabber: false`.
 
-<img width="250" src="https://github.com/user-attachments/assets/20d589b5-54c3-4da3-b420-0c1b10f3e9ef" />
+---
 
-### 3. Fixed Header (Non-Scrollable Area)
-Need a title or close button that **always** stays visible? Use the `bottom` property.
+### 2. Sticky header area
+
+Use `header` for content that should stay visible above the scrollable list.
 
 ```dart
 GrabberSheet(
-  bottom: Row(
-    children: [
-      Text('Locations', style: TextStyle(fontSize: 18)),
+  header: Row(
+    children: const [
+      Text('Locations'),
       Spacer(),
       CloseButton(),
     ],
   ),
-  // ...
+  builder: (context, controller) {
+    return ListView(controller: controller);
+  },
 )
 ```
 
 <img width="250" src="https://github.com/user-attachments/assets/669f7506-2b92-408f-a239-240ac68ca621" />
 
-### 4. Programmatic Control
-Open, close, or snap to specific sizes using `GrabberSheetController`.
+---
 
-```dart
-final controller = GrabberSheetController();
-
-// ...
-controller.maximize(); // Go to maxChildSize
-controller.minimize(); // Go to minChildSize
-controller.animateTo(0.5); // Go to 50%
-```
-
-<img width="250" src="https://github.com/user-attachments/assets/b90799fa-5db5-4e6a-bb9b-3750198877d7" alt="Example of GrabberSheet with FAB control" />
-
-### 5. Desktop & Web Support
-By default, the grabber is hidden on desktop/web (standard UI pattern). Force it visible if needed:
-
-```dart
-GrabberSheet(
-  showGrabberOnNonMobile: true,
-  // ...
-)
-```
-
-
-![grabber_sheet_web](https://github.com/user-attachments/assets/c151bdad-254b-455b-b82a-1308b8863784)
-
-### 6. Snap Animation Control
-Customize the duration and curve of the snap animation for a personalized feel.
+### 3. Snapping
 
 ```dart
 GrabberSheet(
   snap: true,
-  snapAnimationDuration: const Duration(milliseconds: 500), // Default is 300ms
-  snapAnimationCurve: Curves.bounceOut, // Default is Curves.easeOut
-  // ...
+  minChildSize: 0.2,
+  maxChildSize: 1.0,
+  snapSizes: const [0.5, 0.8],
+  builder: (context, controller) {
+    return ListView(controller: controller);
+  },
 )
 ```
 
-### 7. Scrim Overlay
-Add a semi-transparent overlay behind the sheet to draw focus to the sheet content. You can also dismiss the sheet by tapping this overlay.
+![snap gif](https://github.com/user-attachments/assets/3727d83a-456b-4fd9-a721-8ad3e2116005)
+
+---
+
+### 4. Programmatic control
+
+```dart
+final controller = GrabberSheetController();
+
+GrabberSheet(
+  controller: controller,
+  builder: (context, scrollController) {
+    return ListView(controller: scrollController);
+  },
+);
+
+controller.maximize();
+controller.minimize();
+controller.animateTo(0.5);
+```
+
+<img width="250" src="https://github.com/user-attachments/assets/b90799fa-5db5-4e6a-bb9b-3750198877d7" alt="GrabberSheet controller example" />
+
+---
+
+### 5. Scrim overlay
 
 ```dart
 GrabberSheet(
   showScrim: true,
-  scrimColor: Colors.black.withOpacity(0.6), // Default is Colors.black54
-  dismissOnScrimTap: true, // Default is true
-  // ...
+  scrimColor: Colors.black54,
+  dismissOnScrimTap: true,
+  builder: (context, controller) {
+    return ListView(controller: controller);
+  },
 )
 ```
 
+Great for modal-feeling interfaces where the sheet should draw focus.
+
 ---
 
-## 📘 Properties
+### 6. Desktop and web behavior
+
+By default, the grabber is hidden on desktop and web for a more platform-appropriate feel.
+If you want it visible anyway:
+
+```dart
+GrabberSheet(
+  showGrabberOnNonMobile: true,
+  builder: (context, controller) {
+    return ListView(controller: controller);
+  },
+)
+```
+
+![grabber_sheet_web](https://github.com/user-attachments/assets/c151bdad-254b-455b-b82a-1308b8863784)
+
+---
+
+## Main properties
 
 | Property | Description | Default |
 | :--- | :--- | :--- |
-| `builder` | **(Required)** Builds content. Must use the provided `ScrollController`. | - |
-| `snap` | Enable auto-snapping behavior. | `false` |
-| `initialChildSize` | Starting height fraction (0.0 - 1.0). | `0.5` |
-| `minChildSize` | Minimum collapsed height. | `0.25` |
-| `maxChildSize` | Maximum expanded height. | `1.0` |
-| `snapSizes` | List of intermediate snap points (e.g. `[0.5, 0.8]`). | `null` |
-| `showGrabber` | Toggle the grabber handle visibility. | `true` |
-| `grabberStyle` | Customize width, height, color, radius, margin. | `Default Style` |
-| `bottom` | Widget to display below grabber (Title, Buttons, etc.). | `null` |
-| `controller` | Control sheet position programmatically. | `null` |
-| `onSizeChanged` | Callback for size changes during drag/animation. | `null` |
-| `onSnap` | Callback when snapping completes. | `null` |
-| `snapAnimationDuration` | Duration of the snap animation. | `300ms` |
-| `snapAnimationCurve` | Curve of the snap animation. | `Curves.easeOut` |
-| `showScrim` | Toggle the visibility of the background overlay. | `false` |
-| `scrimColor` | Color of the background overlay. | `Colors.black54` |
-| `dismissOnScrimTap` | Dismisses the sheet when the scrim is tapped. | `true` |
+| `builder` | **Required.** Build your scrollable content with the provided `ScrollController`. | - |
+| `initialChildSize` | Initial height fraction. | `0.5` |
+| `minChildSize` | Minimum height fraction. | `0.25` |
+| `maxChildSize` | Maximum height fraction. | `1.0` |
+| `snap` | Enable snapping after drag. | `false` |
+| `snapSizes` | Additional snap points. | `null` |
+| `showGrabber` | Show or hide the grabber. | `true` |
+| `showGrabberOnNonMobile` | Force the grabber to remain visible on desktop/web. | `false` |
+| `grabberStyle` | Customize the grabber appearance. Null fields follow `BottomSheetThemeData` / M3 drag handle. | M3 drag handle |
+| `toggleOnGrabberTap` | Tap (or Enter/Space) on the grabber toggles min/max. | `false` |
+| `header` | Sticky area below the grabber. | `null` |
+| `headerAreaPadding` | Padding for the sticky area. | `null` |
+| `backgroundColor` | Sheet background color. | `BottomSheetThemeData.backgroundColor` → `surfaceContainerLow` (M3) |
+| `borderRadius` | Sheet border radius. | theme shape → top corners 28 (M3) / 16 (M2) |
+| `elevation` | Sheet elevation. | `BottomSheetThemeData.elevation` → `0` |
+| `shadowColor` | Sheet shadow color. | `BottomSheetThemeData.shadowColor` → `colorScheme.shadow` |
+| `clipBehavior` | Clip content to the sheet shape. | `BottomSheetThemeData.clipBehavior` → `Clip.none` |
+| `controller` | Programmatic sheet control. | `null` |
+| `onSizeChanged` | Called whenever the size changes. | `null` |
+| `onSnap` | Called once when the sheet settles on a snap point (any source). | `null` |
+| `shouldCloseOnMinExtent` | Forwarded to `DraggableScrollableSheet`. | `true` |
+| `snapAnimationDuration` | Snap animation duration. | `300ms` |
+| `snapAnimationCurve` | Snap animation curve. | `Curves.easeOut` |
+| `showScrim` | Show a background scrim behind the sheet. | `false` |
+| `scrimColor` | Scrim color. | `Colors.black54` |
+| `dismissOnScrimTap` | Minimize the sheet when tapping the scrim. | `true` |
 
 ---
 
-## 🤝 Contribution
+## When to use this package
 
-Found a bug or have a feature request? Please visit the [GitHub repository](https://github.com/SangWook16074/grabber_sheet).
+Choose `grabber_sheet` if you want:
+- a reusable **in-page** draggable sheet
+- a Maps-like or Search-like bottom surface
+- a built-in handle and sticky top area
+- a package with very low dependency overhead
+
+You may want another solution if you need:
+- a full modal route framework
+- highly custom page transitions
+- a drop-in replacement for every `showModalBottomSheet` use case
+
+---
+
+## Tips
+
+- Always connect the provided `ScrollController` to your scrollable child.
+- Put `GrabberSheet` inside a `Stack` when layering over background content such as maps or dashboards.
+- Use `GrabberSheetController` when the sheet must react to buttons, selections, or map events.
+- `bottom` and `bottomAreaPadding` were removed in 2.0.0. Use `header` and `headerAreaPadding` instead.
+
+---
+
+## Example use cases
+
+- location search results
+- nearby places panel
+- courier or ride status sheet
+- property listing preview
+- media queue / playlist drawer
+
+---
+
+## Contributing
+
+Found a bug or have a feature request?
+Please open an issue on the [GitHub repository](https://github.com/SangWook16074/grabber_sheet).
