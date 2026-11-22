@@ -47,6 +47,10 @@ A **Google Maps 스타일의 드래그 가능한 Flutter 바텀 시트**입니�
 flutter pub add grabber_sheet
 ```
 
+Dart 3.13 / Flutter 3.47 이상이 필요합니다. 1.x에서 업그레이드한다면 [2.0.0 마이그레이션 가이드](CHANGELOG.md#200)를 확인하세요.
+
+Material을 사용하지 않는다면 `package:grabber_sheet/raw_grabber_sheet.dart`를 import 해서 `package:flutter/widgets.dart`에만 의존하는 `RawGrabberSheet`를 사용할 수 있습니다.
+
 ---
 
 ## 빠른 시작
@@ -215,14 +219,19 @@ GrabberSheet(
 | `snapSizes` | 추가 스냅 지점 목록. | `null` |
 | `showGrabber` | 그래버 표시 여부. | `true` |
 | `showGrabberOnNonMobile` | 데스크톱/웹에서도 그래버를 계속 표시할지 여부. | `false` |
-| `grabberStyle` | 그래버 스타일 설정. | `Default Style` |
+| `grabberStyle` | 그래버 스타일 설정. 비어 있는 값은 `BottomSheetThemeData` / M3 드래그 핸들을 따릅니다. | M3 드래그 핸들 |
+| `toggleOnGrabberTap` | 그래버 탭(또는 Enter/Space)으로 최소/최대 전환. | `false` |
 | `header` | 그래버 아래 고정되는 sticky 영역. | `null` |
 | `headerAreaPadding` | sticky 영역의 패딩. | `null` |
-| `backgroundColor` | 시트 배경색. | `Theme.colorScheme.surface` |
-| `borderRadius` | 시트 모서리 둥글기. | 상단 16 |
+| `backgroundColor` | 시트 배경색. | `BottomSheetThemeData.backgroundColor` → `surfaceContainerLow` (M3) |
+| `borderRadius` | 시트 모서리 둥글기. | 테마 shape → 상단 28 (M3) / 16 (M2) |
+| `elevation` | 시트 elevation. | `BottomSheetThemeData.elevation` → `0` |
+| `shadowColor` | 시트 그림자 색. | `BottomSheetThemeData.shadowColor` → `colorScheme.shadow` |
+| `clipBehavior` | 시트 모양대로 콘텐츠 클리핑. | `BottomSheetThemeData.clipBehavior` → `Clip.none` |
 | `controller` | 시트 위치를 코드로 제어. | `null` |
 | `onSizeChanged` | 크기 변경 시 호출되는 콜백. | `null` |
-| `onSnap` | 스냅 완료 시 호출되는 콜백. | `null` |
+| `onSnap` | 시트가 스냅 지점에 멈추면 1회 호출 (드래그 주체 무관). | `null` |
+| `shouldCloseOnMinExtent` | `DraggableScrollableSheet`에 그대로 전달. | `true` |
 | `snapAnimationDuration` | 스냅 애니메이션 지속 시간. | `300ms` |
 | `snapAnimationCurve` | 스냅 애니메이션 커브. | `Curves.easeOut` |
 | `showScrim` | 배경 스크림 표시 여부. | `false` |

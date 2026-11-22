@@ -46,6 +46,10 @@ Use `grabber_sheet` when you want a sheet that feels like a real product surface
 flutter pub add grabber_sheet
 ```
 
+Requires Dart 3.13 / Flutter 3.47 or later. Upgrading from 1.x? See the [2.0.0 migration guide](CHANGELOG.md#200).
+
+Not using Material? Import `package:grabber_sheet/raw_grabber_sheet.dart` and use `RawGrabberSheet`, which depends only on `package:flutter/widgets.dart`.
+
 ---
 
 ## Quick start
@@ -219,14 +223,19 @@ GrabberSheet(
 | `snapSizes` | Additional snap points. | `null` |
 | `showGrabber` | Show or hide the grabber. | `true` |
 | `showGrabberOnNonMobile` | Force the grabber to remain visible on desktop/web. | `false` |
-| `grabberStyle` | Customize the grabber appearance. | `Default Style` |
+| `grabberStyle` | Customize the grabber appearance. Null fields follow `BottomSheetThemeData` / M3 drag handle. | M3 drag handle |
+| `toggleOnGrabberTap` | Tap (or Enter/Space) on the grabber toggles min/max. | `false` |
 | `header` | Sticky area below the grabber. | `null` |
 | `headerAreaPadding` | Padding for the sticky area. | `null` |
-| `backgroundColor` | Sheet background color. | `Theme.colorScheme.surface` |
-| `borderRadius` | Sheet border radius. | top corners 16 |
+| `backgroundColor` | Sheet background color. | `BottomSheetThemeData.backgroundColor` → `surfaceContainerLow` (M3) |
+| `borderRadius` | Sheet border radius. | theme shape → top corners 28 (M3) / 16 (M2) |
+| `elevation` | Sheet elevation. | `BottomSheetThemeData.elevation` → `0` |
+| `shadowColor` | Sheet shadow color. | `BottomSheetThemeData.shadowColor` → `colorScheme.shadow` |
+| `clipBehavior` | Clip content to the sheet shape. | `BottomSheetThemeData.clipBehavior` → `Clip.none` |
 | `controller` | Programmatic sheet control. | `null` |
 | `onSizeChanged` | Called whenever the size changes. | `null` |
-| `onSnap` | Called when a snap animation completes. | `null` |
+| `onSnap` | Called once when the sheet settles on a snap point (any source). | `null` |
+| `shouldCloseOnMinExtent` | Forwarded to `DraggableScrollableSheet`. | `true` |
 | `snapAnimationDuration` | Snap animation duration. | `300ms` |
 | `snapAnimationCurve` | Snap animation curve. | `Curves.easeOut` |
 | `showScrim` | Show a background scrim behind the sheet. | `false` |
