@@ -255,7 +255,7 @@ You may want another solution if you need:
 - Always connect the provided `ScrollController` to your scrollable child.
 - Put `GrabberSheet` inside a `Stack` when layering over background content such as maps or dashboards.
 - Use `GrabberSheetController` when the sheet must react to buttons, selections, or map events.
-- `bottom` and `bottomAreaPadding` are still supported for backward compatibility, but `header` and `headerAreaPadding` are now the preferred names.
+- `bottom` and `bottomAreaPadding` were removed in 2.0.0. Use `header` and `headerAreaPadding` instead.
 
 ---
 

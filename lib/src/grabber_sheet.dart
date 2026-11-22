@@ -61,22 +61,6 @@ class GrabberSheet extends StatelessWidget {
   /// The padding for the sticky header widget.
   final EdgeInsetsGeometry? headerAreaPadding;
 
-  /// A custom widget to be displayed below the grabber.
-  ///
-  /// Deprecated in favor of [header].
-  @Deprecated(
-    'Use header instead. This will be removed in the next major version.',
-  )
-  final Widget? bottom;
-
-  /// The padding for the bottom widget.
-  ///
-  /// Deprecated in favor of [headerAreaPadding].
-  @Deprecated(
-    'Use headerAreaPadding instead. This will be removed in the next major version.',
-  )
-  final EdgeInsetsGeometry? bottomAreaPadding;
-
   /// The background color of the sheet.
   ///
   /// If null, it defaults to the theme's `colorScheme.surface`.
@@ -154,8 +138,6 @@ class GrabberSheet extends StatelessWidget {
     this.grabberStyle = const GrabberStyle(),
     this.header,
     this.headerAreaPadding,
-    this.bottom,
-    this.bottomAreaPadding,
     this.snap = false,
     this.snapSizes,
     this.backgroundColor,
@@ -172,25 +154,11 @@ class GrabberSheet extends StatelessWidget {
   }) : assert(minChildSize >= 0.0),
        assert(maxChildSize <= 1.0),
        assert(minChildSize <= initialChildSize),
-       assert(initialChildSize <= maxChildSize),
-       assert(
-         header == null || bottom == null,
-         'Use either header or bottom, not both.',
-       ),
-       assert(
-         headerAreaPadding == null || bottomAreaPadding == null,
-         'Use either headerAreaPadding or bottomAreaPadding, not both.',
-       );
+       assert(initialChildSize <= maxChildSize);
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    // ignore: deprecated_member_use_from_same_package
-    final Widget? effectiveHeader = header ?? bottom;
-    final EdgeInsetsGeometry effectiveHeaderPadding =
-        // ignore: deprecated_member_use_from_same_package
-        headerAreaPadding ?? bottomAreaPadding ?? EdgeInsets.zero;
-
     return RawGrabberSheet(
       builder: builder,
       backgroundColor: backgroundColor ?? theme.colorScheme.surface,
@@ -199,8 +167,8 @@ class GrabberSheet extends StatelessWidget {
       maxChildSize: maxChildSize,
       showGrabber: showGrabber,
       grabberStyle: grabberStyle,
-      header: effectiveHeader,
-      headerAreaPadding: effectiveHeaderPadding,
+      header: header,
+      headerAreaPadding: headerAreaPadding ?? EdgeInsets.zero,
       snap: snap,
       snapSizes: snapSizes,
       showGrabberOnNonMobile: showGrabberOnNonMobile,
