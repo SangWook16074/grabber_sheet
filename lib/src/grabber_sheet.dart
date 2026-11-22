@@ -50,6 +50,11 @@ class GrabberSheet extends StatelessWidget {
   final bool showGrabber;
 
   /// The visual style of the grabber handle, defined by a [GrabberStyle] object.
+  ///
+  /// Null properties are resolved from [BottomSheetThemeData.dragHandleColor]
+  /// and [BottomSheetThemeData.dragHandleSize], then the Material drag handle
+  /// defaults (a 32x4 handle colored `colorScheme.onSurfaceVariant` in
+  /// Material 3).
   final GrabberStyle grabberStyle;
 
   /// A sticky header widget to display below the grabber.
@@ -63,7 +68,9 @@ class GrabberSheet extends StatelessWidget {
 
   /// The background color of the sheet.
   ///
-  /// If null, it defaults to the theme's `colorScheme.surface`.
+  /// If null, defaults to [BottomSheetThemeData.backgroundColor], then
+  /// `colorScheme.surfaceContainerLow` (Material 3) or `colorScheme.surface`
+  /// (Material 2).
   final Color? backgroundColor;
 
   /// If true, the sheet will snap to the nearest snap point after dragging.
@@ -99,8 +106,27 @@ class GrabberSheet extends StatelessWidget {
 
   /// The border radius of the sheet.
   ///
-  /// If null, defaults to a top-left and top-right radius of 16.0.
+  /// If null, defaults to the radius of [BottomSheetThemeData.shape] when it is
+  /// a [RoundedRectangleBorder], then a top radius of 28.0 (Material 3) or
+  /// 16.0 (Material 2).
   final BorderRadiusGeometry? borderRadius;
+
+  /// The elevation of the sheet surface.
+  ///
+  /// If null, defaults to [BottomSheetThemeData.elevation], then 0.
+  final double? elevation;
+
+  /// The color of the shadow cast when [elevation] is greater than 0.
+  ///
+  /// If null, defaults to [BottomSheetThemeData.shadowColor], then
+  /// `colorScheme.shadow`.
+  final Color? shadowColor;
+
+  /// How the sheet content is clipped to the [borderRadius].
+  ///
+  /// If null, defaults to [BottomSheetThemeData.clipBehavior], then
+  /// [Clip.none].
+  final Clip? clipBehavior;
 
   /// The duration of the snap animation.
   ///
@@ -146,6 +172,9 @@ class GrabberSheet extends StatelessWidget {
     this.onSizeChanged,
     this.onSnap,
     this.borderRadius,
+    this.elevation,
+    this.shadowColor,
+    this.clipBehavior,
     this.snapAnimationDuration = const Duration(milliseconds: 300),
     this.snapAnimationCurve = Curves.easeOut,
     this.showScrim = false,
@@ -159,14 +188,37 @@ class GrabberSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final bottomSheetTheme = theme.bottomSheetTheme;
+    final bool useMaterial3 = theme.useMaterial3;
+    final Size? themeHandleSize = bottomSheetTheme.dragHandleSize;
+    final ShapeBorder? themeShape = bottomSheetTheme.shape;
+
+    final GrabberStyle effectiveGrabberStyle = grabberStyle.merge(
+      GrabberStyle(
+        color:
+            bottomSheetTheme.dragHandleColor ??
+            (useMaterial3
+                ? colorScheme.onSurfaceVariant
+                : colorScheme.onSurface.withValues(alpha: 0.4)),
+        width: themeHandleSize?.width,
+        height: themeHandleSize?.height,
+      ),
+    );
+
     return RawGrabberSheet(
       builder: builder,
-      backgroundColor: backgroundColor ?? theme.colorScheme.surface,
+      backgroundColor:
+          backgroundColor ??
+          bottomSheetTheme.backgroundColor ??
+          (useMaterial3
+              ? colorScheme.surfaceContainerLow
+              : colorScheme.surface),
       initialChildSize: initialChildSize,
       minChildSize: minChildSize,
       maxChildSize: maxChildSize,
       showGrabber: showGrabber,
-      grabberStyle: grabberStyle,
+      grabberStyle: effectiveGrabberStyle,
       header: header,
       headerAreaPadding: headerAreaPadding ?? EdgeInsets.zero,
       snap: snap,
@@ -177,10 +229,16 @@ class GrabberSheet extends StatelessWidget {
       onSnap: onSnap,
       borderRadius:
           borderRadius ??
-          const BorderRadius.only(
-            topLeft: Radius.circular(16.0),
-            topRight: Radius.circular(16.0),
+          (themeShape is RoundedRectangleBorder
+              ? themeShape.borderRadius
+              : null) ??
+          BorderRadius.vertical(
+            top: Radius.circular(useMaterial3 ? 28.0 : 16.0),
           ),
+      elevation: elevation ?? bottomSheetTheme.elevation ?? 0.0,
+      shadowColor:
+          shadowColor ?? bottomSheetTheme.shadowColor ?? colorScheme.shadow,
+      clipBehavior: clipBehavior ?? bottomSheetTheme.clipBehavior ?? Clip.none,
       snapAnimationDuration: snapAnimationDuration,
       snapAnimationCurve: snapAnimationCurve,
       showScrim: showScrim,
