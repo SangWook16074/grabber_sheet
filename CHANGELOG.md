@@ -1,3 +1,15 @@
+## 1.4.0
+
+* **Feat**: Added `header` and `headerAreaPadding` as the preferred sticky-header API.
+* **Deprecation**: Marked `bottom` and `bottomAreaPadding` as deprecated aliases for backward compatibility.
+* **Test**: Added coverage for the new `header` API and mixed-usage assertions.
+* **Docs**: Repositioned the package around a Google Maps-style bottom sheet workflow in `README.md` and `README.ko.md`.
+* **Docs**: Replaced the example app boilerplate docs and added a dedicated Maps-style example showcase.
+
+## 1.3.1
+
+*   **Fix**: Corrected image display issues in `README.md`.
+
 ## 1.3.0
 
 *   **Feat**: Added `snapAnimationDuration` and `snapAnimationCurve` properties to control snap animation.

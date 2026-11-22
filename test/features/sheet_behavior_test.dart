@@ -5,6 +5,29 @@ import 'package:grabber_sheet/grabber_sheet.dart';
 import '../common/test_app_harness.dart';
 
 void main() {
+  testWidgets('renders header widget when provided', (
+    WidgetTester tester,
+  ) async {
+    const headerWidget = Text('Header Widget');
+
+    await tester.pumpWidget(
+      TestAppHarness(
+        child: GrabberSheet(
+          header: headerWidget,
+          builder: (context, scrollController) {
+            return ListView(
+              controller: scrollController,
+              children: const [Text('Content')],
+            );
+          },
+        ),
+      ),
+    );
+
+    expect(find.byWidget(headerWidget), findsOneWidget);
+    expect(find.text('Header Widget'), findsOneWidget);
+  });
+
   testWidgets('renders bottom widget when provided', (
     WidgetTester tester,
   ) async {
@@ -13,6 +36,7 @@ void main() {
     await tester.pumpWidget(
       TestAppHarness(
         child: GrabberSheet(
+          // ignore: deprecated_member_use_from_same_package
           bottom: bottomWidget,
           builder: (context, scrollController) {
             return ListView(
@@ -27,6 +51,20 @@ void main() {
     // Then
     expect(find.byWidget(bottomWidget), findsOneWidget);
     expect(find.text('Bottom Widget'), findsOneWidget);
+  });
+
+  test('asserts when both header and bottom are provided', () {
+    expect(
+      () => GrabberSheet(
+        header: const Text('Header'),
+        // ignore: deprecated_member_use_from_same_package
+        bottom: const Text('Bottom'),
+        builder: (context, scrollController) => ListView(
+          controller: scrollController,
+        ),
+      ),
+      throwsAssertionError,
+    );
   });
 
   group('Snap animation tests', () {

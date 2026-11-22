@@ -101,14 +101,14 @@ class _AdvancedExamplePageState extends State<AdvancedExamplePage> {
               topRight: Radius.circular(30),
             ),
             grabberStyle: GrabberStyle(color: Colors.grey.shade400),
-            bottom: Row(
+            header: Row(
               children: [
                 const Text('Custom Header'),
                 const Spacer(),
                 IconButton(onPressed: () {}, icon: const Icon(Icons.close)),
               ],
             ),
-            bottomAreaPadding: const EdgeInsets.symmetric(horizontal: 16),
+            headerAreaPadding: const EdgeInsets.symmetric(horizontal: 16),
             onSizeChanged: (size) {
               if (mounted) {
                 setState(() {
@@ -132,7 +132,9 @@ class _AdvancedExamplePageState extends State<AdvancedExamplePage> {
             snapAnimationCurve:
                 Curves.elasticOut, // More pronounced curve for demo
             showScrim: true, // Show scrim for demo
-            scrimColor: const Color(0x80000000), // Custom scrim color (0x80 is 0.5 opacity)
+            scrimColor: const Color(
+              0x80000000,
+            ), // Custom scrim color (0x80 is 0.5 opacity)
             dismissOnScrimTap: true, // Allow dismissing by tapping scrim
             // --- End of New properties ---
             builder: (BuildContext context, ScrollController scrollController) {
