@@ -42,6 +42,25 @@ void main() {
   });
 
   group('Platform specific rendering', () {
+    testWidgets('shows grabber on iOS by default', (WidgetTester tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      await tester.pumpWidget(
+        TestAppHarness(
+          child: GrabberSheet(
+            builder: (context, scrollController) {
+              return ListView(
+                controller: scrollController,
+                children: const [Text('Content')],
+              );
+            },
+          ),
+        ),
+      );
+
+      expect(find.byKey(const Key('grabber')), findsOneWidget);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
     testWidgets(
       'shows grabber on desktop when showGrabberOnNonMobile is true',
       (WidgetTester tester) async {

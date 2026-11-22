@@ -57,6 +57,15 @@ class GrabberSheet extends StatelessWidget {
   /// Material 3).
   final GrabberStyle grabberStyle;
 
+  /// Whether tapping the grabber toggles the sheet between [minChildSize]
+  /// and [maxChildSize].
+  ///
+  /// Keyboard users can always use the arrow keys to step through snap
+  /// points; when this is true, Enter and Space toggle the sheet as well.
+  ///
+  /// Defaults to false.
+  final bool toggleOnGrabberTap;
+
   /// A sticky header widget to display below the grabber.
   ///
   /// This area remains visible above the scrollable content, making it useful
@@ -170,6 +179,7 @@ class GrabberSheet extends StatelessWidget {
     this.maxChildSize = 1.0,
     this.showGrabber = true,
     this.grabberStyle = const GrabberStyle(),
+    this.toggleOnGrabberTap = false,
     this.header,
     this.headerAreaPadding,
     this.snap = false,
@@ -228,6 +238,7 @@ class GrabberSheet extends StatelessWidget {
       maxChildSize: maxChildSize,
       showGrabber: showGrabber,
       grabberStyle: effectiveGrabberStyle,
+      toggleOnGrabberTap: toggleOnGrabberTap,
       header: header,
       headerAreaPadding: headerAreaPadding ?? EdgeInsets.zero,
       snap: snap,

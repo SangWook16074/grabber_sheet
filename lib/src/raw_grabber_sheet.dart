@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'grabber_sheet_controller.dart';
@@ -61,6 +62,15 @@ class RawGrabberSheet extends StatefulWidget {
 
   /// The visual style of the grabber handle.
   final GrabberStyle grabberStyle;
+
+  /// Whether tapping the grabber toggles the sheet between [minChildSize]
+  /// and [maxChildSize].
+  ///
+  /// Keyboard users can always use the arrow keys to step through snap
+  /// points; when this is true, Enter and Space toggle the sheet as well.
+  ///
+  /// Defaults to false.
+  final bool toggleOnGrabberTap;
 
   /// A sticky header widget to display below the grabber.
   final Widget? header;
@@ -160,6 +170,7 @@ class RawGrabberSheet extends StatefulWidget {
     this.maxChildSize = 1.0,
     this.showGrabber = true,
     this.grabberStyle = const GrabberStyle(),
+    this.toggleOnGrabberTap = false,
     this.header,
     this.headerAreaPadding = EdgeInsets.zero,
     this.snap = false,
@@ -204,6 +215,9 @@ class _RawGrabberSheetState extends State<RawGrabberSheet> {
 
   /// The last snap point reported through [RawGrabberSheet.onSnap].
   double? _lastSnappedSize;
+
+  /// Whether the grabber currently shows a keyboard focus highlight.
+  bool _showGrabberFocusHighlight = false;
 
   /// Notifier for the current size, used to update the scrim opacity.
   late final ValueNotifier<double> _currentSizeNotifier = ValueNotifier(
@@ -422,16 +436,104 @@ class _RawGrabberSheetState extends State<RawGrabberSheet> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (widget.showGrabber)
-              _Grabber(
-                style: widget.grabberStyle,
-                showOnNonMobile: widget.showGrabberOnNonMobile,
-              ),
+            // For a more native feel, the grabber is not shown on desktop and
+            // web platforms, unless explicitly requested.
+            if (widget.showGrabber &&
+                (widget.showGrabberOnNonMobile || !_isOnDesktopAndWeb))
+              _buildAccessibleGrabber(),
             if (widget.header != null)
               Padding(padding: widget.headerAreaPadding, child: widget.header),
           ],
         ),
       ),
+    );
+  }
+
+  /// Wraps the grabber with keyboard, tap, and mouse support.
+  Widget _buildAccessibleGrabber() {
+    final bool toggle = widget.toggleOnGrabberTap;
+    // Screen reader semantics are intentionally left to apps, which can hide
+    // the grabber and provide their own control through the header.
+    return FocusableActionDetector(
+      includeFocusSemantics: false,
+      mouseCursor: SystemMouseCursors.grab,
+      onShowFocusHighlight: (value) {
+        setState(() => _showGrabberFocusHighlight = value);
+      },
+      shortcuts: <ShortcutActivator, Intent>{
+        const SingleActivator(LogicalKeyboardKey.arrowUp):
+            const _ExpandSheetIntent(),
+        const SingleActivator(LogicalKeyboardKey.arrowDown):
+            const _CollapseSheetIntent(),
+        if (toggle) ...{
+          const SingleActivator(LogicalKeyboardKey.enter):
+              const ActivateIntent(),
+          const SingleActivator(LogicalKeyboardKey.space):
+              const ActivateIntent(),
+        },
+      },
+      actions: <Type, Action<Intent>>{
+        _ExpandSheetIntent: CallbackAction<_ExpandSheetIntent>(
+          onInvoke: (_) => _expandOneStep(),
+        ),
+        _CollapseSheetIntent: CallbackAction<_CollapseSheetIntent>(
+          onInvoke: (_) => _collapseOneStep(),
+        ),
+        if (toggle)
+          ActivateIntent: CallbackAction<ActivateIntent>(
+            onInvoke: (_) => _toggleSize(),
+          ),
+      },
+      child: ExcludeSemantics(
+        child: GestureDetector(
+          onTap: toggle ? _toggleSize : null,
+          child: _Grabber(
+            style: widget.grabberStyle,
+            showFocusHighlight: _showGrabberFocusHighlight,
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// The closest snap point above [size], or [RawGrabberSheet.maxChildSize].
+  double _nextSnapPointAbove(double size) {
+    return _sortedSnapPoints.firstWhere(
+      (point) => point > size + _snapTolerance,
+      orElse: () => widget.maxChildSize,
+    );
+  }
+
+  /// The closest snap point below [size], or [RawGrabberSheet.minChildSize].
+  double _nextSnapPointBelow(double size) {
+    return _sortedSnapPoints.lastWhere(
+      (point) => point < size - _snapTolerance,
+      orElse: () => widget.minChildSize,
+    );
+  }
+
+  void _expandOneStep() {
+    _animateToSize(_nextSnapPointAbove(_currentSizeNotifier.value));
+  }
+
+  void _collapseOneStep() {
+    _animateToSize(_nextSnapPointBelow(_currentSizeNotifier.value));
+  }
+
+  /// Toggles between [RawGrabberSheet.minChildSize] and
+  /// [RawGrabberSheet.maxChildSize].
+  void _toggleSize() {
+    final bool isExpanded =
+        _currentSizeNotifier.value >= widget.maxChildSize - _snapTolerance;
+    _animateToSize(isExpanded ? widget.minChildSize : widget.maxChildSize);
+  }
+
+  void _animateToSize(double size) {
+    if (!_controller.isAttached) return;
+    _controller.animateTo(
+      size,
+      duration: widget.snapAnimationDuration,
+      curve: widget.snapAnimationCurve,
     );
   }
 
@@ -479,26 +581,46 @@ class _RawGrabberSheetState extends State<RawGrabberSheet> {
   }
 }
 
+/// Expands the sheet to the next snap point.
+class _ExpandSheetIntent extends Intent {
+  const _ExpandSheetIntent();
+}
+
+/// Collapses the sheet to the previous snap point.
+class _CollapseSheetIntent extends Intent {
+  const _CollapseSheetIntent();
+}
+
+/// Checks if the current platform is a desktop or web environment.
+bool get _isOnDesktopAndWeb {
+  return kIsWeb ||
+      switch (defaultTargetPlatform) {
+        TargetPlatform.macOS ||
+        TargetPlatform.linux ||
+        TargetPlatform.windows => true,
+        TargetPlatform.android ||
+        TargetPlatform.iOS ||
+        TargetPlatform.fuchsia => false,
+      };
+}
+
 /// A private widget representing the draggable handle area.
 class _Grabber extends StatelessWidget {
-  const _Grabber({required this.style, this.showOnNonMobile = false});
+  const _Grabber({required this.style, this.showFocusHighlight = false});
 
   /// The visual style of the grabber handle.
   final GrabberStyle style;
 
-  /// Whether to show the grabber handle on non-mobile platforms.
-  final bool showOnNonMobile;
+  /// Whether to outline the handle to indicate keyboard focus.
+  final bool showFocusHighlight;
 
   @override
   Widget build(BuildContext context) {
-    // For a more native feel, the grabber is not shown on desktop and web platforms,
-    // unless explicitly requested.
-    if (_isOnDesktopAndWeb && !showOnNonMobile) {
-      return const SizedBox.shrink();
-    }
-
     final GrabberStyle resolved = style.merge(_defaultGrabberStyle);
     final double height = resolved.height!;
+    final BorderRadius borderRadius = BorderRadius.all(
+      resolved.radius ?? Radius.circular(height / 2),
+    );
 
     return Container(
       width: double.infinity,
@@ -513,25 +635,20 @@ class _Grabber extends StatelessWidget {
           height: height,
           decoration: BoxDecoration(
             color: resolved.color,
-            borderRadius: BorderRadius.all(
-              resolved.radius ?? Radius.circular(height / 2),
-            ),
+            borderRadius: borderRadius,
           ),
+          foregroundDecoration: showFocusHighlight
+              ? BoxDecoration(
+                  borderRadius: borderRadius,
+                  border: Border.all(
+                    color: resolved.color!,
+                    width: 2,
+                    strokeAlign: BorderSide.strokeAlignOutside,
+                  ),
+                )
+              : null,
         ),
       ),
     );
-  }
-
-  /// Checks if the current platform is a desktop or web environment.
-  bool get _isOnDesktopAndWeb {
-    return kIsWeb ||
-        switch (defaultTargetPlatform) {
-          TargetPlatform.macOS ||
-          TargetPlatform.linux ||
-          TargetPlatform.windows => true,
-          TargetPlatform.android ||
-          TargetPlatform.iOS ||
-          TargetPlatform.fuchsia => false,
-        };
   }
 }
