@@ -251,7 +251,7 @@ GrabberSheet(
 - builder에서 받은 `ScrollController`를 반드시 스크롤 위젯에 연결하세요.
 - 지도나 대시보드 같은 배경 위에 올릴 때는 `Stack` 안에서 사용하는 것이 좋습니다.
 - 버튼/선택/지도 이벤트에 따라 시트를 움직여야 한다면 `GrabberSheetController`를 사용하세요.
-- `bottom`, `bottomAreaPadding`도 하위 호환을 위해 아직 동작하지만, 이제는 `header`, `headerAreaPadding` 사용을 권장합니다.
+- `bottom`, `bottomAreaPadding`은 2.0.0에서 제거되었습니다. `header`, `headerAreaPadding`을 사용하세요.
 
 ---
 

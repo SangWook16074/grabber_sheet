@@ -28,44 +28,6 @@ void main() {
     expect(find.text('Header Widget'), findsOneWidget);
   });
 
-  testWidgets('renders bottom widget when provided', (
-    WidgetTester tester,
-  ) async {
-    // Given
-    const bottomWidget = Text('Bottom Widget');
-    await tester.pumpWidget(
-      TestAppHarness(
-        child: GrabberSheet(
-          // ignore: deprecated_member_use_from_same_package
-          bottom: bottomWidget,
-          builder: (context, scrollController) {
-            return ListView(
-              controller: scrollController,
-              children: const [Text('Content')],
-            );
-          },
-        ),
-      ),
-    );
-
-    // Then
-    expect(find.byWidget(bottomWidget), findsOneWidget);
-    expect(find.text('Bottom Widget'), findsOneWidget);
-  });
-
-  test('asserts when both header and bottom are provided', () {
-    expect(
-      () => GrabberSheet(
-        header: const Text('Header'),
-        // ignore: deprecated_member_use_from_same_package
-        bottom: const Text('Bottom'),
-        builder: (context, scrollController) =>
-            ListView(controller: scrollController),
-      ),
-      throwsAssertionError,
-    );
-  });
-
   group('Snap animation tests', () {
     testWidgets(
       'sheet should snap to maxChildSize when dragged upwards and snap is true',
