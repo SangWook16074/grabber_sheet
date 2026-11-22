@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 
 import 'grabber_sheet_controller.dart';
@@ -9,6 +10,9 @@ const BorderRadius _defaultBorderRadius = BorderRadius.only(
   topLeft: Radius.circular(16.0),
   topRight: Radius.circular(16.0),
 );
+
+/// The tolerance used to decide whether the sheet rests on a snap point.
+const double _snapTolerance = 1e-3;
 
 /// The default grabber style used when [GrabberStyle] properties are null.
 const GrabberStyle _defaultGrabberStyle = GrabberStyle(
@@ -88,8 +92,18 @@ class RawGrabberSheet extends StatefulWidget {
   /// Called when the sheet's size changes.
   final ValueChanged<double>? onSizeChanged;
 
-  /// Called when the sheet snaps to a specific size.
+  /// Called when the sheet settles on a snap point while [snap] is true.
+  ///
+  /// This is called regardless of whether the snap was triggered by dragging
+  /// the grabber, dragging the content, or tapping the scrim. It is called
+  /// once per snap point.
   final ValueChanged<double>? onSnap;
+
+  /// Whether the sheet, when dragged (or flung) to its minimum size, should
+  /// cause its parent sheet to close.
+  ///
+  /// See [DraggableScrollableSheet.shouldCloseOnMinExtent]. Defaults to true.
+  final bool shouldCloseOnMinExtent;
 
   /// The border radius of the sheet.
   ///
@@ -154,6 +168,7 @@ class RawGrabberSheet extends StatefulWidget {
     this.controller,
     this.onSizeChanged,
     this.onSnap,
+    this.shouldCloseOnMinExtent = true,
     this.borderRadius = _defaultBorderRadius,
     this.elevation = 0.0,
     this.shadowColor = const Color(0xFF000000),
@@ -180,6 +195,15 @@ class _RawGrabberSheetState extends State<RawGrabberSheet> {
 
   /// The current size of the sheet, updated during dragging.
   late double _newSize = widget.initialChildSize;
+
+  /// The number of pointers currently touching the sheet.
+  int _activePointerCount = 0;
+
+  /// Incremented on every size change, used to detect when the sheet settles.
+  int _sizeChangeSequence = 0;
+
+  /// The last snap point reported through [RawGrabberSheet.onSnap].
+  double? _lastSnappedSize;
 
   /// Notifier for the current size, used to update the scrim opacity.
   late final ValueNotifier<double> _currentSizeNotifier = ValueNotifier(
@@ -227,45 +251,120 @@ class _RawGrabberSheetState extends State<RawGrabberSheet> {
     return Stack(
       children: [
         if (widget.showScrim) _buildScrim(),
-        NotificationListener<DraggableScrollableNotification>(
-          onNotification: (notification) {
-            widget.onSizeChanged?.call(notification.extent);
-            _currentSizeNotifier.value = notification.extent;
-            return false;
-          },
-          child: DraggableScrollableSheet(
-            controller: _controller,
-            initialChildSize: widget.initialChildSize,
-            minChildSize: widget.minChildSize,
-            maxChildSize: widget.maxChildSize,
-            snap: widget.snap,
-            snapSizes: widget.snapSizes,
-            builder: (BuildContext context, ScrollController scrollController) {
-              return PhysicalShape(
-                key: const Key('grabber_sheet_surface'),
-                clipper: ShapeBorderClipper(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: widget.borderRadius,
-                  ),
-                  textDirection: Directionality.maybeOf(context),
-                ),
-                color: widget.backgroundColor,
-                elevation: widget.elevation,
-                shadowColor: widget.shadowColor,
-                clipBehavior: widget.clipBehavior,
-                child: Column(
-                  children: <Widget>[
-                    _buildDragArea(),
-                    // The main content of the sheet.
-                    Expanded(child: widget.builder(context, scrollController)),
-                  ],
-                ),
-              );
+        Listener(
+          onPointerDown: (_) => _activePointerCount++,
+          onPointerUp: (_) => _handlePointerReleased(),
+          onPointerCancel: (_) => _handlePointerReleased(),
+          child: NotificationListener<DraggableScrollableNotification>(
+            onNotification: (notification) {
+              widget.onSizeChanged?.call(notification.extent);
+              _currentSizeNotifier.value = notification.extent;
+              _handleSizeChanged(notification.extent);
+              return false;
             },
+            child: DraggableScrollableSheet(
+              controller: _controller,
+              initialChildSize: widget.initialChildSize,
+              minChildSize: widget.minChildSize,
+              maxChildSize: widget.maxChildSize,
+              snap: widget.snap,
+              snapSizes: widget.snapSizes,
+              snapAnimationDuration: widget.snapAnimationDuration,
+              shouldCloseOnMinExtent: widget.shouldCloseOnMinExtent,
+              builder:
+                  (BuildContext context, ScrollController scrollController) {
+                    return PhysicalShape(
+                      key: const Key('grabber_sheet_surface'),
+                      clipper: ShapeBorderClipper(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: widget.borderRadius,
+                        ),
+                        textDirection: Directionality.maybeOf(context),
+                      ),
+                      color: widget.backgroundColor,
+                      elevation: widget.elevation,
+                      shadowColor: widget.shadowColor,
+                      clipBehavior: widget.clipBehavior,
+                      child: Column(
+                        children: <Widget>[
+                          _buildDragArea(),
+                          // The main content of the sheet.
+                          Expanded(
+                            child: widget.builder(context, scrollController),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+            ),
           ),
         ),
       ],
     );
+  }
+
+  /// All snap points of the sheet, sorted in ascending order.
+  List<double> get _sortedSnapPoints {
+    return {
+      widget.minChildSize,
+      widget.maxChildSize,
+      ...?widget.snapSizes,
+    }.toList()..sort();
+  }
+
+  /// Returns the snap point at [size], or null if [size] is between points.
+  double? _snapPointAt(double size) {
+    for (final double point in _sortedSnapPoints) {
+      if ((point - size).abs() <= _snapTolerance) return point;
+    }
+    return null;
+  }
+
+  void _handlePointerReleased() {
+    if (_activePointerCount > 0) _activePointerCount--;
+    _scheduleSettleCheck();
+  }
+
+  void _handleSizeChanged(double size) {
+    _sizeChangeSequence++;
+    final double? lastSnappedSize = _lastSnappedSize;
+    if (lastSnappedSize != null &&
+        (lastSnappedSize - size).abs() > _snapTolerance) {
+      _lastSnappedSize = null;
+    }
+    _scheduleSettleCheck();
+  }
+
+  /// Checks, one frame later, whether the sheet has stopped on a snap point.
+  ///
+  /// Snap animations triggered by [DraggableScrollableSheet] itself do not
+  /// report completion, so the sheet is considered settled when its size did
+  /// not change for a full frame while no pointer is down.
+  void _scheduleSettleCheck() {
+    if (!widget.snap || widget.onSnap == null) return;
+    final int sequence = _sizeChangeSequence;
+    final SchedulerBinding binding = SchedulerBinding.instance;
+    binding.addPostFrameCallback((_) {
+      if (!mounted) return;
+      binding.addPostFrameCallback((_) {
+        if (!mounted ||
+            sequence != _sizeChangeSequence ||
+            _activePointerCount > 0) {
+          return;
+        }
+        final double? point = _snapPointAt(_currentSizeNotifier.value);
+        if (point != null) _reportSnap(point);
+      });
+      binding.scheduleFrame();
+    });
+    binding.scheduleFrame();
+  }
+
+  /// Reports [size] through [RawGrabberSheet.onSnap] once per snap point.
+  void _reportSnap(double size) {
+    if (_lastSnappedSize == size) return;
+    _lastSnappedSize = size;
+    widget.onSnap?.call(size);
   }
 
   /// Builds the scrim whose opacity follows the sheet's size.
@@ -340,25 +439,25 @@ class _RawGrabberSheetState extends State<RawGrabberSheet> {
     // If snapping is disabled, do nothing.
     if (!widget.snap) return;
 
+    // The recognizer reports a zero velocity unless the gesture is a fling.
     final double velocity = details.primaryVelocity ?? 0.0;
-    // A velocity threshold to determine if it's a fling.
-    const double flingVelocity = 300.0;
-
-    // Combine min/max with custom snapSizes, remove duplicates, and sort.
-    final Set<double> allSnapPoints = {
-      widget.minChildSize,
-      widget.maxChildSize,
-      ...?widget.snapSizes,
-    };
-    final List<double> sortedSnapPoints = allSnapPoints.toList()..sort();
+    final List<double> sortedSnapPoints = _sortedSnapPoints;
 
     double targetSize;
 
-    if (velocity.abs() > flingVelocity) {
-      // On a fling, animate to the min or max extent.
-      targetSize = velocity < 0
-          ? sortedSnapPoints.last
-          : sortedSnapPoints.first;
+    if (velocity < 0) {
+      // On an upward fling, move to the next snap point above, like
+      // DraggableScrollableSheet does for content flings.
+      targetSize = sortedSnapPoints.firstWhere(
+        (point) => point > _newSize + _snapTolerance,
+        orElse: () => sortedSnapPoints.last,
+      );
+    } else if (velocity > 0) {
+      // On a downward fling, move to the next snap point below.
+      targetSize = sortedSnapPoints.lastWhere(
+        (point) => point < _newSize - _snapTolerance,
+        orElse: () => sortedSnapPoints.first,
+      );
     } else {
       // On a slow drag, find the closest snap point.
       targetSize = sortedSnapPoints.reduce(
@@ -375,9 +474,7 @@ class _RawGrabberSheetState extends State<RawGrabberSheet> {
         )
         .then((_) {
           // Trigger onSnap callback after animation completes
-          if (mounted && widget.onSnap != null) {
-            widget.onSnap!(targetSize);
-          }
+          if (mounted) _reportSnap(targetSize);
         });
   }
 }

@@ -99,10 +99,18 @@ class GrabberSheet extends StatelessWidget {
   /// The callback receives the new fractional size of the sheet.
   final ValueChanged<double>? onSizeChanged;
 
-  /// Called when the sheet snaps to a specific size.
+  /// Called when the sheet settles on a snap point while [snap] is true.
   ///
-  /// The callback receives the snapped fractional size.
+  /// This is called regardless of whether the snap was triggered by dragging
+  /// the grabber, dragging the content, or tapping the scrim. It is called
+  /// once per snap point.
   final ValueChanged<double>? onSnap;
+
+  /// Whether the sheet, when dragged (or flung) to its minimum size, should
+  /// cause its parent sheet to close.
+  ///
+  /// See [DraggableScrollableSheet.shouldCloseOnMinExtent]. Defaults to true.
+  final bool shouldCloseOnMinExtent;
 
   /// The border radius of the sheet.
   ///
@@ -171,6 +179,7 @@ class GrabberSheet extends StatelessWidget {
     this.controller,
     this.onSizeChanged,
     this.onSnap,
+    this.shouldCloseOnMinExtent = true,
     this.borderRadius,
     this.elevation,
     this.shadowColor,
@@ -227,6 +236,7 @@ class GrabberSheet extends StatelessWidget {
       controller: controller,
       onSizeChanged: onSizeChanged,
       onSnap: onSnap,
+      shouldCloseOnMinExtent: shouldCloseOnMinExtent,
       borderRadius:
           borderRadius ??
           (themeShape is RoundedRectangleBorder
