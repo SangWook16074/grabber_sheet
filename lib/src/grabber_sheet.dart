@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'grabber_sheet_controller.dart';
 import 'grabber_style.dart';
 
@@ -268,10 +268,8 @@ class _GrabberSheetState extends State<GrabberSheet> {
                         : null,
                     child: Container(
                       key: const Key('grabber_sheet_scrim'),
-                      color: widget.scrimColor.withAlpha(
-                        (widget.scrimColor.a * 255 * progress)
-                            .round()
-                            .clamp(0, 255),
+                      color: widget.scrimColor.withValues(
+                        alpha: widget.scrimColor.a * progress,
                       ),
                     ),
                   );
