@@ -4,11 +4,28 @@ on:
   push:
     branches:
       - 'main'
+      - 'develop'
+  pull_request:
   workflow_dispatch:
 
 jobs:
   build-and-test:
+    name: Flutter ${{ matrix.flutter-version }} (${{ matrix.channel }})
     runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.channel == 'beta' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Minimum supported version declared in pubspec.yaml.
+          - flutter-version: '3.47.0'
+            channel: 'stable'
+          - flutter-version: '3.x'
+            channel: 'stable'
+            coverage: true
+          # Early warning for upcoming deprecations and breaking changes.
+          - flutter-version: ''
+            channel: 'beta'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -16,20 +33,36 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.x'
-          channel: 'stable'
+          flutter-version: ${{ matrix.flutter-version }}
+          channel: ${{ matrix.channel }}
           cache: true
 
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Analyze project source
-        run: flutter analyze
+      - name: Verify formatting
+        if: matrix.coverage
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Analyze package source
+        run: flutter analyze lib test
+
+      - name: Analyze example app
+        if: matrix.coverage
+        working-directory: example
+        run: |
+          flutter pub get
+          flutter analyze
 
       - name: Run tests with coverage
         run: flutter test --coverage
 
+      - name: Validate package
+        if: matrix.coverage
+        run: flutter pub publish --dry-run
+
       - name: Upload coverage to Codecov
+        if: matrix.coverage
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
