@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:grabber_sheet/grabber_sheet.dart';
 
@@ -59,9 +59,8 @@ void main() {
         header: const Text('Header'),
         // ignore: deprecated_member_use_from_same_package
         bottom: const Text('Bottom'),
-        builder: (context, scrollController) => ListView(
-          controller: scrollController,
-        ),
+        builder: (context, scrollController) =>
+            ListView(controller: scrollController),
       ),
       throwsAssertionError,
     );
@@ -69,82 +68,89 @@ void main() {
 
   group('Snap animation tests', () {
     testWidgets(
-        'sheet should snap to maxChildSize when dragged upwards and snap is true',
-        (WidgetTester tester) async {
-      // Given
-      double currentSize = 0.0;
-      const minSize = 0.3;
-      const maxSize = 0.9;
+      'sheet should snap to maxChildSize when dragged upwards and snap is true',
+      (WidgetTester tester) async {
+        // Given
+        double currentSize = 0.0;
+        const minSize = 0.3;
+        const maxSize = 0.9;
 
-      await tester.pumpWidget(
-        TestAppHarness(
-          child: NotificationListener<DraggableScrollableNotification>(
-            onNotification: (notification) {
-              currentSize = notification.extent;
-              return true;
-            },
-            child: GrabberSheet(
-              minChildSize: minSize,
-              maxChildSize: maxSize,
-              initialChildSize: minSize,
-              snap: true,
-              builder: (context, scrollController) {
-                return ListView(
-                  controller: scrollController,
-                  children: const [Text('Content')],
-                );
+        await tester.pumpWidget(
+          TestAppHarness(
+            child: NotificationListener<DraggableScrollableNotification>(
+              onNotification: (notification) {
+                currentSize = notification.extent;
+                return true;
               },
+              child: GrabberSheet(
+                minChildSize: minSize,
+                maxChildSize: maxSize,
+                initialChildSize: minSize,
+                snap: true,
+                builder: (context, scrollController) {
+                  return ListView(
+                    controller: scrollController,
+                    children: const [Text('Content')],
+                  );
+                },
+              ),
             ),
           ),
-        ),
-      );
+        );
 
-      // When
-      await tester.drag(
-          find.byKey(const Key('grabber')), const Offset(0, -200));
-      await tester.pumpAndSettle(); // Wait for snap animation to finish
+        // When
+        await tester.drag(
+          find.byKey(const Key('grabber')),
+          const Offset(0, -200),
+        );
+        await tester.pumpAndSettle(); // Wait for snap animation to finish
 
-      // Then
-      expect(currentSize, closeTo(maxSize, 0.01));
-    });
+        // Then
+        expect(currentSize, closeTo(maxSize, 0.01));
+      },
+    );
 
     testWidgets(
-        'sheet should snap to minChildSize when dragged downwards and snap is true',
-        (WidgetTester tester) async {
-      // Given
-      double currentSize = 0.0;
-      const minSize = 0.3;
-      const maxSize = 0.9;
+      'sheet should snap to minChildSize when dragged downwards and snap is true',
+      (WidgetTester tester) async {
+        // Given
+        double currentSize = 0.0;
+        const minSize = 0.3;
+        const maxSize = 0.9;
 
-      await tester.pumpWidget(
-        TestAppHarness(
-          child: NotificationListener<DraggableScrollableNotification>(
-            onNotification: (notification) {
-              currentSize = notification.extent;
-              return true;
-            },
-            child: GrabberSheet(
-              minChildSize: minSize,
-              maxChildSize: maxSize,
-              initialChildSize: maxSize, // Start from max size
-              snap: true,
-              builder: (context, scrollController) {
-                return ListView(
-                  controller: scrollController,
-                  children: const [Text('Content')],
-                );
+        await tester.pumpWidget(
+          TestAppHarness(
+            child: NotificationListener<DraggableScrollableNotification>(
+              onNotification: (notification) {
+                currentSize = notification.extent;
+                return true;
               },
+              child: GrabberSheet(
+                minChildSize: minSize,
+                maxChildSize: maxSize,
+                initialChildSize: maxSize, // Start from max size
+                snap: true,
+                builder: (context, scrollController) {
+                  return ListView(
+                    controller: scrollController,
+                    children: const [Text('Content')],
+                  );
+                },
+              ),
             ),
           ),
-        ),
-      );
+        );
 
-      // When
-      await tester.drag(find.byKey(const Key('grabber')), const Offset(0, 200));
-      await tester.pumpAndSettle(); // Wait for snap animation to finish
+        // When
+        await tester.drag(
+          find.byKey(const Key('grabber')),
+          const Offset(0, 200),
+        );
+        await tester.pumpAndSettle(); // Wait for snap animation to finish
 
-      // Then
-      expect(currentSize, closeTo(minSize, 0.01));
-    });
+        // Then
+        expect(currentSize, closeTo(minSize, 0.01));
+      },
+    );
   });
 }

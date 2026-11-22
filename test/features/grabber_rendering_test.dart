@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:grabber_sheet/grabber_sheet.dart';
 
@@ -42,29 +42,31 @@ void main() {
   });
 
   group('Platform specific rendering', () {
-    testWidgets('shows grabber on desktop when showGrabberOnNonMobile is true',
-        (WidgetTester tester) async {
-      // Given
-      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
-      await tester.pumpWidget(
-        TestAppHarness(
-          child: GrabberSheet(
-            showGrabberOnNonMobile: true,
-            builder: (context, scrollController) {
-              return ListView(
-                controller: scrollController,
-                children: const [Text('Content')],
-              );
-            },
+    testWidgets(
+      'shows grabber on desktop when showGrabberOnNonMobile is true',
+      (WidgetTester tester) async {
+        // Given
+        debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+        await tester.pumpWidget(
+          TestAppHarness(
+            child: GrabberSheet(
+              showGrabberOnNonMobile: true,
+              builder: (context, scrollController) {
+                return ListView(
+                  controller: scrollController,
+                  children: const [Text('Content')],
+                );
+              },
+            ),
           ),
-        ),
-      );
+        );
 
-      // Then
-      final grabber = find.byKey(const Key('grabber'));
-      expect(grabber, findsOneWidget);
+        // Then
+        final grabber = find.byKey(const Key('grabber'));
+        expect(grabber, findsOneWidget);
 
-      debugDefaultTargetPlatformOverride = null;
-    });
+        debugDefaultTargetPlatformOverride = null;
+      },
+    );
   });
 }

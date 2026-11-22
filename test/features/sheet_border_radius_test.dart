@@ -1,12 +1,13 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:grabber_sheet/grabber_sheet.dart';
 
 import '../common/test_app_harness.dart';
 
 void main() {
-  testWidgets('applies custom borderRadius when provided',
-      (WidgetTester tester) async {
+  testWidgets('applies custom borderRadius when provided', (
+    WidgetTester tester,
+  ) async {
     // Given
     const customBorderRadius = BorderRadius.only(
       topLeft: Radius.circular(30),
@@ -39,8 +40,9 @@ void main() {
     expect(sheetContainerFinder, findsOneWidget);
   });
 
-  testWidgets('falls back to default borderRadius when null',
-      (WidgetTester tester) async {
+  testWidgets('falls back to default borderRadius when null', (
+    WidgetTester tester,
+  ) async {
     // Given
     await tester.pumpWidget(
       TestAppHarness(

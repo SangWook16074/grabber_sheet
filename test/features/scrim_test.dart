@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:grabber_sheet/grabber_sheet.dart';
 
@@ -6,8 +6,9 @@ import '../common/test_app_harness.dart';
 
 void main() {
   group('Scrim (Background Overlay) Tests', () {
-    testWidgets('should render scrim when showScrim is true',
-        (WidgetTester tester) async {
+    testWidgets('should render scrim when showScrim is true', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         TestAppHarness(
           child: GrabberSheet(
@@ -28,8 +29,9 @@ void main() {
       expect(find.byKey(const Key('grabber_sheet_scrim')), findsOneWidget);
     });
 
-    testWidgets('should not render scrim when showScrim is false',
-        (WidgetTester tester) async {
+    testWidgets('should not render scrim when showScrim is false', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         TestAppHarness(
           child: GrabberSheet(

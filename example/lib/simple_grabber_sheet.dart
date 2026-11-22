@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:grabber_sheet/grabber_sheet.dart';
 import 'package:grabber_sheet_example/common/responsive_frame.dart';
 
