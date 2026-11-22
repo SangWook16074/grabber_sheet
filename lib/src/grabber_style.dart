@@ -1,4 +1,4 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/widgets.dart';
 
 /// Defines the visual appearance of the grabber handle.
 ///
@@ -6,6 +6,8 @@ import 'package:material_ui/material_ui.dart';
 /// to customize the look and feel of the draggable handle.
 class GrabberStyle {
   /// The background color of the grabber handle.
+  ///
+  /// Defaults to `Color(0xFF9E9E9E)` (Material grey).
   final Color color;
 
   /// The width of the grabber handle.
@@ -33,7 +35,7 @@ class GrabberStyle {
 
   /// Creates a style object that defines the grabber's appearance.
   const GrabberStyle({
-    this.color = Colors.grey,
+    this.color = const Color(0xFF9E9E9E),
     this.width = 48.0,
     this.height = 5.0,
     this.radius = const Radius.circular(8.0),
