@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: pub.dev package page
+    url: https://pub.dev/packages/grabber_sheet
+    about: API documentation and changelog.

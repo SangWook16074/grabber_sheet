@@ -1,0 +1,38 @@
+name: Flutter compatibility
+description: Track changes needed to keep up with a new Flutter/Dart release.
+title: "chore: "
+labels: ["enhancement"]
+body:
+  - type: input
+    id: flutter-version
+    attributes:
+      label: Flutter version
+      description: The Flutter release that introduces the change.
+      placeholder: "3.44.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: change-type
+    attributes:
+      label: Type of change
+      options:
+        - Deprecation / breaking change
+        - New framework API to adopt
+        - SDK constraint update
+        - Tooling / CI
+    validations:
+      required: true
+  - type: textarea
+    id: change
+    attributes:
+      label: What changed in Flutter
+      description: Link to the release notes, migration guide, or PR.
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact on grabber_sheet
+      description: Affected APIs/files and what needs to be done.
+    validations:
+      required: true
