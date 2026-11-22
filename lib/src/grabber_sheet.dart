@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
+
 import 'grabber_sheet_controller.dart';
 import 'grabber_style.dart';
 
@@ -163,18 +164,18 @@ class GrabberSheet extends StatefulWidget {
     this.showScrim = false,
     this.scrimColor = Colors.black54,
     this.dismissOnScrimTap = true,
-  })  : assert(minChildSize >= 0.0),
-        assert(maxChildSize <= 1.0),
-        assert(minChildSize <= initialChildSize),
-        assert(initialChildSize <= maxChildSize),
-        assert(
-          header == null || bottom == null,
-          'Use either header or bottom, not both.',
-        ),
-        assert(
-          headerAreaPadding == null || bottomAreaPadding == null,
-          'Use either headerAreaPadding or bottomAreaPadding, not both.',
-        );
+  }) : assert(minChildSize >= 0.0),
+       assert(maxChildSize <= 1.0),
+       assert(minChildSize <= initialChildSize),
+       assert(initialChildSize <= maxChildSize),
+       assert(
+         header == null || bottom == null,
+         'Use either header or bottom, not both.',
+       ),
+       assert(
+         headerAreaPadding == null || bottomAreaPadding == null,
+         'Use either headerAreaPadding or bottomAreaPadding, not both.',
+       );
 
   @override
   State<GrabberSheet> createState() => _GrabberSheetState();
@@ -189,8 +190,9 @@ class _GrabberSheetState extends State<GrabberSheet> {
   late double _newSize = widget.initialChildSize;
 
   /// Notifier for the current size, used to update the scrim opacity.
-  late final ValueNotifier<double> _currentSizeNotifier =
-      ValueNotifier(widget.initialChildSize);
+  late final ValueNotifier<double> _currentSizeNotifier = ValueNotifier(
+    widget.initialChildSize,
+  );
 
   @override
   void initState() {
@@ -249,7 +251,8 @@ class _GrabberSheetState extends State<GrabberSheet> {
                 builder: (context, currentSize, child) {
                   double progress = 0.0;
                   if (widget.maxChildSize > widget.minChildSize) {
-                    progress = (currentSize - widget.minChildSize) /
+                    progress =
+                        (currentSize - widget.minChildSize) /
                         (widget.maxChildSize - widget.minChildSize);
                   }
                   progress = progress.clamp(0.0, 1.0);
@@ -288,12 +291,12 @@ class _GrabberSheetState extends State<GrabberSheet> {
                 maxChildSize: widget.maxChildSize,
                 snap: widget.snap,
                 snapSizes: widget.snapSizes,
-                builder:
-                    (BuildContext context, ScrollController scrollController) {
+                builder: (BuildContext context, ScrollController scrollController) {
                   return Container(
                     decoration: BoxDecoration(
                       color: sheetColor,
-                      borderRadius: widget.borderRadius ??
+                      borderRadius:
+                          widget.borderRadius ??
                           const BorderRadius.only(
                             topLeft: Radius.circular(16.0),
                             topRight: Radius.circular(16.0),
@@ -345,24 +348,24 @@ class _GrabberSheetState extends State<GrabberSheet> {
                               targetSize = sortedSnapPoints.reduce(
                                 (a, b) =>
                                     (_newSize - a).abs() < (_newSize - b).abs()
-                                        ? a
-                                        : b,
+                                    ? a
+                                    : b,
                               );
                             }
 
                             // Animate the sheet to the determined target size.
                             _controller
                                 .animateTo(
-                              targetSize,
-                              duration: widget.snapAnimationDuration,
-                              curve: widget.snapAnimationCurve,
-                            )
+                                  targetSize,
+                                  duration: widget.snapAnimationDuration,
+                                  curve: widget.snapAnimationCurve,
+                                )
                                 .then((_) {
-                              // Trigger onSnap callback after animation completes
-                              if (mounted && widget.onSnap != null) {
-                                widget.onSnap!(targetSize);
-                              }
-                            });
+                                  // Trigger onSnap callback after animation completes
+                                  if (mounted && widget.onSnap != null) {
+                                    widget.onSnap!(targetSize);
+                                  }
+                                });
                           },
                           child: Container(
                             color: Colors.transparent,
@@ -386,7 +389,8 @@ class _GrabberSheetState extends State<GrabberSheet> {
                         ),
                         // The main content of the sheet.
                         Expanded(
-                            child: widget.builder(context, scrollController)),
+                          child: widget.builder(context, scrollController),
+                        ),
                       ],
                     ),
                   );
@@ -402,10 +406,7 @@ class _GrabberSheetState extends State<GrabberSheet> {
 
 /// A private widget representing the draggable handle area.
 class _Grabber extends StatelessWidget {
-  const _Grabber({
-    required this.style,
-    this.showOnNonMobile = false,
-  });
+  const _Grabber({required this.style, this.showOnNonMobile = false});
 
   /// The visual style of the grabber handle.
   final GrabberStyle style;
@@ -447,12 +448,10 @@ class _Grabber extends StatelessWidget {
         switch (defaultTargetPlatform) {
           TargetPlatform.macOS ||
           TargetPlatform.linux ||
-          TargetPlatform.windows =>
-            true,
+          TargetPlatform.windows => true,
           TargetPlatform.android ||
           TargetPlatform.iOS ||
-          TargetPlatform.fuchsia =>
-            false,
+          TargetPlatform.fuchsia => false,
         };
   }
 }

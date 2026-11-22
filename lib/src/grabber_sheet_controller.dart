@@ -22,11 +22,7 @@ class GrabberSheetController extends DraggableScrollableController {
     Curve curve = Curves.easeOut,
   }) {
     if (!isAttached) return;
-    animateTo(
-      _maxSize,
-      duration: duration,
-      curve: curve,
-    );
+    animateTo(_maxSize, duration: duration, curve: curve);
   }
 
   /// Animates the sheet to its minimum allowed size ([minChildSize]).
@@ -35,10 +31,6 @@ class GrabberSheetController extends DraggableScrollableController {
     Curve curve = Curves.easeOut,
   }) {
     if (!isAttached) return;
-    animateTo(
-      _minSize,
-      duration: duration,
-      curve: curve,
-    );
+    animateTo(_minSize, duration: duration, curve: curve);
   }
 }
