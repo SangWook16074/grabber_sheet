@@ -1,3 +1,52 @@
+## 2.0.0
+
+### Breaking changes
+
+* **Requirements**: Requires Dart 3.13 / Flutter 3.47 or later. Required by `package:material_ui`; the previous `>=3.0.0` constraint also allowed installs that failed to compile.
+* **Removed**: `bottom` and `bottomAreaPadding`. Use `header` and `headerAreaPadding` instead.
+* **Theme defaults**: When values are not provided, `GrabberSheet` now follows `BottomSheetThemeData` and the Material 3 bottom sheet spec.
+  - Grabber: 32x4 handle colored `colorScheme.onSurfaceVariant`, inside a 48px tall area.
+  - Sheet: `colorScheme.surfaceContainerLow` background with a top radius of 28.
+  - Material 2 themes (`useMaterial3: false`) keep the previous background and radius.
+* **GrabberStyle**: All properties are now nullable; null values are resolved from the theme.
+* **Snapping**: A grabber fling now moves to the adjacent snap point (same as a content fling) instead of jumping to min/max.
+
+### Features
+
+* **Feat**: The Material layer now uses `package:material_ui` instead of the deprecated `package:flutter/material.dart` (deprecated since Flutter 3.47).
+* **Feat**: Added `RawGrabberSheet` and `package:grabber_sheet/raw_grabber_sheet.dart`, a widgets-only layer without Material/Cupertino dependencies.
+* **Feat**: Added `elevation`, `shadowColor`, and `clipBehavior`.
+* **Feat**: Added `toggleOnGrabberTap`, a 48px grabber touch area, arrow-key / Enter / Space keyboard support, a grab cursor, and a focus highlight.
+* **Feat**: Added `shouldCloseOnMinExtent`.
+
+### Fixes
+
+* **Fix**: `snapAnimationDuration` is now applied to content-driven snaps as well.
+* **Fix**: `onSnap` now fires for every snap source (grabber, content, scrim, controller), once per snap point.
+
+### Migration
+
+```dart
+// 1.x
+GrabberSheet(bottom: header, bottomAreaPadding: padding, ...)
+// 2.0
+GrabberSheet(header: header, headerAreaPadding: padding, ...)
+
+// Keep the 1.x grabber look
+GrabberSheet(
+  grabberStyle: const GrabberStyle(
+    color: Colors.grey,
+    width: 48,
+    height: 5,
+    radius: Radius.circular(8),
+    margin: EdgeInsets.symmetric(vertical: 10),
+  ),
+  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+  backgroundColor: Theme.of(context).colorScheme.surface,
+  ...
+)
+```
+
 ## 1.4.0
 
 * **Feat**: Added `header` and `headerAreaPadding` as the preferred sticky-header API.
