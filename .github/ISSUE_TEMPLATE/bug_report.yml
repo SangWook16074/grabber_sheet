@@ -1,0 +1,69 @@
+name: Bug report
+description: Report something that is not working as expected.
+title: "fix: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill in as much detail as possible.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear and concise description of the bug.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Minimal steps or a minimal code sample that reproduces the issue.
+      placeholder: |
+        1. Wrap content with `GrabberSheet(...)`
+        2. Drag the grabber to ...
+        3. See error
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include screenshots, recordings, or logs if possible.
+    validations:
+      required: true
+  - type: input
+    id: package-version
+    attributes:
+      label: grabber_sheet version
+      placeholder: "1.4.0"
+    validations:
+      required: true
+  - type: textarea
+    id: flutter-doctor
+    attributes:
+      label: flutter doctor -v
+      description: Paste the output of `flutter doctor -v`.
+      render: shell
+    validations:
+      required: true
+  - type: dropdown
+    id: platforms
+    attributes:
+      label: Platforms
+      multiple: true
+      options:
+        - Android
+        - iOS
+        - Web
+        - macOS
+        - Windows
+        - Linux
+    validations:
+      required: true
